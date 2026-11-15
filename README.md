@@ -22,6 +22,7 @@ Produção: <https://v2.fraudicio.com.br>, na VPS `hermes`.
 | Desempenho do painel e guardas de escala | [docs/DESEMPENHO.md](docs/DESEMPENHO.md) |
 | Medir modelos de IA na leitura de apostas (`npm run bench:leitura`) | [docs/BENCH-LEITURA.md](docs/BENCH-LEITURA.md) |
 | Ligar o agente do dono (MCP) que resolve as pendências | [docs/FUNCIONARIO-IA.md](docs/FUNCIONARIO-IA.md) |
+| Plano da migração para Rust, em fases | [docs/MIGRACAO-RUST.md](docs/MIGRACAO-RUST.md) |
 
 ## Onde cada coisa roda
 
