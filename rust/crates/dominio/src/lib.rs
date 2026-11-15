@@ -4,4 +4,7 @@
 #![forbid(unsafe_code)]
 
 pub mod cron;
+pub mod decimal_input;
+pub mod js;
 pub mod kelly;
+pub mod odds;

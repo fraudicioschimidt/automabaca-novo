@@ -6,6 +6,7 @@
 //! cadência inventada. As mensagens de erro são as do TypeScript, palavra por
 //! palavra: os testes e os logs dependem delas.
 
+use crate::js;
 use std::collections::BTreeSet;
 use std::fmt;
 
@@ -46,8 +47,8 @@ pub fn cron_max_gap_minutes(cron: &str) -> Result<u32, CronError> {
 /// que o cron dispara, em ordem.
 pub fn cron_firing_minutes(cron: &str) -> Result<Vec<u32>, CronError> {
     let fields: Vec<&str> = cron
-        .trim_matches(is_js_whitespace)
-        .split(is_js_whitespace)
+        .trim_matches(js::is_whitespace)
+        .split(js::is_whitespace)
         .filter(|field| !field.is_empty())
         .collect();
     // `"".trim().split(/\s+/)` é `[""]` no JavaScript: um campo, não zero.
@@ -166,12 +167,6 @@ fn parse_number(text: &str) -> Option<u64> {
         return None;
     }
     Some(text.parse().unwrap_or(u64::MAX))
-}
-
-/// O `\s` e o `trim()` do JavaScript: o espaço do Unicode, sem o NEL (U+0085),
-/// mais o BOM (U+FEFF).
-fn is_js_whitespace(c: char) -> bool {
-    (c.is_whitespace() && c != '\u{85}') || c == '\u{FEFF}'
 }
 
 #[cfg(test)]

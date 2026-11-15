@@ -52,3 +52,73 @@ pub fn analyze_kelly(odds: f64, vantagem_pct: f64) -> Option<Vec<f64>> {
 pub fn kelly_stake(odds: f64, vantagem_pct: f64, fraction: f64, cap_units: f64) -> f64 {
     dominio::kelly::kelly_stake(odds, vantagem_pct, fraction, cap_units)
 }
+
+/// Ver `src/domain/decimal-input.ts`: só o texto; a casca trata o resto.
+#[napi]
+pub fn parse_decimal_text(value: String) -> Option<f64> {
+    dominio::decimal_input::parse_decimal_text(&value)
+}
+
+#[napi]
+pub fn parse_money_text(value: String) -> Option<f64> {
+    dominio::decimal_input::parse_money_text(&value)
+}
+
+/// Ver `src/domain/odds.ts`: listas de odds entram como `Array` e saem como
+/// `Array` ou `null`.
+#[napi]
+pub fn power_fair_probs(odds: Vec<f64>) -> Option<Vec<f64>> {
+    dominio::odds::power_fair_probs(&odds)
+}
+
+#[napi]
+pub fn shin_fair_probs(odds: Vec<f64>) -> Option<Vec<f64>> {
+    dominio::odds::shin_fair_probs(&odds)
+}
+
+#[napi]
+pub fn power_fair_odds(odds: Vec<f64>) -> Option<Vec<f64>> {
+    dominio::odds::power_fair_odds(&odds)
+}
+
+#[napi]
+pub fn shin_fair_odds(odds: Vec<f64>) -> Option<Vec<f64>> {
+    dominio::odds::shin_fair_odds(&odds)
+}
+
+#[napi]
+pub fn auto_fair_odds(odds: Vec<f64>) -> Option<Vec<f64>> {
+    dominio::odds::auto_fair_odds(&odds)
+}
+
+#[napi]
+pub fn auto_fair_probs(odds: Vec<f64>) -> Option<Vec<f64>> {
+    dominio::odds::auto_fair_probs(&odds)
+}
+
+#[napi]
+pub fn combine_quarter_line_odds(
+    side: String,
+    a_line_q: f64,
+    a_odd: f64,
+    b_line_q: f64,
+    b_odd: f64,
+) -> Option<f64> {
+    use dominio::odds::QuarterLineComponent;
+    dominio::odds::combine_quarter_line_odds(
+        &side,
+        QuarterLineComponent {
+            line_q: a_line_q,
+            odd: a_odd,
+        },
+        QuarterLineComponent {
+            line_q: b_line_q,
+            odd: b_odd,
+        },
+    )
+}
+
+#[napi]
+pub fn percentual_contra_fair(book_odd: f64, fair_odd: f64) -> Option<f64> {
+    dominio::odds::percentual_contra_fair(book_odd, fair_odd)
+}
