@@ -8,7 +8,7 @@ if [[ "$EUID" -eq 0 ]]; then
   echo "dev:setup deve rodar como usuário normal, não root." >&2
   exit 1
 fi
-for command_name in node npm docker; do
+for command_name in node npm docker cargo; do
   if ! command -v "$command_name" >/dev/null 2>&1; then
     echo "dependência ausente: $command_name" >&2
     exit 1
@@ -23,6 +23,8 @@ fi
 node scripts/init-local-env.mjs
 docker compose -f docker-compose.dev.yml up -d --wait
 npm ci --no-audit --fund=false
+(cd rust && rustup toolchain install)
+npm run build:dominio-node
 npm run prisma:deploy
 npm run prisma:seed
 

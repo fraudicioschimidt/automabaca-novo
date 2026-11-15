@@ -11,7 +11,8 @@
 #
 # `nova` liga o node_modules da árvore principal, copia o .env dela com o
 # TEST_DATABASE_URL no servidor de teste da porta 5433 (o `db-test` do compose)
-# e no banco automabaca_test_<tarefa>, e gera o client do Prisma. Cada worktree
+# e no banco automabaca_test_<tarefa>, e gera o client do Prisma e a ponte Rust
+# (rust/crates/dominio-node, com o rust/target da worktree). Cada worktree
 # tem a sua família de bancos nesse servidor (scripts/lib/test-databases.mjs):
 # as suítes rodam juntas sem esperar umas pelas outras, e não sobra container
 # por worktree para morrer quando o PC reinicia.
@@ -158,6 +159,8 @@ nova() {
   (umask 077 && printf '%s\n' "$env" >"$destino/.env")
   local saida
   saida="$(cd "$destino" && npx prisma generate 2>&1)" || { echo "$saida" >&2; falhar "prisma generate falhou em $destino"; }
+  # A ponte Rust é por worktree: o binário fica em rust/crates/dominio-node dela.
+  saida="$(cd "$destino" && npm run --silent build:dominio-node 2>&1)" || { echo "$saida" >&2; falhar "build da ponte Rust falhou em $destino"; }
   echo "→ $destino na branch $branch, a partir de $base"
   echo "→ banco de teste: $banco, no servidor da porta $porta"
   if (( para_build )); then modulos_para_build "$destino"; fi

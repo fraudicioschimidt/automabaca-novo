@@ -16,6 +16,7 @@
     "dev:infra:logs": "docker compose -f docker-compose.dev.yml logs --tail=100 -f",
     "build": "bash scripts/vez.sh -- node scripts/build.mjs",
     "build:worker": "node scripts/build-worker.mjs",
+    "build:dominio-node": "node scripts/build-dominio-node.mjs",
     "start": "PORT=${PORT:-3100} HOSTNAME=${HOSTNAME:-127.0.0.1} node .next/standalone/server.js",
     "worker": "node dist/worker.mjs",
     "worker:dev": "tsx watch src/jobs/worker.ts",
@@ -65,6 +66,7 @@
     "check:ci": "bash scripts/vez.sh --peso 3 -- node scripts/check-project.mjs ci"
   },
   "dependencies": {
+    "@automabaca/dominio-node": "file:rust/crates/dominio-node",
     "@google/genai": "2.27.0",
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",

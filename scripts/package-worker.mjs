@@ -4,6 +4,7 @@ import { isBuiltin } from "node:module";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { carregarDominioNode, DOMINIO_NODE_ARQUIVOS, DOMINIO_NODE_BINARIO, DOMINIO_NODE_DIR, DOMINIO_NODE_PACOTE } from "./lib/dominio-node.mjs";
 import { safeRemoveTreeSync } from "./lib/safe-fs.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -21,6 +22,8 @@ for (const entry of entries) {
       if (!imported.external || isBuiltin(imported.path)) continue;
       const parts = imported.path.split("/");
       const name = imported.path.startsWith("@") ? parts.slice(0, 2).join("/") : parts[0];
+      // A ponte Rust não vem do registry: é copiada do checkout, abaixo.
+      if (name === DOMINIO_NODE_PACOTE) continue;
       if (!source.dependencies[name]) throw new Error(`Import externo não declarado: ${imported.path}`);
       dependencies[name] = source.dependencies[name];
     }
@@ -94,6 +97,13 @@ for (const [key, pkg] of Object.entries(runtimeLock.packages)) {
   }
 }
 run(["ci", "--omit=dev", "--omit=peer", "--no-audit", "--fund=false"]);
+// A ponte Rust vai sempre, copiada do checkout depois do `npm ci` (que apagaria
+// o que não está no lockfile do runtime). O carregamento daqui prova que o
+// worker a acha dentro do pacote, não no node_modules do checkout.
+const dominioNode = path.join(target, "node_modules", DOMINIO_NODE_PACOTE);
+mkdirSync(dominioNode, { recursive: true });
+for (const arquivo of DOMINIO_NODE_ARQUIVOS) cpSync(path.join(root, DOMINIO_NODE_DIR, arquivo), path.join(dominioNode, arquivo));
+carregarDominioNode(target);
 // Image-format qualification now imports Sharp in the worker too. Verify the
 // native binding in the reduced runtime, not only in the full build checkout.
 if (dependencies.sharp) {
@@ -106,6 +116,7 @@ if (dependencies.sharp) {
 writeFileSync(path.join(target, "build-manifest.json"), `${JSON.stringify({
   node: process.version,
   sourceLockSha256: createHash("sha256").update(lockBytes).digest("hex"),
+  dominioNodeSha256: createHash("sha256").update(readFileSync(path.join(root, DOMINIO_NODE_BINARIO))).digest("hex"),
   bundles: Object.fromEntries(entries.map((entry) => [entry,
     createHash("sha256").update(readFileSync(path.join(target, `dist/${entry}.mjs`))).digest("hex")],
   )),

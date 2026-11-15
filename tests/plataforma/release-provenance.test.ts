@@ -3,6 +3,7 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+import { DOMINIO_NODE_BINARIO, DOMINIO_NODE_NO_RUNTIME } from "@/scripts/lib/dominio-node.mjs";
 import { sha256, sourceSnapshot, verifyChecks } from "@/scripts/lib/release-provenance.mjs";
 import { safeRemoveTreeSync } from "@/scripts/lib/safe-fs.mjs";
 
@@ -11,11 +12,31 @@ afterEach(() => { for (const root of roots.splice(0)) safeRemoveTreeSync(tmpdir(
 function fixture() {
   const root = mkdtempSync(join(tmpdir(), "automabaca-release-")); roots.push(root);
   writeFileSync(join(root, "package-lock.json"), "{}");
-  writeFileSync(join(root, ".gitignore"), ".env\nreports/\n");
+  writeFileSync(join(root, ".gitignore"), ".env\nreports/\n*.node\nstage/\n");
   const git = (args: string[]) => execFileSync("git", args, { cwd: root, stdio: "pipe" });
   git(["init", "-b", "main"]); git(["add", "."]);
   git(["-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-m", "baseline"]);
   return root;
+}
+/**
+ * Pacote de verdade (tar.gz) com as duas cópias da ponte Rust, e o binário
+ * "do job rust" no caminho do checkout, como o artefato `ci-rust` o deixa.
+ */
+function pacote(root: string, source: ReturnType<typeof sourceSnapshot>, binarioNoPacote = "binario da ponte") {
+  const folder = join(root, "reports/ci"); mkdirSync(folder, { recursive: true });
+  mkdirSync(join(root, DOMINIO_NODE_BINARIO, ".."), { recursive: true });
+  writeFileSync(join(root, DOMINIO_NODE_BINARIO), "binario da ponte");
+  for (const caminho of DOMINIO_NODE_NO_RUNTIME) {
+    mkdirSync(join(root, "stage", caminho, ".."), { recursive: true });
+    writeFileSync(join(root, "stage", caminho), binarioNoPacote);
+  }
+  execFileSync("tar", ["-czf", join(folder, "runtime.tar.gz"), "-C", join(root, "stage"), ".next", "dist"]);
+  const archive = readFileSync(join(folder, "runtime.tar.gz"));
+  writeFileSync(join(folder, "runtime.json"), JSON.stringify({
+    source, archive: "runtime.tar.gz", sha256: sha256(archive),
+    dominioNode: Object.fromEntries(DOMINIO_NODE_NO_RUNTIME.map((caminho) => [caminho, sha256(binarioNoPacote)])),
+  }));
+  return folder;
 }
 describe("rastreabilidade da release", () => {
   it("detecta fonte novo ou alterado e não lê segredos ignorados", () => {
@@ -40,10 +61,7 @@ describe("rastreabilidade da release", () => {
   });
   it("verificação independente detecta alteração no pacote após emitir manifesto", () => {
     const root = fixture(); const source = sourceSnapshot(root);
-    const folder = join(root, "reports/ci"); mkdirSync(folder, { recursive: true });
-    const archive = "fixture de bytes de um artefato";
-    writeFileSync(join(folder, "runtime.tar.gz"), archive);
-    writeFileSync(join(folder, "runtime.json"), JSON.stringify({ source, archive: "runtime.tar.gz", sha256: sha256(archive) }));
+    const folder = pacote(root, source);
     for (const name of ["static", "database", "browser", "build", "package", "rust"]) {
       writeFileSync(join(folder, `${name}.json`), JSON.stringify({ name, source, exitCode: 0 }));
     }
@@ -54,12 +72,26 @@ describe("rastreabilidade da release", () => {
     expect(() => run("verify-release.mjs")).toThrow();
     expect(() => run("write-release-manifest.mjs")).toThrow();
   });
+  it("a ponte Rust do pacote tem de ser o binário que o job rust compilou", () => {
+    const root = fixture(); const source = sourceSnapshot(root);
+    const folder = pacote(root, source, "outro binario");
+    for (const name of ["static", "database", "browser", "build", "package", "rust"]) {
+      writeFileSync(join(folder, `${name}.json`), JSON.stringify({ name, source, exitCode: 0 }));
+    }
+    const run = (script: string) => execFileSync(process.execPath, [join(process.cwd(), "scripts", script)], { cwd: root, stdio: "pipe" });
+    expect(() => run("write-release-manifest.mjs")).toThrow(/não é o binário do job rust/);
+    // Manifesto bom, e depois o pacote troca o binário dentro do tar.
+    pacote(root, source);
+    expect(() => run("write-release-manifest.mjs")).not.toThrow();
+    const manifesto = JSON.parse(readFileSync(join(folder, "release-manifest.json"), "utf8"));
+    pacote(root, source, "trocado depois");
+    manifesto.runtime.sha256 = sha256(readFileSync(join(folder, "runtime.tar.gz")));
+    writeFileSync(join(folder, "release-manifest.json"), JSON.stringify(manifesto));
+    expect(() => run("verify-release.mjs")).toThrow();
+  });
   it("aceita verificações reaproveitadas do PR só do commit declarado e com o mesmo fonte", () => {
     const root = fixture(); const source = sourceSnapshot(root);
-    const folder = join(root, "reports/ci"); mkdirSync(folder, { recursive: true });
-    const archive = "fixture de bytes de um artefato";
-    writeFileSync(join(folder, "runtime.tar.gz"), archive);
-    writeFileSync(join(folder, "runtime.json"), JSON.stringify({ source, archive: "runtime.tar.gz", sha256: sha256(archive) }));
+    const folder = pacote(root, source);
     // Commit de teste do PR: outro SHA, mesma árvore (e portanto mesmo fonte).
     const testado = { ...source, commit: "f".repeat(40) };
     const gravar = (reaproveitadas: typeof source) => {

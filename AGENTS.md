@@ -27,7 +27,8 @@ bash scripts/worktree.sh podar                             # bancos de worktree 
 ```
 
 O `nova` liga o `node_modules` da árvore principal, copia o `.env` e gera o
-client do Prisma. O banco de teste da worktree é o servidor compartilhado da
+client do Prisma e a ponte Rust (`npm run build:dominio-node`, que compila
+`rust/` e põe o `.node` em `rust/crates/dominio-node`). O banco de teste da worktree é o servidor compartilhado da
 5433 (o `db-test` do compose), com bancos só dela (`automabaca_test_<tarefa>`,
 `_template`, `_1`…`_N`): suítes de worktrees diferentes rodam juntas sem
 esperar uma pela outra. Não suba container de PostgreSQL por worktree.

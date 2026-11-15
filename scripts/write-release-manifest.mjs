@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { DOMINIO_NODE_BINARIO, DOMINIO_NODE_NO_RUNTIME } from "./lib/dominio-node.mjs";
 import { sha256, sourceSnapshot, verifyChecks } from "./lib/release-provenance.mjs";
 
 const source = sourceSnapshot();
@@ -26,8 +27,16 @@ if (runtime.archive !== "runtime.tar.gz" || runtime.source.sourceSha256 !== sour
     runtime.sha256 !== sha256(readFileSync(`${root}/runtime.tar.gz`))) {
   throw new Error("Artefato não corresponde ao fonte verificado ou foi alterado.");
 }
+// O binário da ponte Rust no pacote (web e worker) é o que o job `rust`
+// compilou e testou: o artefato `ci-rust` o devolve ao caminho do checkout.
+const binario = sha256(readFileSync(DOMINIO_NODE_BINARIO));
+for (const caminho of DOMINIO_NODE_NO_RUNTIME) {
+  if (runtime.dominioNode?.[caminho] !== binario) {
+    throw new Error(`Ponte Rust no runtime (${caminho}) não é o binário do job rust (${binario}).`);
+  }
+}
 writeFileSync(`${root}/release-manifest.json`, JSON.stringify({
   schemaVersion: 1, generatedAt: new Date().toISOString(), source, runtime,
   checks, workflowRun: process.env.GITHUB_RUN_ID ?? null, reusedChecks,
 }, null, 2) + "\n");
-process.stdout.write("Release vinculada ao fonte, migrations, artefato e verificações aprovadas.\n");
+process.stdout.write("Release vinculada ao fonte, migrations, artefato, ponte Rust e verificações aprovadas.\n");

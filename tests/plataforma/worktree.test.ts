@@ -37,8 +37,9 @@ beforeEach(() => {
   principal = path.join(dir, "automabaca-novo");
   const bin = path.join(dir, "bin");
   mkdirSync(bin);
-  // `npx prisma generate` e o `gh` são de mentira; o git é de verdade.
+  // `npx prisma generate`, o build da ponte Rust e o `gh` são de mentira; o git é de verdade.
   executavel(path.join(bin, "npx"), `#!/usr/bin/env bash\necho "$PWD $*" >> "${dir}/npx.log"\n`);
+  executavel(path.join(bin, "npm"), `#!/usr/bin/env bash\necho "$PWD $*" >> "${dir}/npm.log"\n`);
   executavel(path.join(bin, "gh"), `#!/usr/bin/env bash\necho "$*" >> "${dir}/gh.log"\nprintf '%s' "\${GH_MERGEADOS:-}"\n`);
   ambiente = {
     ...process.env,
@@ -95,6 +96,7 @@ describe("worktree.sh nova", () => {
     );
     expect(statSync(path.join(wt(), ".env")).mode & 0o777).toBe(0o600);
     expect(readFileSync(path.join(dir, "npx.log"), "utf8")).toBe(`${wt()} prisma generate\n`);
+    expect(readFileSync(path.join(dir, "npm.log"), "utf8")).toBe(`${wt()} run --silent build:dominio-node\n`);
     expect(saida).toContain("automabaca_test_clv");
   });
 
