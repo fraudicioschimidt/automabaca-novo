@@ -45,7 +45,10 @@ normal, **Node 24.20.0 e npm 11.19.0**. A versão está fixada em `.node-version
 
 O código em Rust (`rust/`, ver [docs/MIGRACAO-RUST.md](docs/MIGRACAO-RUST.md))
 pede o `rustup`: a versão fica em `rust/rust-toolchain.toml`, e
-`cd rust && rustup toolchain install` a instala.
+`cd rust && rustup toolchain install` a instala. A ponte N-API
+(`@automabaca/dominio-node`, que web, worker e testes carregam) sai de
+`npm run build:dominio-node`: o `dev:setup` já a compila, e depois de mudar
+`rust/` é preciso rodar de novo.
 
 ```bash
 git clone https://github.com/fraudicioschimidt/automabaca-novo.git

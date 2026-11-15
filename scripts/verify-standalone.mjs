@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
+import { carregarDominioNode } from "./lib/dominio-node.mjs";
 
 const root = path.resolve(".next", "standalone");
 const forbidden = [
@@ -21,6 +22,7 @@ const forbidden = [
   "dist",
   "infra",
   "prisma",
+  "rust",
   "scripts",
   "src",
   "tests",
@@ -69,6 +71,12 @@ try {
   )).resize(2, 2).png().toBuffer();
 } catch (error) {
   throw new Error("Standalone não consegue carregar o runtime nativo do Sharp.", { cause: error });
+}
+
+try {
+  carregarDominioNode(root);
+} catch (error) {
+  throw new Error("Standalone não consegue carregar a ponte Rust (@automabaca/dominio-node).", { cause: error });
 }
 
 const nestedAssets = [".next/static/static", "public/public"].filter((entry) =>

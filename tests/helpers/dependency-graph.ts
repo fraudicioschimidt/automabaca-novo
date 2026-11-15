@@ -97,7 +97,8 @@ export function runtimeCycles(graph: DependencyGraph): string[][] {
 
 /** Segue inclusive helpers sem diretiva; Server Actions são fronteiras RPC do Next. */
 export function forbiddenClientDependencies(graph: DependencyGraph): string[] {
-  const forbidden = /^(?:src\/(?:infra|services|providers|jobs|telegram|generated)(?:\/|$)|server-only$|node:|@prisma\/|pg(?:-boss)?$|next\/(?:headers|cache|server)$)/;
+  // `@automabaca/dominio-node` é a ponte Rust: binário nativo, que o navegador não carrega.
+  const forbidden = /^(?:src\/(?:infra|services|providers|jobs|telegram|generated)(?:\/|$)|server-only$|node:|@prisma\/|pg(?:-boss)?$|next\/(?:headers|cache|server)$|@automabaca\/dominio-node$)/;
   const violations: string[] = [];
   for (const [root, module] of graph) {
     if (!module.client) continue;

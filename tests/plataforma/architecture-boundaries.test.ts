@@ -106,6 +106,24 @@ function dbTestsWithoutTeardown(): string[] {
     .map((absolute) => path.relative(ROOT, absolute).replaceAll(path.sep, "/"));
 }
 
+/**
+ * A ponte Rust é CommonJS com o binário num `require`: no ESM do Node (o bundle
+ * do worker) só existe o default, e um import nomeado passa no vitest e no
+ * Next mas chega `undefined` ao worker de produção.
+ */
+function nonDefaultBridgeImports(): string[] {
+  return ["app", "src", "scripts", "tests"]
+    .flatMap((raiz) => sourceFiles(raiz))
+    .filter((absolute) => readFileSync(absolute, "utf8").includes("@automabaca/dominio-node"))
+    .flatMap((absolute) => {
+      const ast = ts.createSourceFile(absolute, readFileSync(absolute, "utf8"), ts.ScriptTarget.Latest, true);
+      return ast.statements.filter((node): node is ts.ImportDeclaration => ts.isImportDeclaration(node)
+        && ts.isStringLiteral(node.moduleSpecifier) && node.moduleSpecifier.text === "@automabaca/dominio-node"
+        && (node.importClause?.name === undefined || node.importClause.namedBindings !== undefined))
+        .map((node) => `${path.relative(ROOT, absolute).replaceAll(path.sep, "/")}: ${node.getText()}`);
+    });
+}
+
 describe("fronteiras arquiteturais", () => {
   it("mantém domínio independente das camadas externas e do Prisma", () => {
     expect(forbiddenImports("src/domain", /^@\/(src\/(infra|services|providers|jobs|telegram|generated)(?:\/|$)|@prisma\/)/)).toEqual([]);
@@ -146,5 +164,9 @@ describe("fronteiras arquiteturais", () => {
 
   it("impede dependências transitivas do navegador em serviços e infraestrutura", () => {
     expect(forbiddenClientDependencies(graph)).toEqual([]);
+  });
+
+  it("importa a ponte Rust só pelo default, o único nome que o ESM do Node enxerga", () => {
+    expect(nonDefaultBridgeImports()).toEqual([]);
   });
 });

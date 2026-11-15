@@ -44,6 +44,10 @@ const nextConfig: NextConfig = {
   // isto, o `next dev` rodado por um agente (Claude Code, Codex) acrescenta
   // nele o bloco de regras do Next e suja a árvore.
   agentRules: false,
+  // Ponte N-API para o Rust (rust/crates/dominio-node): binário nativo, carregado
+  // pelo require do Node em runtime, nunca empacotado pelo Turbopack. O
+  // `prepare-standalone` copia o pacote para o node_modules do standalone.
+  serverExternalPackages: ["@automabaca/dominio-node"],
   allowedDevOrigins: DEV_ORIGINS,
   // O CI executa `tsc --noEmit` como gate independente antes de produzir o
   // artefato. Somente seus builds redundantes podem pular a segunda passagem;
