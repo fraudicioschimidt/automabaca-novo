@@ -9,6 +9,7 @@ import { prisma } from "@/src/infra/prisma";
 import type { Prisma } from "@/src/generated/prisma/client";
 import * as training from "@/src/services/sharp/training-resolve";
 import { deferTrainingCaseForAgent, readWriteBudget, applyVincularPlan, buildVincularPlan } from "@/src/services/ops/funcionario/escrita";
+import { RecusaDeNegocioError } from "@/src/services/shared/recusa";
 import { createTestDb, type TestDb } from "../helpers/db";
 import { seedCatalogLink, seedTeamCard } from "../helpers/team-cards";
 import { runFuncionario, type FuncionarioIo } from "@/scripts/ops-funcionario";
@@ -694,10 +695,24 @@ describe("teto de escritas por dono", () => {
     // minuto mesmo que a máquina ocupada atrase as três decisões.
     await seedWrites(9, new Date(NOW.getTime() + 600_000));
     const cases = await Promise.all(["Primeiro", "Segundo", "Terceiro"].map((evento) => db.prisma.trainingCase.create({ data: { evento, esporte: "Soccer" } })));
-    const results = await Promise.all(cases.map((item) => deferTrainingCaseForAgent({ caseId: item.id, executor: EXECUTOR, reason: "Candidato sem evidência suficiente", now: NOW })));
-    expect(results.filter((result) => result.kind === "saved")).toHaveLength(1);
+    const results = await Promise.allSettled(cases.map((item) => deferTrainingCaseForAgent({ caseId: item.id, executor: EXECUTOR, reason: "Candidato sem evidência suficiente", now: NOW })));
+    expect(results.filter((result) => result.status === "fulfilled" && result.value.kind === "saved")).toHaveLength(1);
+    // A perdedora que já estava na transação volta `refused`; a que só começou
+    // depois do commit da vencedora (máquina ocupada) é recusada na conferência
+    // de antes. As duas formas são recusa, e nada mais é gravado.
+    expect(results.filter((result) => result.status === "rejected"
+      ? result.reason instanceof RecusaDeNegocioError
+      : result.value.kind === "refused")).toHaveLength(2);
     expect((await readWriteBudget(EXECUTOR, NOW)).usadasNoMinuto).toBe(10);
     expect(await db.prisma.trainingCase.count({ where: { status: "REJECTED" } })).toBe(1);
+  });
+
+  it("a decisão que chega com a vaga do minuto já gasta é recusada antes da transação", async () => {
+    await seedWrites(10, new Date(NOW.getTime() + 600_000));
+    const tcase = await db.prisma.trainingCase.create({ data: { evento: "Atrasado", esporte: "Soccer" } });
+    await expect(deferTrainingCaseForAgent({ caseId: tcase.id, executor: EXECUTOR, reason: "Candidato sem evidência suficiente", now: NOW }))
+      .rejects.toThrow(/10 de 10 no último minuto/);
+    expect(await db.prisma.trainingCase.count({ where: { status: "REJECTED" } })).toBe(0);
   });
 
   it("janelas do orçamento preservam os limites exclusivos e ignoram os agentes de outro dono e outras ações", async () => {
