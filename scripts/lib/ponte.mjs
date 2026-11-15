@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import { cpSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSync, unlinkSync } from "node:fs";
+import { cpSync, existsSync, lstatSync, mkdirSync, readdirSync, realpathSync, unlinkSync } from "node:fs";
 import path from "node:path";
 import { safeRemoveTreeSync } from "./safe-fs.mjs";
 
@@ -15,7 +15,7 @@ export const PONTE_WASM = `${PONTE_DIR}/wasm/dominio_ponte_bg.wasm`;
 /** O que web e worker carregam no servidor: só o lado N-API. */
 export const PONTE_ARQUIVOS = ["package.json", "index.cjs", "index.d.ts", path.basename(PONTE_BINARIO)];
 /** O pacote inteiro, com o lado do navegador, como o build do Next o resolve. */
-const PONTE_ARQUIVOS_COM_NAVEGADOR = [...PONTE_ARQUIVOS, "browser.mjs", "wasm/dominio_ponte.mjs", "wasm/bytes.mjs"];
+const PONTE_ARQUIVOS_COM_NAVEGADOR = [...PONTE_ARQUIVOS, "browser.mjs", "wasm/dominio_ponte.mjs", "wasm/dominio_ponte_bg.wasm"];
 
 /**
  * Carrega a ponte como o runtime em `raiz` a carregaria e confere que ela
@@ -79,23 +79,20 @@ export function conferirPonteInstalada(raiz) {
 export const PONTE_NO_RUNTIME = [".next/standalone", "dist/worker-runtime"]
   .map((pasta) => `${pasta}/node_modules/${PONTE_PACOTE}/${path.basename(PONTE_BINARIO)}`);
 
-/** Onde o build do Next põe os chunks do navegador, dentro do standalone. */
-export const PONTE_CHUNKS_DO_NAVEGADOR = ".next/standalone/.next/static/chunks";
+/** Onde o build do Next publica os arquivos estáticos, dentro do standalone. */
+export const PONTE_ESTATICOS_DO_NAVEGADOR = ".next/standalone/.next/static";
 
 /**
- * O WebAssembly embutido num chunk do navegador: a string base64 que começa
- * pelo cabeçalho do formato (`\0asm` versão 1). `null` quando o chunk não o tem.
+ * O WebAssembly da ponte que o build publicou para o navegador: um arquivo
+ * `.wasm` só, com hash no nome. Mais de um, ou nenhum, é build errado.
  */
-export function wasmDoChunk(texto) {
-  const embutido = /"(AGFzbQEAAAA[A-Za-z0-9+/]*={0,2})"/.exec(texto)?.[1];
-  return embutido ? Buffer.from(embutido, "base64") : null;
-}
-
-/** Os chunks do standalone que levam o WebAssembly da ponte, em ordem. */
-export function chunksComWasm(raiz = ".") {
-  const pasta = path.join(raiz, PONTE_CHUNKS_DO_NAVEGADOR);
-  return readdirSync(pasta, { recursive: true, encoding: "utf8" })
-    .filter((nome) => nome.endsWith(".js") && wasmDoChunk(readFileSync(path.join(pasta, nome), "utf8")))
-    .map((nome) => `${PONTE_CHUNKS_DO_NAVEGADOR}/${nome.replaceAll("\\", "/")}`)
-    .sort();
+export function wasmPublicado(raiz = ".") {
+  const pasta = path.join(raiz, PONTE_ESTATICOS_DO_NAVEGADOR);
+  const encontrados = readdirSync(pasta, { recursive: true, encoding: "utf8" })
+    .filter((nome) => nome.endsWith(".wasm"))
+    .map((nome) => `${PONTE_ESTATICOS_DO_NAVEGADOR}/${nome.replaceAll("\\", "/")}`);
+  if (encontrados.length !== 1) {
+    throw new Error(`O navegador devia receber um .wasm da ponte Rust; o build publicou ${encontrados.length}: ${encontrados.join(", ")}`);
+  }
+  return encontrados[0];
 }

@@ -71,8 +71,8 @@ e a ponte N-API não carrega no navegador (a fronteira em
 
 1. Compilar o `dominio` também para WebAssembly (`wasm-bindgen`), com a casca
    usando a ponte N-API no servidor e o WASM no navegador. É o que a
-   estimativa acima supõe: pipeline e teste do WASM, inicialização síncrona
-   no cliente e o tamanho do pacote nas telas.
+   estimativa acima supõe: pipeline e teste do WASM, inicialização no
+   cliente antes da hidratação e o tamanho do pacote nas telas.
 2. Uma ponte só, em WebAssembly, nos dois lados. Um binário a menos para
    conferir, mas a chamada fica mais cara que a N-API no worker.
 3. Portar primeiro só o que roda no servidor (52 arquivos, 6,4 mil linhas) e
@@ -81,9 +81,9 @@ e a ponte N-API não carrega no navegador (a fronteira em
 
 **Escolhido em 15/11/2026: caminho 1.** A ponte `@automabaca/dominio`
 (`rust/crates/ponte`) entrega o `.node` ao servidor e o WebAssembly ao
-navegador pela condição `browser` do pacote; o WASM é compilado de forma
-síncrona na carga, e a CSP ganhou `'wasm-unsafe-eval'` no `script-src`, que
-libera só isso. Andamento:
+navegador pela condição `browser` do pacote, e a CSP ganhou
+`'wasm-unsafe-eval'` no `script-src`, que libera só a compilação de
+WebAssembly. Andamento:
 
 - ponte única, com os testes dos dois lados (#13);
 - `kelly` (calculadora de Ferramentas), o primeiro módulo que roda no
@@ -94,6 +94,13 @@ libera só isso. Andamento:
   passou a 86 KB (compilado para tamanho), e o chunk que o leva, a ~55 KB com
   gzip, em 7 telas. O tamanho é medido a cada módulo: quando incomodar, o
   próximo passo é o `wasm-opt`.
+- o WASM passa a arquivo estático (`.next/static/media`, gzip e cache
+  imutável), carregado com `await` no topo do lado do navegador antes da
+  hidratação, em vez de base64 dentro de um chunk JS: 42 KB transferidos
+  contra 56,5 KB, e compilação em streaming (#16). Era o formato que não
+  escalava: o `regress`, o motor de regex com a semântica do ECMAScript que a
+  leitura de apostas e a liquidação vão usar, pesa sozinho 490 KB de WASM
+  (137 KB com gzip), e 40 dos 58 módulos com regex chegam ao navegador.
 
 Duas regras de método saíram desses módulos:
 

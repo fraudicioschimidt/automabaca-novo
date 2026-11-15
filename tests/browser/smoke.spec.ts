@@ -115,6 +115,16 @@ test("Kelly oferece o CLV médio do canal como vantagem estimada", async ({ page
   await expect(page.getByLabel("Vantagem estimada")).toHaveValue("2.4");
 });
 
+// A ponte Rust do navegador é um .wasm à parte, baixado antes da hidratação:
+// se ele não chega, a tela diz que falhou e oferece tentar de novo, em vez de
+// ficar desenhada e morta.
+test("sem o WebAssembly da ponte, a tela mostra o erro e o Tentar de novo", async ({ page }) => {
+  await page.route("**/*.wasm", (route) => route.abort());
+  await page.goto("/ferramentas");
+  await expect(page.getByText("Algo deu errado")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Tentar de novo" })).toBeVisible();
+});
+
 test("paleta de comandos implementa navegação por teclado", async ({ page }) => {
   test.skip(process.env.VISUAL_TEST_MODE !== "1", "ambiente isolado obrigatório");
   await page.goto("/?mock=1", { waitUntil: "networkidle" });

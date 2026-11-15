@@ -6,9 +6,9 @@
  * - N-API: `dominio.linux-x64-gnu.node`. Tem de carregar nas imagens (Debian
  *   bookworm, glibc 2.36): binário que peça glibc mais nova é recusado aqui,
  *   em vez de o worker só cair na produção.
- * - WebAssembly: `wasm/dominio_ponte.mjs` (a cola do `wasm-bindgen`, na mesma
- *   versão do crate) e `wasm/bytes.mjs` (o módulo em base64, para compilar de
- *   forma síncrona no navegador).
+ * - WebAssembly: `wasm/dominio_ponte_bg.wasm` e `wasm/dominio_ponte.mjs` (a
+ *   cola do `wasm-bindgen`, na mesma versão do crate). O navegador baixa o
+ *   .wasm como arquivo estático (ver browser.mjs).
  *
  *   node scripts/build-ponte.mjs              compila e instala no node_modules
  *   node scripts/build-ponte.mjs --instalar   só instala (binários do artefato `ci-rust`)
@@ -63,18 +63,16 @@ function compilarWasm() {
   mkdirSync(saida, { recursive: true });
   run("wasm-bindgen", ["--target", "web", "--no-typescript", "--out-dir", saida, "--out-name", "dominio_ponte",
     path.join(rust, "target/wasm32-unknown-unknown/release/dominio_ponte.wasm")]);
-  // A carga assíncrona da cola acharia o .wasm por `new URL(..., import.meta.url)`,
-  // e o bundler publicaria o arquivo solto. A ponte só usa o `initSync` com os
-  // bytes embutidos.
-  // A cola é ESM: `.mjs`, para o Node não ter de adivinhar o formato.
+  // A cola acharia o .wasm por conta própria (`new URL(..., import.meta.url)`);
+  // o browser.mjs passa o endereço, e uma referência só faz o bundler publicar
+  // um arquivo só. A cola é ESM: `.mjs`, para o Node não ter de adivinhar.
   const gerada = path.join(saida, "dominio_ponte.js");
   const texto = readFileSync(gerada, "utf8");
   const referencia = "new URL('dominio_ponte_bg.wasm', import.meta.url)";
   if (texto.split(referencia).length !== 2) throw new Error(`cola do wasm-bindgen mudou: sem ${referencia}`);
   writeFileSync(path.join(saida, "dominio_ponte.mjs"), texto.replace(referencia, "undefined"));
   rmSync(gerada);
-  writeFileSync(path.join(saida, "bytes.mjs"),
-    `// Gerado por scripts/build-ponte.mjs: o ${path.basename(PONTE_WASM)} em base64.\nexport default "${readFileSync(path.join(root, PONTE_WASM)).toString("base64")}";\n`);
+  rmSync(path.join(saida, "bytes.mjs"), { force: true });
 }
 
 if (!process.argv.includes("--instalar")) {

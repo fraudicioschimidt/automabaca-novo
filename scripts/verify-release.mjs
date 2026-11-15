@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { PONTE_NO_RUNTIME, wasmDoChunk } from "./lib/ponte.mjs";
+import { PONTE_NO_RUNTIME } from "./lib/ponte.mjs";
 import { sha256, sourceSnapshot, verifyChecks } from "./lib/release-provenance.mjs";
 
 const folder = resolve(process.argv[2] ?? "reports/ci");
@@ -26,12 +26,11 @@ for (const caminho of PONTE_NO_RUNTIME) {
     throw new Error(`Ponte Rust alterada no pacote: ${caminho}`);
   }
 }
-// E o WebAssembly de cada chunk do navegador que o manifesto registrou.
-const chunks = Object.entries(manifest.runtime.ponteWasm ?? {});
-if (chunks.length === 0) throw new Error("Manifesto sem os chunks do WebAssembly da ponte Rust.");
-for (const [caminho, hash] of chunks) {
-  const texto = execFileSync("tar", ["-xzOf", `${folder}/runtime.tar.gz`, caminho], { maxBuffer: 64 * 1024 * 1024, encoding: "utf8" });
-  const wasm = wasmDoChunk(texto);
-  if (!wasm || sha256(wasm) !== hash) throw new Error(`WebAssembly da ponte alterado no pacote: ${caminho}`);
+// E o WebAssembly que o navegador baixa, o que o manifesto registrou.
+const publicados = Object.entries(manifest.runtime.ponteWasm ?? {});
+if (publicados.length !== 1) throw new Error("Manifesto sem o WebAssembly da ponte Rust.");
+for (const [caminho, hash] of publicados) {
+  const wasm = execFileSync("tar", ["-xzOf", `${folder}/runtime.tar.gz`, caminho], { maxBuffer: 64 * 1024 * 1024 });
+  if (sha256(wasm) !== hash) throw new Error(`WebAssembly da ponte alterado no pacote: ${caminho}`);
 }
 process.stdout.write(`Release conferida: commit ${manifest.source.commit}, SHA-256 ${manifest.runtime.sha256}, ponte Rust ${nativos[PONTE_NO_RUNTIME[0]]}\n`);

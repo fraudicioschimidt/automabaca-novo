@@ -6,10 +6,11 @@ import ts from "typescript";
 import { describe, expect, it } from "vitest";
 import type ponte from "@automabaca/dominio";
 
-// Cada lado pelo caminho: o resto do código entra pelo nome do pacote, e o
-// bundler (ou o alias do vitest) escolhe o lado.
+// Cada lado pelo caminho (o do navegador pelo carregador do Node, com o mesmo
+// .wasm): o resto do código entra pelo nome do pacote, e o bundler (ou o alias
+// do vitest) escolhe o lado.
 const servidor = createRequire(import.meta.url)(path.resolve("rust/crates/ponte/index.cjs")) as typeof ponte;
-const navegador = (await import(pathToFileURL(path.resolve("rust/crates/ponte/browser.mjs")).href) as { default: typeof ponte }).default;
+const navegador = (await import(pathToFileURL(path.resolve("rust/crates/ponte/wasm-node.mjs")).href) as { default: typeof ponte }).default;
 
 const lados = { servidor, navegador } as Record<string, Record<string, (...args: unknown[]) => unknown>>;
 
