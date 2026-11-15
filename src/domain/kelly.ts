@@ -1,3 +1,8 @@
+// A regra mora em Rust (`rust/crates/dominio/src/kelly.rs`): no servidor pela
+// N-API, no navegador (a calculadora de Ferramentas) pelo WebAssembly. Este
+// arquivo só monta o objeto e guarda os padrões da tela.
+import dominio from "@automabaca/dominio";
+
 /**
  * Kelly da calculadora de Ferramentas — domínio puro (client-safe). A vantagem
  * é uma ESTIMATIVA do operador (o CLV médio do tipster é a melhor que se tem):
@@ -11,13 +16,9 @@ export type KellyAnalysis = {
 
 /** Decomposição canônica de Kelly; null quando vantagem/odd implicam probabilidade impossível. */
 export function analyzeKelly(odds: number, vantagemPct: number): KellyAnalysis | null {
-  if (!Number.isFinite(odds) || !Number.isFinite(vantagemPct) || odds <= 1) return null;
-  const impliedProbability = 1 / odds;
-  const estimatedProbability = (1 + vantagemPct / 100) / odds;
-  if (estimatedProbability <= 0 || estimatedProbability >= 1) return null;
-  const b = odds - 1;
-  const fullFraction =
-    (b * estimatedProbability - (1 - estimatedProbability)) / b;
+  const analysis = dominio.analyzeKelly(odds, vantagemPct);
+  if (!analysis) return null;
+  const [impliedProbability, estimatedProbability, fullFraction] = analysis;
   return { impliedProbability, estimatedProbability, fullFraction };
 }
 
@@ -28,22 +29,7 @@ export function kellyStake(params: {
   fraction: number;
   capUnits: number;
 }): number {
-  const { odds, vantagemPct, fraction, capUnits } = params;
-  if (
-    !Number.isFinite(odds) ||
-    !Number.isFinite(vantagemPct) ||
-    !Number.isFinite(fraction) ||
-    !Number.isFinite(capUnits) ||
-    odds <= 1 ||
-    vantagemPct <= 0 ||
-    fraction <= 0 ||
-    capUnits <= 0
-  ) return 0;
-  const analysis = analyzeKelly(odds, vantagemPct);
-  if (!analysis) return 0;
-  const kelly = analysis.fullFraction;
-  if (kelly <= 0) return 0;
-  return Math.min(capUnits, fraction * kelly * 100);
+  return dominio.kellyStake(params.odds, params.vantagemPct, params.fraction, params.capUnits);
 }
 
 /** A fração e o teto com que a calculadora de Ferramentas abre. */

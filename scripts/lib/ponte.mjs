@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import { cpSync, existsSync, lstatSync, mkdirSync, realpathSync, unlinkSync } from "node:fs";
+import { cpSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSync, unlinkSync } from "node:fs";
 import path from "node:path";
 import { safeRemoveTreeSync } from "./safe-fs.mjs";
 
@@ -78,3 +78,24 @@ export function conferirPonteInstalada(raiz) {
  */
 export const PONTE_NO_RUNTIME = [".next/standalone", "dist/worker-runtime"]
   .map((pasta) => `${pasta}/node_modules/${PONTE_PACOTE}/${path.basename(PONTE_BINARIO)}`);
+
+/** Onde o build do Next põe os chunks do navegador, dentro do standalone. */
+export const PONTE_CHUNKS_DO_NAVEGADOR = ".next/standalone/.next/static/chunks";
+
+/**
+ * O WebAssembly embutido num chunk do navegador: a string base64 que começa
+ * pelo cabeçalho do formato (`\0asm` versão 1). `null` quando o chunk não o tem.
+ */
+export function wasmDoChunk(texto) {
+  const embutido = /"(AGFzbQEAAAA[A-Za-z0-9+/]*={0,2})"/.exec(texto)?.[1];
+  return embutido ? Buffer.from(embutido, "base64") : null;
+}
+
+/** Os chunks do standalone que levam o WebAssembly da ponte, em ordem. */
+export function chunksComWasm(raiz = ".") {
+  const pasta = path.join(raiz, PONTE_CHUNKS_DO_NAVEGADOR);
+  return readdirSync(pasta, { recursive: true, encoding: "utf8" })
+    .filter((nome) => nome.endsWith(".js") && wasmDoChunk(readFileSync(path.join(pasta, nome), "utf8")))
+    .map((nome) => `${PONTE_CHUNKS_DO_NAVEGADOR}/${nome.replaceAll("\\", "/")}`)
+    .sort();
+}

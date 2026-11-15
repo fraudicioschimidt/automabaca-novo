@@ -79,6 +79,17 @@ e a ponte N-API não carrega no navegador (a fronteira em
    deixar o resto para a fase 4, quando as telas saírem do Next. Cabe nas 3 a
    5 semanas, mas o domínio fica em duas linguagens até lá.
 
+**Escolhido em 15/11/2026: caminho 1.** A ponte `@automabaca/dominio`
+(`rust/crates/ponte`) entrega o `.node` ao servidor e o WebAssembly ao
+navegador pela condição `browser` do pacote; o WASM é compilado de forma
+síncrona na carga, e a CSP ganhou `'wasm-unsafe-eval'` no `script-src`, que
+libera só isso. Andamento:
+
+- ponte única, com os testes dos dois lados (#13);
+- `kelly` (calculadora de Ferramentas), o primeiro módulo que roda no
+  navegador: +31,6 KB com gzip só em `/ferramentas` e ~3 ms de compilação do
+  WASM na carga (#14).
+
 Também pesa na estimativa: funções que recebem callback por item (por
 exemplo, `sumMoneyBy(itens, seletor)`) pedem assinatura nova na ponte, com
 arrays em vez de uma chamada por item, para a travessia não custar mais que

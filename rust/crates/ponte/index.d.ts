@@ -14,5 +14,8 @@ declare const dominio: {
   cronFiringMinutes(cron: string): number[];
   /** Instantes em milissegundos da época; `null` quando o intervalo não tem disparo. */
   latestCronFiring(cron: string, afterMs: number, untilMs: number, utcOffsetHours: number): number | null;
+  /** Ver `src/domain/kelly.ts`: `[implícita, estimada, fração]`, ou `null`. */
+  analyzeKelly(odds: number, vantagemPct: number): [number, number, number] | null;
+  kellyStake(odds: number, vantagemPct: number, fraction: number, capUnits: number): number;
 };
 export = dominio;

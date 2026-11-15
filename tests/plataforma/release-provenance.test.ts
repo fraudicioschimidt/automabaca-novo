@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { PONTE_BINARIO, PONTE_NO_RUNTIME } from "@/scripts/lib/ponte.mjs";
+import { PONTE_BINARIO, PONTE_CHUNKS_DO_NAVEGADOR, PONTE_NO_RUNTIME, PONTE_WASM } from "@/scripts/lib/ponte.mjs";
 import { sha256, sourceSnapshot, verifyChecks } from "@/scripts/lib/release-provenance.mjs";
 import { safeRemoveTreeSync } from "@/scripts/lib/safe-fs.mjs";
 
@@ -12,29 +12,39 @@ afterEach(() => { for (const root of roots.splice(0)) safeRemoveTreeSync(tmpdir(
 function fixture() {
   const root = mkdtempSync(join(tmpdir(), "automabaca-release-")); roots.push(root);
   writeFileSync(join(root, "package-lock.json"), "{}");
-  writeFileSync(join(root, ".gitignore"), ".env\nreports/\n*.node\nstage/\n");
+  writeFileSync(join(root, ".gitignore"), ".env\nreports/\n*.node\nstage/\nrust/crates/ponte/wasm/\n");
   const git = (args: string[]) => execFileSync("git", args, { cwd: root, stdio: "pipe" });
   git(["init", "-b", "main"]); git(["add", "."]);
   git(["-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-m", "baseline"]);
   return root;
 }
+/** Um módulo WebAssembly válido (só o cabeçalho) mais um byte que o distingue. */
+const wasm = (marca: number) => Buffer.from([0, 0x61, 0x73, 0x6d, 1, 0, 0, 0, 0, 2, 1, marca]);
+
 /**
- * Pacote de verdade (tar.gz) com as duas cópias da ponte Rust, e o binário
- * "do job rust" no caminho do checkout, como o artefato `ci-rust` o deixa.
+ * Pacote de verdade (tar.gz) com as duas cópias da ponte Rust e um chunk do
+ * navegador com o WebAssembly embutido; o binário e o WASM "do job rust" ficam
+ * no caminho do checkout, como o artefato `ci-rust` os deixa.
  */
-function pacote(root: string, source: ReturnType<typeof sourceSnapshot>, binarioNoPacote = "binario da ponte") {
+function pacote(root: string, source: ReturnType<typeof sourceSnapshot>, binarioNoPacote = "binario da ponte", wasmNoChunk = wasm(1)) {
   const folder = join(root, "reports/ci"); mkdirSync(folder, { recursive: true });
   mkdirSync(join(root, PONTE_BINARIO, ".."), { recursive: true });
   writeFileSync(join(root, PONTE_BINARIO), "binario da ponte");
+  mkdirSync(join(root, PONTE_WASM, ".."), { recursive: true });
+  writeFileSync(join(root, PONTE_WASM), wasm(1));
   for (const caminho of PONTE_NO_RUNTIME) {
     mkdirSync(join(root, "stage", caminho, ".."), { recursive: true });
     writeFileSync(join(root, "stage", caminho), binarioNoPacote);
   }
+  const chunk = `${PONTE_CHUNKS_DO_NAVEGADOR}/ferramentas.js`;
+  mkdirSync(join(root, "stage", chunk, ".."), { recursive: true });
+  writeFileSync(join(root, "stage", chunk), `var a="${wasmNoChunk.toString("base64")}";`);
   execFileSync("tar", ["-czf", join(folder, "runtime.tar.gz"), "-C", join(root, "stage"), ".next", "dist"]);
   const archive = readFileSync(join(folder, "runtime.tar.gz"));
   writeFileSync(join(folder, "runtime.json"), JSON.stringify({
     source, archive: "runtime.tar.gz", sha256: sha256(archive),
     ponteNode: Object.fromEntries(PONTE_NO_RUNTIME.map((caminho) => [caminho, sha256(binarioNoPacote)])),
+    ponteWasm: { [chunk]: sha256(wasmNoChunk) },
   }));
   return folder;
 }
@@ -88,6 +98,25 @@ describe("rastreabilidade da release", () => {
     manifesto.runtime.sha256 = sha256(readFileSync(join(folder, "runtime.tar.gz")));
     writeFileSync(join(folder, "release-manifest.json"), JSON.stringify(manifesto));
     expect(() => run("verify-release.mjs")).toThrow();
+  });
+
+  it("o WebAssembly dos chunks do navegador tem de ser o que o job rust compilou", () => {
+    const root = fixture(); const source = sourceSnapshot(root);
+    const folder = pacote(root, source, "binario da ponte", wasm(2));
+    for (const name of ["static", "database", "browser", "build", "package", "rust"]) {
+      writeFileSync(join(folder, `${name}.json`), JSON.stringify({ name, source, exitCode: 0 }));
+    }
+    const run = (script: string) => execFileSync(process.execPath, [join(process.cwd(), "scripts", script)], { cwd: root, stdio: "pipe" });
+    expect(() => run("write-release-manifest.mjs")).toThrow(/não é o do job rust/);
+    pacote(root, source);
+    expect(() => run("write-release-manifest.mjs")).not.toThrow();
+    expect(() => run("verify-release.mjs")).not.toThrow();
+    // O chunk troca de WebAssembly dentro do tar depois do manifesto.
+    const manifesto = JSON.parse(readFileSync(join(folder, "release-manifest.json"), "utf8"));
+    pacote(root, source, "binario da ponte", wasm(3));
+    manifesto.runtime.sha256 = sha256(readFileSync(join(folder, "runtime.tar.gz")));
+    writeFileSync(join(folder, "release-manifest.json"), JSON.stringify(manifesto));
+    expect(() => run("verify-release.mjs")).toThrow(/WebAssembly da ponte alterado/);
   });
   it("aceita verificações reaproveitadas do PR só do commit declarado e com o mesmo fonte", () => {
     const root = fixture(); const source = sourceSnapshot(root);

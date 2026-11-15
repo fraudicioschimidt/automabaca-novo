@@ -4,3 +4,4 @@
 #![forbid(unsafe_code)]
 
 pub mod cron;
+pub mod kelly;

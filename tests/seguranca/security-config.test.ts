@@ -32,7 +32,13 @@ describe("headers de segurança", () => {
     expect(csp.match(/unsafe-inline/g)).toHaveLength(1);
     expect(csp.match(/script-src[^;]*/)?.[0]).not.toContain("unsafe-inline");
     expect(csp.match(/style-src [^;]*/)?.[0]).not.toContain("unsafe-inline");
-    expect(csp).not.toContain("unsafe-eval");
+    expect(csp).not.toContain("'unsafe-eval'");
+  });
+
+  it("libera em produção só a compilação de WebAssembly, que a ponte Rust usa no navegador", () => {
+    const scriptSrc = buildContentSecurityPolicy("prod", false).match(/script-src[^;]*/)?.[0] ?? "";
+    expect(scriptSrc.split(" ")).toContain("'wasm-unsafe-eval'");
+    expect(scriptSrc.split(" ")).not.toContain("'unsafe-eval'");
   });
 
   it("libera unsafe-eval somente no desenvolvimento", () => {

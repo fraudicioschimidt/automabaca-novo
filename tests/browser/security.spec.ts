@@ -36,6 +36,7 @@ test("headers de segurança e nonce correspondem ao HTML", async ({ page }) => {
   expect(csp.match(/script-src[^;]*/)?.[0]).not.toContain("'unsafe-inline'");
   expect(csp.match(/style-src [^;]*/)?.[0]).not.toContain("'unsafe-inline'");
   expect(csp).not.toContain("'unsafe-eval'");
+  expect(csp.match(/script-src[^;]*/)?.[0]).toContain("'wasm-unsafe-eval'");
   expect(csp).toContain("frame-ancestors 'none'");
   expect(csp).toContain("object-src 'none'");
 
