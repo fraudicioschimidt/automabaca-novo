@@ -1,0 +1,6 @@
+# Versão fixada: a CI e as máquinas de desenvolvimento compilam com a mesma.
+# Atualizar é um PR que troca só esta linha (e o que o clippy novo pedir).
+[toolchain]
+channel = "1.99.0"
+profile = "minimal"
+components = ["rustfmt", "clippy"]

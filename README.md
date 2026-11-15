@@ -43,6 +43,10 @@ normal, **Node 24.20.0 e npm 11.19.0**. A versão está fixada em `.node-version
 `.nvmrc` e `packageManager`, e o próprio `npm install` recusa outra
 (`scripts/check-toolchain.mjs`, rodado no `preinstall`).
 
+O código em Rust (`rust/`, ver [docs/MIGRACAO-RUST.md](docs/MIGRACAO-RUST.md))
+pede o `rustup`: a versão fica em `rust/rust-toolchain.toml`, e
+`cd rust && rustup toolchain install` a instala.
+
 ```bash
 git clone https://github.com/fraudicioschimidt/automabaca-novo.git
 cd automabaca-novo
@@ -72,6 +76,7 @@ npm run check:ci                   # a metade estática do job `verificações` 
 npm run test:unit      # unitários
 npm run test:db        # testes com PostgreSQL (banco da porta 5433)
 npm run check                      # check:ci + testes com PostgreSQL
+npm run check:rust                 # rust/: cargo fmt, clippy sem aviso e testes
 npm run test:browser:local         # Playwright contra uma instância E2E isolada
 npm run test:coverage              # relatório de cobertura (não é gate)
 ```

@@ -1,0 +1,10 @@
+[package]
+name = "dominio"
+description = "Regras puras do AutomaBACA: sem banco, rede, disco nem relógio."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,21 @@
+[package]
+name = "dominio-node"
+description = "Ponte N-API: expõe o crate dominio aos processos Node (web e worker)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+dominio.workspace = true
+napi.workspace = true
+napi-derive.workspace = true
+
+[build-dependencies]
+napi-build.workspace = true
+
+[lints]
+workspace = true

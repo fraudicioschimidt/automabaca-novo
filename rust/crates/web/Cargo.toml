@@ -1,0 +1,10 @@
+[package]
+name = "web"
+description = "API em Rust (axum), atrás do Caddy, rota a rota."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true

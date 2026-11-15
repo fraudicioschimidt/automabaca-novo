@@ -1,0 +1,29 @@
+# Migração do AutomaBACA para Rust: ver docs/MIGRACAO-RUST.md.
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+publish = false
+
+[workspace.dependencies]
+dominio = { path = "crates/dominio" }
+napi = "3.16.2"
+napi-derive = "3.7.1"
+napi-build = "2.6.0"
+
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[workspace.lints.clippy]
+dbg_macro = "deny"
+todo = "deny"
+unwrap_used = "deny"
+
+[profile.release]
+# Um binário só, carregado uma vez por processo: vale a compilação mais lenta.
+lto = true
+codegen-units = 1
