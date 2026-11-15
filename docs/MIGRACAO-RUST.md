@@ -51,7 +51,38 @@ PRs pequenos, com a CI verde e o publicador automático de sempre.
   `money.ts`) responde em produção pelo Rust, com os testes em TypeScript dela
   passando contra a ponte.
 
-### Fase 1: domínio puro (~3 a 5 semanas)
+**Concluída em 15/11/2026** (#9, #10, #11; no ar desde a release
+`dcb5dfd1a767`): workspace e job `rust`, ponte `@automabaca/dominio-node` no
+standalone e no worker, conferida no manifesto e carregada nas imagens
+bookworm, e o `cron-cadence` respondendo pelo Rust no worker de produção
+(agendamento de cada job na subida e no laço do agendador). A função não foi
+`kelly` nem `money` porque as duas rodam no navegador, onde o `.node` não
+carrega (ver a fase 1). Paridade do `cron-cadence`: os testes em TypeScript
+sem mudança e 200 mil entradas aleatórias com o mesmo resultado e a mesma
+mensagem de erro do TS antigo.
+
+### Fase 1: domínio puro (~6 a 9 semanas; era 3 a 5, revista em 15/11/2026)
+
+**Decisão antes de começar.** 81 dos 133 arquivos de `src/domain/` (14,9 mil
+das 21,2 mil linhas, inclusive `money`, `lucro`, `formato-de-resultado`,
+`dates`, `odds` e `decimal-input`) são alcançados por componentes de cliente,
+e a ponte N-API não carrega no navegador (a fronteira em
+`tests/plataforma/architecture-boundaries.test.ts` recusa). Os caminhos:
+
+1. Compilar o `dominio` também para WebAssembly (`wasm-bindgen`), com a casca
+   usando a ponte N-API no servidor e o WASM no navegador. É o que a
+   estimativa acima supõe: pipeline e teste do WASM, inicialização síncrona
+   no cliente e o tamanho do pacote nas telas.
+2. Uma ponte só, em WebAssembly, nos dois lados. Um binário a menos para
+   conferir, mas a chamada fica mais cara que a N-API no worker.
+3. Portar primeiro só o que roda no servidor (52 arquivos, 6,4 mil linhas) e
+   deixar o resto para a fase 4, quando as telas saírem do Next. Cabe nas 3 a
+   5 semanas, mas o domínio fica em duas linguagens até lá.
+
+Também pesa na estimativa: funções que recebem callback por item (por
+exemplo, `sumMoneyBy(itens, seletor)`) pedem assinatura nova na ponte, com
+arrays em vez de uma chamada por item, para a travessia não custar mais que
+a conta.
 
 Cada módulo de `src/domain/` é portado para o crate `dominio`, ganha testes em
 Rust e passa a delegar pela ponte. O arquivo `.ts` vira uma casca fina com os
@@ -112,7 +143,9 @@ produção dentro dos processos Node.
 - As imagens deixam de ter Node; o `check.yml`, o `deploy/` e os scripts deixam
   de chamar o npm. O código TypeScript sai do repositório (fica no histórico).
 
-Total estimado: de 4 a 7 meses. A estimativa é refeita no fim de cada fase.
+Total estimado: de 4 a 7 meses, revisto para 4,5 a 7,5 no fim da fase 0
+(a fase 0 levou um dia, e a fase 1 cresce com o navegador). A estimativa é
+refeita no fim de cada fase.
 
 ## Riscos e como cada um é contido
 
@@ -122,6 +155,9 @@ Total estimado: de 4 a 7 meses. A estimativa é refeita no fim de cada fase.
 | Dois workers pegando o mesmo job | uma fila só tem um dono por vez, pela lista no ambiente; o `SKIP LOCKED` evita dupla execução |
 | pg-boss mudar o esquema | versão fixada enquanto Rust e Node convivem |
 | Ponte N-API quebrar o build ou o deploy | o binário entra no manifesto e no `verify-release`; a CI gera e testa o mesmo `.node` que vai para a imagem |
+| Binário pedir glibc mais nova que a das imagens | o `build:dominio-node` recusa acima da 2.36 (bookworm), e a CI carrega a ponte dentro da imagem do worker e da base do web |
+| Import nomeado da ponte chegar `undefined` no worker | o ESM do Node só vê o default de um CommonJS com `require` dinâmico; a fronteira exige `import dominio from "@automabaca/dominio-node"` |
+| Componente de cliente alcançar a ponte | fronteira de dependências do cliente em `tests/plataforma/architecture-boundaries.test.ts` |
 | Projeto parado no meio | cada fase termina com tudo funcionando; parar depois de qualquer uma não deixa nada quebrado |
 
 ## Onde o trabalho acontece
