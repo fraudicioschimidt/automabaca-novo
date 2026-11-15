@@ -139,3 +139,79 @@ pub fn combine_quarter_line_odds(
 pub fn percentual_contra_fair(book_odd: f64, fair_odd: f64) -> JsValue {
     number_or_null(dominio::odds::percentual_contra_fair(book_odd, fair_odd))
 }
+
+fn date_error(error: dominio::dates::DateError) -> JsError {
+    JsError::new(&error.0)
+}
+
+#[wasm_bindgen(js_name = spDayKey)]
+pub fn sp_day_key(ms: f64) -> Result<String, JsError> {
+    dominio::dates::sp_day_key(ms).map_err(date_error)
+}
+
+#[wasm_bindgen(js_name = formatSpTime)]
+pub fn format_sp_time(ms: f64) -> String {
+    dominio::dates::format_sp_time(ms)
+}
+
+#[wasm_bindgen(js_name = formatSpDayMonth)]
+pub fn format_sp_day_month(ms: f64) -> String {
+    dominio::dates::format_sp_day_month(ms)
+}
+
+#[wasm_bindgen(js_name = formatSpDateTime)]
+pub fn format_sp_date_time(ms: f64) -> String {
+    dominio::dates::format_sp_date_time(ms)
+}
+
+#[wasm_bindgen(js_name = formatSpDateWithYear)]
+pub fn format_sp_date_with_year(ms: f64) -> String {
+    dominio::dates::format_sp_date_with_year(ms)
+}
+
+#[wasm_bindgen(js_name = spGreeting)]
+pub fn sp_greeting(ms: f64) -> String {
+    dominio::dates::sp_greeting(ms).to_owned()
+}
+
+#[wasm_bindgen(js_name = formatSpFullDate)]
+pub fn format_sp_full_date(ms: f64) -> String {
+    dominio::dates::format_sp_full_date(ms)
+}
+
+#[wasm_bindgen(js_name = spStartOfTodayUtc)]
+pub fn sp_start_of_today_utc(now_ms: f64) -> f64 {
+    dominio::dates::sp_start_of_today_utc(now_ms)
+}
+
+#[wasm_bindgen(js_name = spWeekKey)]
+pub fn sp_week_key(ms: f64) -> String {
+    dominio::dates::sp_week_key(ms)
+}
+
+#[wasm_bindgen(js_name = spRelative)]
+pub fn sp_relative(date_ms: f64, now_ms: f64) -> String {
+    dominio::dates::sp_relative(date_ms, now_ms)
+}
+
+#[wasm_bindgen(js_name = spToUtc)]
+pub fn sp_to_utc(year: f64, month: f64, day: f64, hour: f64, minute: f64) -> f64 {
+    dominio::dates::sp_to_utc(year, month, day, hour, minute)
+}
+
+#[wasm_bindgen(js_name = formatDurationMinutes)]
+pub fn format_duration_minutes(minutes: Option<f64>) -> String {
+    dominio::dates::format_duration_minutes(minutes)
+}
+
+#[wasm_bindgen(js_name = shiftDayKey)]
+pub fn shift_day_key(day_key: &str, days: f64) -> Result<String, JsError> {
+    dominio::dates::shift_day_key(day_key, days).map_err(date_error)
+}
+
+#[wasm_bindgen(js_name = parseSpDateTimeInput)]
+pub fn parse_sp_date_time_input(date_text: &str, time_text: &str) -> JsValue {
+    number_or_null(dominio::dates::parse_sp_date_time_input(
+        date_text, time_text,
+    ))
+}

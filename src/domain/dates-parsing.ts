@@ -1,3 +1,9 @@
+// A parte sem regex mora em Rust (`rust/crates/dominio/src/dates.rs`): chave
+// de dia, componentes de São Paulo → UTC e os campos de data e hora do painel.
+// A leitura de data e hora no texto do post (parseBrKickoff*) continua aqui
+// até o motor de regex do ECMAScript entrar na ponte.
+import dominio from "@automabaca/dominio";
+
 export const SAO_PAULO_UTC_OFFSET_HOURS = 3;
 
 export function assertValidDate(date: Date, caller: string): void {
@@ -12,21 +18,7 @@ export function utcToSpParts(date: Date): Date {
 
 /** Soma dias de calendario a uma chave YYYY-MM-DD sem reinterpretar fuso. */
 export function shiftDayKey(dayKey: string, days: number): string {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dayKey);
-  if (!match || !Number.isInteger(days)) throw new Error(`Chave de dia invalida: ${dayKey}`);
-  const year = Number(match[1]);
-  const month = Number(match[2]);
-  const day = Number(match[3]);
-  const source = new Date(Date.UTC(year, month - 1, day));
-  if (
-    source.getUTCFullYear() !== year ||
-    source.getUTCMonth() !== month - 1 ||
-    source.getUTCDate() !== day
-  ) {
-    throw new Error(`Chave de dia invalida: ${dayKey}`);
-  }
-  const date = new Date(Date.UTC(year, month - 1, day + days));
-  return date.toISOString().slice(0, 10);
+  return dominio.shiftDayKey(dayKey, days);
 }
 
 /** Componentes de data/hora locais de São Paulo → instante UTC. */
@@ -37,15 +29,7 @@ export function spToUtc(parts: {
   hour?: number;
   minute?: number;
 }): Date {
-  return new Date(
-    Date.UTC(
-      parts.year,
-      parts.month - 1,
-      parts.day,
-      (parts.hour ?? 0) + SAO_PAULO_UTC_OFFSET_HOURS,
-      parts.minute ?? 0,
-    ),
-  );
+  return new Date(dominio.spToUtc(parts.year, parts.month, parts.day, parts.hour ?? 0, parts.minute ?? 0));
 }
 
 /**
@@ -54,45 +38,8 @@ export function spToUtc(parts: {
  * (por exemplo, 31/02 vira março silenciosamente).
  */
 export function parseSpDateTimeInput(dateText: string, timeText: string): Date | null {
-  const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateText.trim());
-  const timeMatch = /^(\d{1,2}):(\d{2})$/.exec(timeText.trim());
-  if (!dateMatch || !timeMatch) return null;
-
-  const year = Number(dateMatch[1]);
-  const month = Number(dateMatch[2]);
-  const day = Number(dateMatch[3]);
-  const hour = Number(timeMatch[1]);
-  const minute = Number(timeMatch[2]);
-  if (
-    !Number.isInteger(year) ||
-    !Number.isInteger(month) ||
-    !Number.isInteger(day) ||
-    !Number.isInteger(hour) ||
-    !Number.isInteger(minute) ||
-    month < 1 ||
-    month > 12 ||
-    day < 1 ||
-    day > 31 ||
-    hour < 0 ||
-    hour > 23 ||
-    minute < 0 ||
-    minute > 59
-  ) {
-    return null;
-  }
-
-  const result = spToUtc({ year, month, day, hour, minute });
-  const roundTrip = utcToSpParts(result);
-  if (
-    roundTrip.getUTCFullYear() !== year ||
-    roundTrip.getUTCMonth() !== month - 1 ||
-    roundTrip.getUTCDate() !== day ||
-    roundTrip.getUTCHours() !== hour ||
-    roundTrip.getUTCMinutes() !== minute
-  ) {
-    return null;
-  }
-  return result;
+  const result = dominio.parseSpDateTimeInput(dateText, timeText);
+  return result === null ? null : new Date(result);
 }
 
 /** Resultado do parse de kickoff: instante UTC + se a hora veio no texto. */
