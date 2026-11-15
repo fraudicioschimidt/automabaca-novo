@@ -5,12 +5,12 @@
 #   bash scripts/publicador-automatico-instalar.sh            instala / atualiza
 #   bash scripts/publicador-automatico-instalar.sh --remover  tira do crontab
 #
-# Rode como `fabricio`, no WSL, SEM sudo: o publicador usa o `gh` e o
-# `ssh hermes` desse usuário. Idempotente: rodar de novo só confirma.
+# Rode na VPS como `deploy`, SEM sudo: o publicador usa o `gh` desse usuário e
+# chama o `deploy/publicar.sh`, que pede `sudo -n` sozinho onde precisa.
+# Idempotente: rodar de novo só confirma.
 #
-# O cron chama CÓPIAS em ~/.local/lib/automabaca/, não os arquivos de um
-# checkout: a bancada troca de branch com outras sessões e as worktrees somem
-# depois do merge. Mudou `scripts/publicador-automatico.sh`? Rode este de
+# O cron chama CÓPIAS em ~/.local/lib/automabaca/, não os arquivos do
+# checkout: o `publicar.sh` troca o checkout de commit a cada publicação. Mudou `scripts/publicador-automatico.sh`? Rode este de
 # novo. O mesmo vale para
 # `scripts/lib/notificar-telegram.sh`, por onde o publicador avisa no Telegram.
 set -euo pipefail
@@ -47,7 +47,8 @@ for tarefa in "${tarefas[@]}"; do
     echo "Cópia instalada: $destino/$nome"
   fi
   # O cron roda com PATH mínimo e sem o ambiente do login; `bash -lc` não é
-  # necessário: gh, ssh, curl e flock ficam em /usr/bin.
+  # necessário: gh, curl, flock e docker ficam em /usr/bin, e o node em
+  # /usr/local/bin.
   novo="$(printf '%s\n%s\n' "$novo" "$quando PATH=/usr/local/bin:/usr/bin:/bin /bin/bash $destino/$nome $marca")"
 done
 
@@ -72,8 +73,8 @@ echo "Conferências (só leitura):"
 systemctl is-active --quiet cron && echo "  cron: ativo" || echo "  AVISO: o serviço cron não está ativo (sudo systemctl enable --now cron)"
 env -i HOME="$HOME" PATH=/usr/local/bin:/usr/bin:/bin gh auth status >/dev/null 2>&1 \
   && echo "  gh: autenticado no ambiente do cron" || echo "  AVISO: gh sem autenticação no ambiente do cron"
-env -i HOME="$HOME" PATH=/usr/local/bin:/usr/bin:/bin ssh -o BatchMode=yes -o ConnectTimeout=15 hermes true 2>/dev/null \
-  && echo "  ssh hermes: ok sem agente nem senha" || echo "  AVISO: ssh hermes falhou no ambiente do cron (chave com senha? precisa de agente?)"
+sudo -n true 2>/dev/null \
+  && echo "  sudo -n: ok (o publicar.sh usa nos passos de root)" || echo "  AVISO: sudo -n pede senha; o publicar.sh vai falhar nos passos de root"
 echo
 echo "Log: $estado/publicador.log (tail -f para acompanhar)."
 echo "Commit já tratado pelo publicador: $estado/tratados/<sha>."

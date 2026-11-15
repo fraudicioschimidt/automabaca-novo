@@ -8,7 +8,7 @@ como estado de uma máquina, e uma reconstrução noutro lugar não o teria.
 
 | Arquivo | Onde vive em produção |
 |---|---|
-| `publicar.sh` | roda do checkout `/srv/apps/automabaca-novo/source/`; publica um commit da `main`, o topo ou o do `--commit` (ver `docs/RELEASE.md`). Chamado sozinho pelo `scripts/publicador-automatico.sh`, no crontab do PC do dono |
+| `publicar.sh` | roda do checkout `/srv/apps/automabaca-novo/source/`; publica um commit da `main`, o topo ou o do `--commit` (ver `docs/RELEASE.md`). Chamado sozinho pelo `scripts/publicador-automatico.sh`, no crontab do `deploy` nesta VPS |
 | `prepare.py`, `publish.py`, `backup.py`, `migrar.py` | rodam do mesmo checkout, chamados pelo `publicar.sh` (`migrar.py` só em release com migration) |
 | `compose.yaml` | `/srv/apps/automabaca-novo/deploy/compose.yaml`, com a release e os digests preenchidos |
 | `Dockerfile.web`, `Dockerfile.worker` (na raiz do repo) | copiados para cada release pelo `prepare.py` |

@@ -114,25 +114,26 @@ resolvido no PR (rebase).
 
 ### Publicação
 
-**A publicação é automática.** No PC do dono, o crontab do `fabricio` roda
+**A publicação é automática.** Na VPS, o crontab do `deploy` roda
 `scripts/publicador-automatico.sh` a cada minuto: ele chama o `publicar.sh`
 abaixo para o commit mais novo da `main` com a CI verde (com as imagens), mesmo
 que a CI do topo ainda esteja rodando; a CI da `main` não cancela a execução em
 andamento, então os merges seguidos não seguram a produção.
 Merge que só toca documentação (`*.md`, `docs/`) não é publicado: o próximo
 deploy de código leva junto. O que foi feito com cada commit fica em
-`~/.local/state/automabaca/publicador.log`; depois do merge, confira que o
+`~/.local/state/automabaca/publicador.log` do `deploy` na VPS; depois do merge, confira que o
 commit no ar (`/api/health`) contém o seu (`git merge-base --is-ancestor <seu>
 <no ar>`) e relate o que saiu: o commit do merge pode sair junto com um mais
-novo, sem linha própria no log. Instalar ou atualizar:
-`bash scripts/publicador-automatico-instalar.sh`.
+novo, sem linha própria no log. Instalar ou atualizar, na VPS como `deploy`:
+`bash /srv/apps/automabaca-novo/source/scripts/publicador-automatico-instalar.sh`.
 
 Commit que o publicador marca "recusado" ou "FALHOU" vira um aviso no Telegram
-do dono, uma vez. No mesmo crontab, `scripts/vigia-externo.sh` lê o
-`/api/health` de fora da VPS a cada minuto e avisa quando a produção cai e
-quando volta ([docs/OBSERVABILIDADE.md](docs/OBSERVABILIDADE.md), "Vigia de
-fora"). Os dois avisam pelo bot de notificações, com o token em
-`~/.config/automabaca/notificar.env` no PC, fora do repositório e do `.env`.
+do dono, uma vez, pelo bot de notificações, com o token em
+`~/.config/automabaca/notificar.env` do usuário que roda o cron, fora do
+repositório e do `.env`. O `scripts/vigia-externo.sh` lê o `/api/health` de
+FORA da VPS a cada minuto e avisa quando a produção cai e quando volta
+([docs/OBSERVABILIDADE.md](docs/OBSERVABILIDADE.md), "Vigia de fora"); ele
+precisa de uma máquina que não seja a VPS, com o mesmo arquivo de aviso.
 
 O publicador passa `--com-migration`: a migration que o `deploy/migrar.py`
 aprova (aditiva) sai sozinha, com o backup conferido antes. Release que uma

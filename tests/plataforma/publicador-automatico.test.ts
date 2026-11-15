@@ -12,7 +12,7 @@ const LIVE = "a".repeat(12);
 let dir: string;
 let state: string;
 
-/** Comando falso no PATH: o publicador fala com o GitHub, a produção e a VPS só por eles. */
+/** Comando falso no PATH: o publicador fala com o GitHub e com a produção só por eles. */
 function fake(name: string, body: string): void {
   const file = path.join(dir, "bin", name);
   writeFileSync(file, `#!/usr/bin/env bash\n${body}\n`);
@@ -42,13 +42,14 @@ afterEach(() => {
   safeRemoveTreeSync(tmpdir(), dir);
 });
 
-/** Uma volta do cron, com o `publicar.sh` da VPS respondendo `output` e saindo com `exitCode`. */
+/** Uma volta do cron, com o `publicar.sh` respondendo `output` e saindo com `exitCode`. */
 function tick(exitCode: number, output = ""): void {
-  fake("ssh", `cat > /dev/null; echo "${output}"; echo x >> "${dir}/published"; exit ${exitCode}`);
+  fake("publicar.sh", `echo "${output}"; echo x >> "${dir}/published"; exit ${exitCode}`);
   const run = spawnSync("bash", [SCRIPT], {
     env: {
       ...process.env, PATH: `${path.join(dir, "bin")}:${process.env.PATH}`, XDG_STATE_HOME: path.join(dir, "state"),
       AUTOMABACA_NOTIFICAR_ENV: path.join(dir, "notificar.env"),
+      AUTOMABACA_PUBLICAR: path.join(dir, "bin", "publicar.sh"),
     },
     encoding: "utf8",
   });
@@ -58,7 +59,7 @@ function tick(exitCode: number, output = ""): void {
 const attempts = () => (existsSync(path.join(dir, "published")) ? readFileSync(path.join(dir, "published"), "utf8").length / 2 : 0);
 const outcome = () => (existsSync(path.join(state, "tratados", TOP)) ? readFileSync(path.join(state, "tratados", TOP), "utf8") : null);
 
-/** O arquivo do PC com o bot de notificações; sem ele o publicador só registra no log. */
+/** O arquivo com o bot de notificações; sem ele o publicador só registra no log. */
 function configureTelegram(): void {
   writeFileSync(path.join(dir, "notificar.env"), "TELEGRAM_NOTIFY_BOT_TOKEN=123:fake-token\nTELEGRAM_NOTIFY_CHAT_ID=42\n", { mode: 0o600 });
 }
