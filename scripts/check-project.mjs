@@ -160,6 +160,8 @@ export function classifyImpact(files, fileExists = (file) => existsSync(path.joi
     lintFiles: codeFiles.filter((file) => !file.startsWith("src/generated/")),
     operationsChanged: files.some((file) => /^(?:(?:scripts|infra|deploy|\.github)\/|package\.json$|(?:next|playwright|prisma)\.config\.)/.test(file)),
     fullTests: deletedCode || files.some(requiresFullTests),
+    // O Vitest não segue o import da ponte até `rust/`: quem a importa é testado.
+    rustChanged: files.some((file) => file.startsWith("rust/")),
     browserChanged: files.some((file) =>
       /^tests\/browser\//.test(file)
       || file.startsWith("app/")
@@ -184,6 +186,15 @@ export function treeScanningTests(dir = path.join(ROOT, "tests")) {
         || (/readdirSync\(|[^a-zA-Z]readdir\(/.test(source) && !/mkdtemp\w*\(/.test(source));
     })
     .map((name) => `tests/${name}`)
+    .sort();
+}
+
+/** Módulos que importam a ponte Rust: os testes deles exercitam o binário novo. */
+export function bridgeImporters(roots = ["src", "app"]) {
+  return roots.flatMap((root) => readdirSync(path.join(ROOT, root), { recursive: true, encoding: "utf8" })
+    .map((name) => `${root}/${name.replaceAll("\\", "/")}`))
+    .filter((file) => isCode(file) && !file.startsWith("src/generated/"))
+    .filter((file) => readFileSync(path.join(ROOT, file), "utf8").includes('"@automabaca/dominio-node"'))
     .sort();
 }
 
@@ -241,12 +252,20 @@ async function runFast() {
   }
   failIfNeeded(await runPhase(staticTasks, 3));
 
+  // Em ordem: o build da ponte só depois de fmt/clippy/testes do Rust, e os
+  // testes em TypeScript só com o binário novo.
+  if (impact.rustChanged) {
+    failIfNeeded(await runPhase([npmTask("Rust (fmt, clippy, testes)", "check:rust")], 1));
+    failIfNeeded(await runPhase([npmTask("ponte Rust", "build:dominio-node")], 1));
+  }
+  const relatedFiles = [...new Set([...impact.codeFiles, ...(impact.rustChanged ? bridgeImporters() : [])])];
+
   const testTasks = [];
   if (impact.fullTests) {
     testTasks.push(npmTask("testes completos por mudanca global", "test"));
   } else {
     if (impact.scriptTests.length) testTasks.push(npmTask("testes de scripts afetados", "test:unit", impact.scriptTests));
-    if (impact.codeFiles.length) testTasks.push(npmTask("testes relacionados", "test:affected", impact.codeFiles));
+    if (relatedFiles.length) testTasks.push(npmTask("testes relacionados", "test:affected", relatedFiles));
     testTasks.push(npmTask("testes que varrem a arvore", "test:unit", treeScanningTests()));
   }
   failIfNeeded(await runPhase(testTasks, 1));

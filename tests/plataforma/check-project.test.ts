@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { classifyImpact, treeScanningTests } from "@/scripts/check-project.mjs";
+import { bridgeImporters, classifyImpact, treeScanningTests } from "@/scripts/check-project.mjs";
 
 describe("classificacao do check incremental", () => {
   it("encerra cedo quando somente documentacao mudou", () => {
@@ -18,6 +18,12 @@ describe("classificacao do check incremental", () => {
     for (const file of ["package-lock.json", "vitest.config.ts", "prisma/schema.prisma"]) {
       expect(classifyImpact([file]).fullTests, file).toBe(true);
     }
+  });
+
+  it("mudança em rust/ roda o Rust e os testes de quem importa a ponte", () => {
+    expect(classifyImpact(["rust/crates/dominio/src/cron.rs"]).rustChanged).toBe(true);
+    expect(classifyImpact(["src/domain/cron-cadence.ts"]).rustChanged).toBe(false);
+    expect(bridgeImporters()).toContain("src/domain/cron-cadence.ts");
   });
 
   it("escala quando codigo foi excluido", () => {
