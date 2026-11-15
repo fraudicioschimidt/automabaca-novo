@@ -1,0 +1,72 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  background: rgba(18, 16, 12, .58);
+}
+
+.surface {
+  --sheet-pad: var(--sheet-pad-largo);
+  --sheet-title-size: 22px;
+  --sheet-close-size: 34px;
+  display: flex;
+  width: min(100%, var(--sheet-width));
+  height: var(--sheet-height, auto);
+  max-height: calc(100vh - 80px);
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: var(--sheet-pad);
+  border-bottom: 1px solid var(--sheet-border-soft);
+}
+
+.headingGroup { min-width: 0; }
+
+.title {
+  margin: 0;
+  color: var(--sheet-text);
+  font: 600 var(--sheet-title-size) var(--sheet-display);
+  letter-spacing: -.02em;
+}
+
+.subtitle {
+  margin-top: 3px;
+  color: var(--sheet-muted);
+  font-size: 13px;
+}
+
+.surface .close {
+  display: grid;
+  width: var(--sheet-close-size);
+  height: var(--sheet-close-size);
+  flex-shrink: 0;
+  place-items: center;
+  margin-left: auto;
+  border: 1px solid var(--sheet-border);
+  border-radius: var(--sheet-radius-sm);
+  background: transparent;
+  color: var(--sheet-muted);
+  cursor: pointer;
+  font-size: 19px;
+  line-height: 1;
+}
+
+/* Compacto (layout.ts): a gaveta ocupa a tela, com alvos de toque maiores. */
+@media (max-width: 1023px) {
+  .overlay { padding: 12px; }
+  .surface {
+    --sheet-pad: 18px;
+    --sheet-title-size: 19px;
+    --sheet-close-size: 44px;
+    height: calc(100dvh - 24px);
+    max-height: calc(100dvh - 24px);
+  }
+}

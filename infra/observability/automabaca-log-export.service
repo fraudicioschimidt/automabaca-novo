@@ -1,0 +1,24 @@
+[Unit]
+Description=AutomaBACA log archive export
+After=systemd-journald.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/lib/automabaca-novo/observability/export.py
+Environment=PYTHONDONTWRITEBYTECODE=1
+SyslogIdentifier=automabaca-log-archive
+UMask=0077
+TimeoutStartSec=6min
+MemoryMax=512M
+CPUQuota=25%
+Nice=10
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX
+ReadWritePaths=/var/log/automabaca-novo/archive /var/lib/automabaca-novo/observability /srv/apps/automabaca-novo/exports/logs

@@ -1,0 +1,158 @@
+.chart {
+  margin-top: 20px;
+  min-width: 0;
+}
+
+.plot {
+  position: relative;
+  height: 154px;
+  margin-inline: 2px;
+}
+
+.gridLine {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--trajectory-border-soft);
+}
+
+.gridLine[data-position="top"] {
+  top: 18%;
+}
+
+.gridLine[data-position="middle"] {
+  top: 50%;
+}
+
+.gridLine[data-position="bottom"] {
+  top: 82%;
+}
+
+.line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.line polyline {
+  fill: none;
+  stroke: var(--trajectory-line);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.point {
+  position: absolute;
+  top: var(--trajectory-y);
+  left: var(--trajectory-x);
+  width: 0;
+  height: 0;
+}
+
+.marker {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--trajectory-line);
+  border-radius: var(--trajectory-pill);
+  background: var(--trajectory-surface);
+  transform: translate(-50%, -50%);
+}
+
+.point[data-current="true"] .marker {
+  width: 12px;
+  height: 12px;
+  border-color: var(--trajectory-line);
+  background: var(--trajectory-line);
+  box-shadow: 0 0 0 4px var(--trajectory-surface);
+}
+
+.value {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  padding: 5px 8px;
+  border: 1px solid var(--trajectory-border);
+  border-radius: var(--trajectory-radius-sm);
+  background: var(--trajectory-surface);
+  color: var(--trajectory-text);
+  font-family: var(--trajectory-num-font);
+  font-size: var(--trajectory-value-size);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  line-height: 1;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.labels {
+  display: grid;
+  grid-template-columns: repeat(var(--trajectory-step-count), minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--trajectory-border-soft);
+}
+
+.stage {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  text-align: center;
+}
+
+.stage[data-edge="first"] {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.stage[data-edge="last"] {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.stageName {
+  color: var(--trajectory-muted);
+  font-family: var(--trajectory-body-font);
+  font-size: var(--trajectory-label-size);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.stageMeta {
+  overflow: hidden;
+  max-width: 100%;
+  color: var(--trajectory-faint);
+  font-family: var(--trajectory-num-font);
+  font-size: var(--trajectory-meta-size);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .chart {
+    margin-top: 16px;
+  }
+
+  .plot {
+    height: 132px;
+  }
+
+  .labels {
+    gap: 8px;
+    padding-top: 12px;
+  }
+
+  .stageMeta {
+    white-space: normal;
+  }
+}

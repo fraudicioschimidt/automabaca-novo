@@ -1,0 +1,83 @@
+/* Matriz canal × mercado. Cores e fontes vêm de `T` pelas vars `--cm-*`,
+   setadas no componente; nada literal aqui além da geometria. */
+
+/* Rola dentro do cartão: no celular a página não ganha rolagem lateral. */
+.rolagem {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: minmax(136px, 1.4fr) repeat(var(--cm-colunas), minmax(78px, 1fr));
+  gap: 5px;
+  min-width: calc(136px + var(--cm-colunas) * 83px);
+}
+
+/* A linha é só agrupamento no JSX; quem posiciona é a grade. */
+.linha { display: contents; }
+
+/* O canal fica visível enquanto os mercados rolam. */
+.fixa {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--cm-superficie);
+  min-width: 0;
+  padding-right: 6px;
+}
+
+.cabecalho {
+  align-self: end;
+  min-width: 0;
+  padding-bottom: 4px;
+}
+
+.canal {
+  color: var(--cm-texto);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.total {
+  margin-top: 3px;
+  color: var(--cm-fraco);
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+
+.celula, .vazia {
+  min-height: 44px;
+  border-radius: 6px;
+  border: 1px solid var(--cm-borda);
+}
+
+.celula {
+  display: grid;
+  place-content: center;
+  gap: 2px;
+  padding: 4px;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+
+.celula:focus-visible { outline: 2px solid var(--cm-foco); outline-offset: 1px; }
+
+/* O corte leva contorno e a palavra "corte": a cor nunca carrega o sentido sozinha. */
+.corte { border: 2px solid var(--cm-corte); }
+
+.clv {
+  color: var(--cm-texto);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.n {
+  color: var(--cm-apagado);
+  font-size: 10px;
+}

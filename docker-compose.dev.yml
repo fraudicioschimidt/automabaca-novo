@@ -1,0 +1,78 @@
+# Postgres de DESENVOLVIMENTO para a máquina do dono (WSL2/Windows, Linux ou Mac).
+# Reproduz a topologia da VPS: um cluster para o app e OUTRO só para testes.
+# Eles são separados de propósito: desenvolvimento e testes não disputam
+# checkpointer/WAL, e nenhuma suíte pode alcançar produção.
+#
+#   docker compose -f docker-compose.dev.yml up -d
+#
+# Produção usa ../deploy/compose.yaml. Este arquivo é exclusivo de desenvolvimento.
+#
+# Imagem igual à de produção (PostgreSQL 17.11 Alpine/musl): a collation de texto
+# do musl difere da do glibc, então ordenação testada em Debian não prova produção.
+# O volume mudou de nome na troca 16 → 17 (15/09/2026): versão maior não abre o
+# diretório de dados da anterior. O volume antigo `db-data` fica intacto; para
+# levar dados, faça pg_dump no 16 e restaure no 17.
+
+services:
+  db:
+    image: postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    container_name: automabaca-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: automabaca
+      POSTGRES_PASSWORD: automabaca
+      POSTGRES_DB: automabaca
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - db-data-pg17:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U automabaca -d automabaca"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  db-test:
+    image: postgres:17.11-alpine@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    container_name: automabaca-db-test
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: automabaca
+      POSTGRES_PASSWORD: automabaca
+      POSTGRES_DB: automabaca_test
+    ports:
+      - "127.0.0.1:${AUTOMABACA_TEST_DB_PORT:-5433}:5432"
+    # Banco de teste é recriado a cada suíte: durabilidade aqui só custa tempo.
+    # `tmpfs` põe o cluster inteiro na RAM — é o que torna a suíte de banco
+    # rápida numa máquina com memória sobrando.
+    #
+    # As worktrees dividem este servidor, cada uma com os próprios bancos
+    # (scripts/lib/test-databases.mjs): até 4 suítes ao mesmo tempo, uma por
+    # vaga do scripts/vez.sh, com até 6 workers cada. Uma suíte usou ~30
+    # conexões no pico medido, mas cada worker pode abrir 10 do pool do Prisma
+    # e 10 do pg-boss: 500 cobrem esse teto (~480) por 15 MB de memória
+    # compartilhada a mais que 200.
+    #
+    # Sem tamanho, o tmpfs pode crescer até metade da RAM do WSL. Cada suíte
+    # ocupa ~100 MB enquanto roda; o teto de 4 GB segura família esquecida de
+    # worktree removida à mão (`bash scripts/worktree.sh podar` as apaga).
+    tmpfs:
+      - /var/lib/postgresql/data:rw,size=4g
+    command:
+      - postgres
+      - -c
+      - fsync=off
+      - -c
+      - synchronous_commit=off
+      - -c
+      - full_page_writes=off
+      - -c
+      - max_connections=500
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U automabaca -d automabaca_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  db-data-pg17:

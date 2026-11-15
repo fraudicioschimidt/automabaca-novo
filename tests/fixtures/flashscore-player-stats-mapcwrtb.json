@@ -1,0 +1,176 @@
+{
+  "players": [
+    {
+      "player_id": "8Wy1Bhqh",
+      "name": "Ronaldo",
+      "short_name": "Ronaldo Strada",
+      "in_base_lineup": true,
+      "stats": {
+        "MATCH_MINUTES_PLAYED": {
+          "value": "90",
+          "raw_value": "90",
+          "rank": 1
+        },
+        "INTERCEPTIONS": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "KEY_PASSES": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "OFFSIDES": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "SAVES_TOTAL": {
+          "value": "3",
+          "raw_value": "3",
+          "rank": 1
+        },
+        "GOALS": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "GOALS_OWN": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        }
+      }
+    },
+    {
+      "player_id": "nDs9hCHH",
+      "name": "David Duarte",
+      "short_name": "David Duarte",
+      "in_base_lineup": true,
+      "stats": {
+        "MATCH_MINUTES_PLAYED": {
+          "value": "90",
+          "raw_value": "90",
+          "rank": 1
+        },
+        "INTERCEPTIONS": {
+          "value": "5",
+          "raw_value": "5",
+          "rank": 1
+        },
+        "KEY_PASSES": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "OFFSIDES": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "SAVES_TOTAL": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "GOALS": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "GOALS_OWN": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        }
+      }
+    },
+    {
+      "player_id": "4pGAPF8j",
+      "name": "Rodrigo Nestor",
+      "short_name": "Rodrigo",
+      "in_base_lineup": true,
+      "stats": {
+        "MATCH_MINUTES_PLAYED": {
+          "value": "86",
+          "raw_value": "86",
+          "rank": 13
+        },
+        "INTERCEPTIONS": {
+          "value": "1",
+          "raw_value": "1",
+          "rank": 5
+        },
+        "KEY_PASSES": {
+          "value": "4",
+          "raw_value": "4",
+          "rank": 1
+        },
+        "OFFSIDES": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "SAVES_TOTAL": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "GOALS": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "GOALS_OWN": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        }
+      }
+    },
+    {
+      "player_id": "hph7e3vc",
+      "name": "Veliz Alejo",
+      "short_name": "Veliz A.",
+      "in_base_lineup": true,
+      "stats": {
+        "MATCH_MINUTES_PLAYED": {
+          "value": "90",
+          "raw_value": "90",
+          "rank": 1
+        },
+        "INTERCEPTIONS": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "KEY_PASSES": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "OFFSIDES": {
+          "value": "2",
+          "raw_value": "2",
+          "rank": 1
+        },
+        "SAVES_TOTAL": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "GOALS": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        },
+        "GOALS_OWN": {
+          "value": "0",
+          "raw_value": "0",
+          "rank": null
+        }
+      }
+    }
+  ]
+}

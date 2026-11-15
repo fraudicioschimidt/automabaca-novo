@@ -1,0 +1,64 @@
+/* Onde a cobertura se perde — uma linha por motivo, clicável até a gaveta.
+   Mesma gramática das tabelas do Analyzer: linha inteira é o alvo, número à
+   direita em tabular, divisória fina entre linhas. */
+
+.linha {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 4px;
+  border: none;
+  border-bottom: 1px solid var(--pc-borda);
+  background: none;
+  font-family: var(--pc-font);
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background var(--pc-fast);
+}
+
+.linha:last-of-type { border-bottom: none; }
+.linha:hover { background: var(--pc-hover); }
+.linha:focus-visible {
+  outline: 2px solid var(--pc-accent);
+  outline-offset: -2px;
+}
+
+.motivo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.rotulo {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--pc-text);
+}
+
+/* O mercado dominante: é ele que vira decisão de cobertura. */
+.mercado {
+  font-size: 11.5px;
+  color: var(--pc-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stake, .n {
+  font-size: 13px;
+  color: var(--pc-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.n { font-weight: 600; color: var(--pc-text); min-width: 62px; }
+
+.rodape {
+  margin-top: 12px;
+  font-size: 11.5px;
+  color: var(--pc-faint);
+}

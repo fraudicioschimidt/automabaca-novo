@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "SharpMode" ADD VALUE 'IDENTITY_ONLY';

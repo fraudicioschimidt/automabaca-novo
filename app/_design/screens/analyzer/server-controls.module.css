@@ -1,0 +1,11 @@
+.filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-top: 16px; }
+.filters > label { flex: 1 1 140px; max-width: 240px; }
+.pagination button { font: inherit; padding: 10px 12px; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 6px; min-height: 44px; cursor: pointer; }
+.pagination button:disabled { cursor: default; opacity: .5; }
+.history { padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+.history h2 { font-size: 20px; margin: 0 0 12px; }
+.history p { line-height: 1.5; }
+.metrics { display: flex; gap: 24px; flex-wrap: wrap; }
+.metrics dt { font-size: 12px; }
+.metrics dd { font-size: 20px; font-variant-numeric: tabular-nums; margin: 6px 0 0; }
+.pagination { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: center; margin-top: 16px; }

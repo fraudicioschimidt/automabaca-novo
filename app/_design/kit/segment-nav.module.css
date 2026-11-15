@@ -1,0 +1,61 @@
+/* Navegação de SEÇÃO em cartões — forma e movimento. As cores chegam por
+   `--sn-*`, setadas pelo componente a partir de `T` (mesmo padrão do Tooltip).
+   Movimento sai de `--mo-*` (SSOT em globals.css).
+
+   Cada aba é um mini cartão: o nome em cima e o estado da seção embaixo, para
+   a saúde de cada seção ser lida sem abri-la. A ativa é branca e levantada, com
+   um filete dourado no topo; as outras ficam translúcidas sobre a página. */
+
+.nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 22px;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* Folga para a sombra do cartão ativo não ser cortada pela rolagem. */
+  padding: 2px 2px 8px;
+}
+.nav::-webkit-scrollbar { display: none; }
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex-shrink: 0;
+  min-width: 132px;
+  padding: 11px 14px 12px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--sn-surface) 45%, transparent);
+  box-shadow: inset 0 0 0 1px var(--sn-border-soft);
+  color: var(--sn-muted);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--mo-base) ease, color var(--mo-base) ease, box-shadow var(--mo-base) ease;
+}
+.tab:hover { background: color-mix(in srgb, var(--sn-surface) 80%, transparent); color: var(--sn-text); }
+/* `outline-offset` negativo: o anel de foco cabe DENTRO do cartão, senão a
+   rolagem da faixa o cortaria. */
+.tab:focus-visible { outline: 2px solid var(--sn-accent); outline-offset: -3px; }
+
+.tabAtiva, .tabAtiva:hover {
+  background: var(--sn-surface);
+  color: var(--sn-text);
+  box-shadow: var(--sn-lift), inset 0 0 0 1px var(--sn-border);
+  cursor: default;
+}
+.tabAtiva::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--sn-brand); }
+
+/* Mesmo peso nos dois estados: peso variável reflui o texto a cada troca. */
+.rotulo { font: 600 13.5px var(--sn-body); letter-spacing: -.01em; white-space: nowrap; }
+
+/* ── Legenda ───────────────────────────────────────────────────────────────
+   Uma classe por FORMA (`formaDoContador`), nunca por tela. Fila com trabalho
+   em destaque; fila zerada em verde ("em dia"); acervo e descrição, terciários. */
+.legenda { font: 500 12px var(--sn-body); font-variant-numeric: tabular-nums; color: var(--sn-faint); white-space: nowrap; }
+.legendaAtencao { color: var(--sn-accent); font-weight: 600; }
+.legendaResolvido { color: var(--sn-pos); }

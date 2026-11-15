@@ -1,0 +1,28 @@
+[Unit]
+Description=Verified isolated backup and encrypted export of AutomaBACA novo
+After=docker.service
+Requires=docker.service
+# Até 3 tentativas por noite (a do timer e duas do Restart, 30 min depois de
+# cada falha): uma falha que se repete não vira um dump a cada 30 min. A
+# janela é menor que um dia para não barrar o timer da noite seguinte.
+StartLimitIntervalSec=6h
+StartLimitBurst=3
+
+[Service]
+Type=oneshot
+User=root
+UMask=0077
+Environment=DOCKER_CONFIG=/etc/automabaca/backup-docker
+ExecStart=/usr/bin/python3 /usr/local/lib/automabaca-novo/backup.py
+TimeoutStartSec=45min
+TimeoutStopSec=90s
+Restart=on-failure
+RestartSec=30min
+Nice=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/backups/automabaca-novo /srv/apps/automabaca-novo/exports /var/lib/automabaca-novo/backup-status
+RestrictAddressFamilies=AF_UNIX
+

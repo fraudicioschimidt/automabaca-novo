@@ -1,0 +1,117 @@
+/* Gaveta do Analyzer: as apostas por trás de uma linha de tabela.
+   As custom properties `--gv-*` são setadas UMA vez na raiz, a partir de `T`, e
+   cascateiam. Nada de hex, ms ou medida cravada aqui. */
+
+/* A gaveta preenche o corpo do Sheet (flex column, overflow hidden): a raiz
+   cresce, e só a LISTA rola — o resumo fica sempre à vista, para o operador
+   poder comparar os números da linha com o que está listado. */
+.raiz {
+  font-family: var(--gv-font);
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.vazio {
+  padding: 28px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--gv-faint);
+}
+
+/* Repete os números da linha clicada: se a gaveta divergir dela, aparece aqui. */
+.resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border: 1px solid var(--gv-border);
+  border-radius: 8px;
+  background: var(--gv-inset);
+}
+
+.resumoItem { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+.resumoRotulo {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gv-faint);
+}
+
+.resumoValor { font-size: 15px; font-weight: 600; }
+
+/* Tom do número: tokens semânticos AA, não as variantes Display — é texto
+   pequeno, e cor viva fica para número grande e marca gráfica. */
+.pos { color: var(--gv-pos); }
+.neg { color: var(--gv-neg); }
+.neutro { color: var(--gv-text); }
+.valor.neutro { color: var(--gv-muted); }
+
+.lista {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+.linha {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 4px;
+  border-bottom: 1px solid var(--gv-border);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--gv-fast);
+}
+
+.linha:last-child { border-bottom: none; }
+.linha:hover, .linha:focus-visible { background: var(--gv-hover); }
+
+.principal { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+
+.evento {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--gv-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.versus { color: var(--gv-faint); font-weight: 400; }
+
+.meta {
+  font-size: 11.5px;
+  color: var(--gv-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mercado { color: var(--gv-accent); }
+.ponto { color: var(--gv-faint); padding: 0 5px; }
+
+.resultado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.valor { font-size: 13.5px; font-weight: 600; }
+.status { font-size: 10.5px; color: var(--gv-faint); }
+
+@media (max-width: 1023px) {
+  .raiz:not(.vazio) { padding: 18px; }
+}
+
+.pagination { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding-top: 12px; font-size: 12px; color: var(--gv-muted); }
+.pagination button { min-height: 44px; padding: 8px 12px; border: 1px solid var(--gv-border); border-radius: var(--gv-radius); background: var(--gv-inset); color: var(--gv-text); font: inherit; cursor: pointer; }
+.pagination button:disabled { opacity: 0.5; cursor: default; }

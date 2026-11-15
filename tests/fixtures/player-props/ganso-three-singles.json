@@ -1,0 +1,62 @@
+{
+  "caption": "",
+  "items": [
+    {
+      "evento": "Fluminense vs Platense",
+      "esporte": "Soccer",
+      "competicao": "",
+      "pais": "",
+      "mercado": "Player Shots on Target",
+      "selecao": "Ganso Over 0.5",
+      "odds": 3.8,
+      "stake": 1,
+      "data": null,
+      "casaDeAposta": "KTO",
+      "stakeSource": "image_units",
+      "playerProp": {
+        "jogador": "Ganso",
+        "mercadoOriginal": "Player Shots on Target",
+        "selecaoOriginal": "Ganso - Mais 0.5",
+        "substituicao": "UNKNOWN"
+      }
+    },
+    {
+      "evento": "Fluminense vs Platense",
+      "esporte": "Soccer",
+      "competicao": "",
+      "pais": "",
+      "mercado": "Player Shots",
+      "selecao": "Ganso Over 0.5",
+      "odds": 1.89,
+      "stake": 2,
+      "data": null,
+      "casaDeAposta": "KTO",
+      "stakeSource": "image_units",
+      "playerProp": {
+        "jogador": "Ganso",
+        "mercadoOriginal": "Player Shots",
+        "selecaoOriginal": "Ganso - Mais 0.5",
+        "substituicao": "UNKNOWN"
+      }
+    },
+    {
+      "evento": "Fluminense vs Platense",
+      "esporte": "Soccer",
+      "competicao": "",
+      "pais": "",
+      "mercado": "Player Shots",
+      "selecao": "Ganso Over 1.5",
+      "odds": 5.1,
+      "stake": 0.5,
+      "data": null,
+      "casaDeAposta": "KTO",
+      "stakeSource": "image_units",
+      "playerProp": {
+        "jogador": "Ganso",
+        "mercadoOriginal": "Player Shots",
+        "selecaoOriginal": "Ganso - Mais 1.5",
+        "substituicao": "UNKNOWN"
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+.players-panel { line-height: 1.5; }
+.players-panel h2 { font-size: 20px; font-weight: 650; margin-bottom: 4px; }
+.players-panel h3 { font-size: 16px; font-weight: 600; margin: 24px 0 12px; }
+.players-panel p { margin: 8px 0; }
+.players-panel summary { cursor: pointer; }
+.players-panel form { display: grid; gap: 10px; margin-top: 12px; }
+.players-panel label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.players-panel input:not([type="checkbox"]),
+.players-panel select {
+  min-width: 0; width: 100%; padding: 9px 12px; border: 1px solid currentColor;
+  border-radius: 8px; font: inherit; color: inherit; background: transparent;
+}
+.players-panel button {
+  justify-self: start; min-height: 40px; padding: 8px 14px; border: 1px solid currentColor;
+  border-radius: 8px; font: inherit; font-weight: 600; cursor: pointer;
+}
+.players-panel button:disabled { opacity: .5; cursor: default; }
+.players-panel input[type="checkbox"] { flex: 0 0 auto; width: 16px; height: 16px; }
+.players-panel pre { font-size: 12px; max-height: 360px; overflow: auto; }

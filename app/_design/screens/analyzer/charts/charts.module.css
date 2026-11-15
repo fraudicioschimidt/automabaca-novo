@@ -1,0 +1,12 @@
+.chart {
+  display: block;
+}
+
+.chartOverflow {
+  display: block;
+  overflow: visible;
+}
+
+.relative {
+  position: relative;
+}

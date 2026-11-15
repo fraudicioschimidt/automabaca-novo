@@ -1,0 +1,24 @@
+[Unit]
+Description=AutomaBACA log archive collect
+After=systemd-journald.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/lib/automabaca-novo/observability/collect.py
+Environment=PYTHONDONTWRITEBYTECODE=1
+SyslogIdentifier=automabaca-log-archive
+UMask=0077
+TimeoutStartSec=100s
+MemoryMax=256M
+CPUQuota=25%
+Nice=10
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX
+ReadWritePaths=/var/log/automabaca-novo/archive /var/lib/automabaca-novo/observability

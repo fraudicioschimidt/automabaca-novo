@@ -1,0 +1,357 @@
+/* Os `--ops-*` chegam pelo AppShell de Operações e Monitoramento (objeto inline
+   a partir de `T`). Existia aqui um `.theme` que os redeclarava a partir dos
+   tokens globais: era o remendo do SegmentNav, único consumidor deste módulo
+   fora dessas duas telas. Com ele no kit, o remendo não tem mais dono. */
+
+.main { flex: 1; min-width: 0; max-width: 1180px; margin: 0 auto; padding: 46px; }
+.spacer36 { height: 36px; }
+.spacer20 { height: 20px; }
+.healthGrid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+.pageHeader { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 28px; }
+.pageTitle { margin: 0; color: var(--ops-text); font: 600 32px/1.05 var(--ops-display); letter-spacing: -.03em; }
+/* O total mora no título: número discreto quando zero; pílula suave na cor de
+   destaque para pendências (Operações) e na negativa para problemas
+   (Monitoramento). */
+.pageTitle { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; }
+.titleCount, .titleCountPending, .titleCountAlert { font: 600 15px var(--ops-num); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.titleCount { color: var(--ops-faint); }
+.titleCountPending, .titleCountAlert { align-self: center; padding: 2px 10px; border-radius: 999px; }
+.titleCountPending { background: var(--ops-accent-soft); color: var(--ops-accent); }
+.titleCountAlert { background: var(--ops-neg-soft); color: var(--ops-neg); }
+.statusPending { color: var(--ops-text); font-weight: 600; }
+.statusOk { color: var(--ops-pos); font-weight: 600; }
+.statusBad { color: var(--ops-neg); font-weight: 600; }
+.pageSubtitle { margin-top: 6px; color: var(--ops-muted); font: 14px var(--ops-body); }
+
+/* Filas: o cartão de resumo é a própria aba (`QueueTabs`). */
+.queueTabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+.queueTab { position: relative; overflow: hidden; display: grid; gap: 8px; align-content: start; padding: 18px 20px; border: 0; border-radius: var(--ops-radius); background: color-mix(in srgb, var(--ops-surface) 50%, transparent); box-shadow: inset 0 0 0 1px var(--ops-border-soft); color: var(--ops-muted); cursor: pointer; text-align: left; transition: background var(--mo-base) ease, box-shadow var(--mo-base) ease; }
+.queueTab:hover { background: color-mix(in srgb, var(--ops-surface) 85%, transparent); }
+.queueTab:focus-visible { outline: 2px solid var(--ops-accent); outline-offset: -3px; }
+.queueTabAtiva, .queueTabAtiva:hover { background: var(--ops-surface); box-shadow: 0 1px 2px rgb(20 18 14 / .08), 0 6px 16px -8px rgb(20 18 14 / .22), inset 0 0 0 1px var(--ops-border); cursor: default; }
+.queueTabAtiva::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--ops-brand); }
+.queueTabCap { font: 600 10.5px var(--ops-body); letter-spacing: .12em; text-transform: uppercase; color: var(--ops-faint); }
+.queueTabNum { font: 600 27px/1 var(--ops-num); letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--ops-accent) 70%, transparent); }
+.queueTabAtiva .queueTabNum { color: var(--ops-accent); }
+.queueTabNumZero, .queueTabAtiva .queueTabNumZero { color: var(--ops-pos); }
+.queueTabNota { font: 11.5px/1.4 var(--ops-body); color: var(--ops-faint); }
+@media (max-width: 1023px) { .queueTabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
+
+.unavailable {
+  padding: 28px;
+  border: 1px solid color-mix(in srgb, var(--ops-neg) 30%, var(--ops-border));
+  border-radius: var(--ops-radius);
+  background: color-mix(in srgb, var(--ops-neg-soft) 54%, var(--ops-surface));
+}
+.unavailableEyebrow {
+  color: var(--ops-neg);
+  font: 700 10px/1.2 var(--ops-body);
+  letter-spacing: .12em;
+}
+.unavailableTitle {
+  margin: 9px 0 0;
+  color: var(--ops-text);
+  font: 600 22px/1.2 var(--ops-display);
+  letter-spacing: -.02em;
+}
+.unavailableText {
+  max-width: 620px;
+  margin: 8px 0 0;
+  color: var(--ops-muted);
+  font: 13.5px/1.55 var(--ops-body);
+}
+
+.sectionHead { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; min-width: 0; }
+.sectionTitle { margin: 0; color: var(--ops-text); font: 600 22px var(--ops-display); letter-spacing: -.02em; }
+.sectionCount { min-width: 22px; padding: 2px 10px; border-radius: 999px; text-align: center; color: var(--ops-accent-text); background: var(--ops-count-bg); font: 600 13px var(--ops-num); font-variant-numeric: tabular-nums; }
+.sectionSub { min-width: 0; color: var(--ops-faint); font: 13px var(--ops-body); }
+.sectionRight { margin-left: auto; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.sectionHint { color: var(--ops-hint-color); font: 11.5px var(--ops-body); }
+.matchStrong { font-weight: 600; }
+.matchVs { color: var(--ops-faint); font-weight: 400; }
+
+.engineGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 30px; }
+.engineLabel { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; color: var(--ops-faint); }
+.engineValueRow { display: flex; align-items: center; gap: 9px; }
+.engineState { position: relative; width: 9px; height: 9px; }
+.engineStateDot { position: absolute; inset: 0; border-radius: 50%; background: var(--ops-tone); }
+.engineStateRing { position: absolute; inset: -3px; border: 2px solid var(--ops-tone); border-radius: 50%; opacity: .35; }
+.engineValue { color: var(--ops-value-color); font: 600 26px/1 var(--ops-display); letter-spacing: -.02em; white-space: nowrap; }
+.engineValueMono { font-family: var(--ops-num); font-size: 24px; font-variant-numeric: tabular-nums; }
+.engineSub { margin-top: 9px; color: var(--ops-faint); font: 11.5px var(--ops-body); }
+.backupRow { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.backupLabel { display: flex; align-items: center; gap: 8px; color: var(--ops-faint); }
+.backupStatus { color: var(--ops-text); font: 600 15px var(--ops-body); }
+.backupNote { min-width: 0; color: var(--ops-faint); font: 12.5px var(--ops-body); }
+
+.flushCard { margin-bottom: 16px; overflow: hidden; }
+.cardSpace { margin-bottom: 16px; }
+.columnCard { display: flex; flex-direction: column; }
+.cardTitle { margin: 0; color: var(--ops-text); font: 600 17px var(--ops-display); letter-spacing: -.01em; }
+.cardSubtitle { margin-top: 3px; color: var(--ops-faint); font: 12.5px var(--ops-body); }
+.backlogFooter { padding: 12px 24px; color: var(--ops-faint); background: var(--ops-surface-2); font: 11.5px var(--ops-body); }
+.empty { padding: 40px; text-align: center; }
+.emptyTitle { color: var(--ops-text); font: 600 17px var(--ops-display); }
+.emptyText { margin-top: 6px; color: var(--ops-faint); font: 13px var(--ops-body); }
+.itemRow { display: flex; align-items: center; gap: 14px; padding: 15px 24px; transition: background var(--mo-fast); }
+.itemContent { flex: 1; min-width: 0; }
+.itemDetail { margin-top: 4px; color: var(--ops-faint); font: 11px var(--ops-body); }
+.textFaint { color: var(--ops-faint); }
+.textStrong { color: var(--ops-text); font-weight: 600; }
+.mono { font-family: var(--ops-num); font-variant-numeric: tabular-nums; }
+.rowActions { display: flex; gap: 8px; flex-shrink: 0; }
+
+
+/* ── Caixa de ações: caixa de entrada ─────────────────────────────────────
+   Uma linha por ação; o texto completo e as evidências abrem sob demanda. O
+   cartão não tem respiro próprio: as linhas vão de borda a borda. */
+.caixa { overflow: hidden; --caixa-pad: 26px; }
+.caixaTopo { display: flex; align-items: center; gap: 10px 16px; flex-wrap: wrap; padding: 22px var(--caixa-pad) 18px; border-bottom: 1px solid var(--ops-border-soft); }
+.caixaDica { flex: 1 1 200px; min-width: 0; color: var(--ops-faint); font: 12px var(--ops-body); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.caixaAbas { margin-left: auto; display: inline-flex; gap: 2px; padding: 3px; border-radius: 12px; background: var(--ops-inset); }
+.caixaAba { height: 28px; padding: 0 11px; display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 9px; background: transparent; color: var(--ops-muted); cursor: pointer; font: 600 12.5px var(--ops-body); white-space: nowrap; transition: background var(--mo-fast) ease, color var(--mo-fast) ease; }
+.caixaAba:hover { color: var(--ops-text); }
+.caixaAba[aria-selected="true"] { background: var(--ops-surface); color: var(--ops-text); box-shadow: 0 0 0 1px var(--ops-border-soft), 0 1px 2px rgba(20,18,14,.08), 0 6px 14px -8px rgba(20,18,14,.3); }
+.caixaAba:focus-visible { outline: 2px solid var(--ops-accent); outline-offset: 1px; }
+.caixaAbaConta { color: var(--ops-faint); font: 600 11px var(--ops-num); font-variant-numeric: tabular-nums; }
+.caixaVazia { padding: 18px var(--caixa-pad) var(--caixa-pad); }
+/* As linhas herdam as colunas da lista (subgrid): a recência fica alinhada
+   mesmo quando uma ação tem "Abrir" e a outra não. */
+.caixaLista { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+.caixaRecorte { grid-column: 1 / -1; padding: 12px var(--caixa-pad) 14px; }
+.incidentEmpty { padding: 14px 16px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--ops-empty-border); border-radius: var(--ops-radius-md); background: var(--ops-empty-bg); }
+.incidentEmptyIcon { width: 28px; height: 28px; flex-shrink: 0; display: grid; place-items: center; border-radius: 8px; background: color-mix(in srgb, var(--ops-pos) 18%, transparent); color: var(--ops-pos); }
+.incidentEmptyText { color: var(--ops-text); font: 13.5px var(--ops-body); }
+/* Sem `content-visibility: auto`: ele faz o navegador PULAR o layout da linha
+   fora da viewport e usar um tamanho estimado, o que torna a altura da página
+   instável entre renders e deixa retângulos vazios na captura de página inteira
+   (a revisão visual). Com teto de 25 linhas por aba
+   (`domain/recorte-da-caixa-de-acoes`) o ganho seria desprezível. */
+.acao { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: center; border-bottom: 1px solid var(--ops-border-soft); transition: background var(--mo-fast) ease; }
+.acao:last-of-type { border-bottom: 0; }
+.acao:hover { background: var(--ops-surface-2); }
+.acao[data-aberta] { background: color-mix(in srgb, var(--ops-accent) 5%, transparent); }
+.acaoLinha { width: 100%; min-width: 0; padding: 12px 14px 12px var(--caixa-pad); display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; gap: 14px; align-items: center; border: 0; background: none; color: inherit; cursor: pointer; text-align: left; font: inherit; }
+.acaoLinha:focus-visible { outline: 2px solid var(--ops-accent); outline-offset: -2px; border-radius: 10px; }
+.acaoPonto { width: 8px; height: 8px; border-radius: 50%; background: var(--ops-faint); }
+.acaoPonto[data-gravidade="alta"] { background: var(--ops-neg); }
+.acaoPonto[data-gravidade="media"] { background: var(--ops-brand); }
+.acaoPonto[data-gravidade="baixa"] { background: var(--ops-chart); }
+.acaoTexto { min-width: 0; display: flex; align-items: baseline; gap: 10px; }
+.acaoTitulo { flex-shrink: 0; max-width: 45%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ops-text); font: 600 13.5px var(--ops-body); }
+.acaoResumo { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ops-muted); font: 12.5px var(--ops-body); }
+.acaoQuando { color: var(--ops-faint); font: 11.5px var(--ops-body); white-space: nowrap; }
+.acaoBotoes { padding-right: var(--caixa-pad); display: flex; align-items: center; gap: 6px; }
+/* Com mouse, os botões aparecem na linha sob o ponteiro, com foco ou aberta;
+   sem mouse (toque) ficam sempre à vista. `opacity` e não `display`: o Tab
+   ainda chega neles, e o foco os mostra. */
+@media (hover: hover) and (pointer: fine) {
+  .acaoBotoes { opacity: 0; transition: opacity var(--mo-fast) ease; }
+  .acao:hover .acaoBotoes, .acao:focus-within .acaoBotoes, .acao[data-aberta] .acaoBotoes { opacity: 1; }
+}
+.acaoLink { height: 30px; display: inline-flex; align-items: center; padding: 0 9px; border-radius: 10px; color: var(--ops-muted); text-decoration: none; font: 600 12.5px var(--ops-body); white-space: nowrap; }
+.acaoLink:hover { background: var(--ops-inset); color: var(--ops-text); }
+.acaoBotao, .acaoPrimario { height: 30px; padding: 0 12px; border: 1px solid var(--ops-border); border-radius: 10px; background: var(--ops-surface); color: var(--ops-text); cursor: pointer; font: 600 12.5px var(--ops-body); white-space: nowrap; transition: box-shadow var(--mo-fast) ease; }
+.acaoPrimario { border-color: var(--ops-accent); background: var(--ops-accent); color: var(--ops-accent-text); }
+.acaoBotao:hover, .acaoPrimario:hover { box-shadow: 0 1px 2px rgba(20,18,14,.08), 0 6px 14px -8px rgba(20,18,14,.35); }
+.acaoLink:focus-visible, .acaoBotao:focus-visible, .acaoPrimario:focus-visible { outline: 2px solid var(--ops-accent); outline-offset: 2px; }
+.acaoBotao:disabled, .acaoPrimario:disabled { cursor: wait; opacity: .6; }
+.acaoCorpo { grid-column: 1 / -1; padding: 0 var(--caixa-pad) 16px calc(var(--caixa-pad) + 22px); }
+.acaoDescricao { margin: 0; max-width: 80ch; color: var(--ops-muted); font: 13px/1.5 var(--ops-body); white-space: pre-line; }
+.acaoMeta { margin-top: 8px; display: flex; gap: 6px 8px; flex-wrap: wrap; color: var(--ops-faint); font: 11.5px var(--ops-body); }
+.acaoMetaQuando { color: var(--ops-text); font-weight: 600; }
+.acaoDono { color: var(--ops-muted); }
+/* "Voltou 7 vezes desde 13/07" é o oposto de recência e merece o mesmo peso:
+   crônico e novo pediam a mesma leitura, e o crônico parecia o mais novo. */
+.acaoReincidente { color: var(--ops-text); font-weight: 600; }
+.acaoDesfecho { margin-top: 8px; color: var(--ops-pos); font: 12px var(--ops-body); }
+.acaoFazer { margin-top: 12px; max-width: 76ch; display: flex; gap: 10px; padding: 10px 13px; border-radius: 12px; background: var(--ops-accent-soft); color: var(--ops-text); font: 13px/1.55 var(--ops-body); }
+.acaoFazerRotulo { flex: none; color: var(--ops-accent); font-weight: 700; }
+.acaoLinks { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+.acaoLinkBotao { height: 30px; display: inline-flex; align-items: center; padding: 0 12px; border: 1px solid var(--ops-border); border-radius: 9px; background: var(--ops-surface); color: var(--ops-accent); text-decoration: none; font: 600 12.5px var(--ops-body); }
+.acaoLinkBotao:hover { background: var(--ops-inset); }
+.acaoLinkBotao:focus-visible { outline: 2px solid var(--ops-accent); outline-offset: 2px; }
+.acaoTecnico { margin-top: 10px; max-width: 80ch; color: var(--ops-faint); font: 12px var(--ops-body); }
+.acaoTecnico > summary { cursor: pointer; width: max-content; font-weight: 600; }
+.acaoTecnico .evidencias { margin-top: 8px; }
+/* Fichas por tipo de ação (escritas, recusas, bilhete). */
+.fichaBloco { display: grid; gap: 10px; max-width: 80ch; }
+.fichaDuas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; max-width: 900px; }
+.fichaPainel { display: grid; align-content: start; gap: 8px; padding: 12px 14px; border-radius: 14px; background: var(--ops-surface-2); box-shadow: inset 0 0 0 1px var(--ops-border-soft); min-width: 0; }
+.fichaPainelTitulo { margin: 0; color: var(--ops-faint); font: 600 10.5px var(--ops-body); letter-spacing: .08em; text-transform: uppercase; }
+.fichaAutor { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; color: var(--ops-text); font: 13.5px var(--ops-body); }
+.fichaAutor b { font-weight: 600; }
+.fichaSelo { padding: 2px 8px; border-radius: 99px; background: var(--ops-pos-soft); color: var(--ops-pos); font: 600 11px var(--ops-body); }
+.fichaSelo[data-alerta] { background: var(--ops-neg-soft); color: var(--ops-neg); }
+.fichaConta { margin-left: auto; color: var(--ops-muted); font: 12.5px var(--ops-num); }
+.fichaLista { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.fichaLista li { display: flex; gap: 8px; color: var(--ops-text); font: 13px/1.45 var(--ops-body); }
+.fichaLista li::before { content: ""; flex: none; width: 5px; height: 5px; margin-top: 7px; border-radius: 50%; background: var(--ops-brand); }
+.fichaLista code { color: var(--ops-faint); font: 11px var(--ops-num); overflow-wrap: anywhere; }
+.fichaNota { margin: 0; color: var(--ops-muted); font: 12.5px/1.5 var(--ops-body); }
+.fichaNumero { display: flex; align-items: center; gap: 14px; color: var(--ops-muted); font: 13.5px/1.45 var(--ops-body); }
+.fichaNumero b { color: var(--ops-text); font-weight: 600; }
+.fichaNumeroValor { color: var(--ops-text); font: 600 30px/1 var(--ops-num); letter-spacing: -.02em; }
+.fichaPost { padding-left: 10px; border-left: 3px solid var(--ops-brand); color: var(--ops-text); font: 13px/1.5 var(--ops-body); white-space: pre-line; overflow-wrap: anywhere; }
+.fichaPerna { display: flex; justify-content: space-between; gap: 8px; color: var(--ops-text); font: 13px var(--ops-body); }
+.fichaFalta { flex: none; color: var(--ops-neg); font: 600 12px var(--ops-body); }
+.evidencias { margin: 10px 0 0; max-width: 80ch; padding: 10px 12px; display: grid; grid-template-columns: minmax(90px, auto) 1fr; gap: 4px 12px; border-radius: 12px; background: var(--ops-surface-2); box-shadow: inset 0 0 0 1px var(--ops-border-soft); font: 12px/1.5 var(--ops-num); }
+.evidenciaChave { color: var(--ops-faint); }
+.evidenciaValor { margin: 0; color: var(--ops-muted); overflow-wrap: anywhere; white-space: pre-line; }
+
+.sloEmpty { padding: 18px 16px; border-radius: var(--ops-radius-md); background: var(--ops-inset); color: var(--ops-muted); font: 13px var(--ops-body); }
+.sloGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(245px, 1fr)); gap: 10px; }
+/* Mesma razão de `.acao` acima: layout que o navegador pode pular não é
+   layout que a captura consegue conferir. */
+.sloCard { padding: 13px 14px; border: 1px solid var(--ops-border-soft); border-radius: var(--ops-radius-md); background: var(--ops-surface-2); }
+.sloHead { display: flex; align-items: center; gap: 8px; }
+.sloDot { width: 7px; height: 7px; border-radius: 50%; background: var(--ops-tone); box-shadow: 0 0 0 4px var(--ops-tone-soft); }
+.sloName { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ops-text); font: 650 13px var(--ops-body); }
+.sloKind { color: var(--ops-faint); font: 10.5px var(--ops-body); text-transform: uppercase; letter-spacing: .06em; }
+.sloMetrics { margin-top: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sloLabel { color: var(--ops-faint); font: 10px var(--ops-body); text-transform: uppercase; }
+.sloValue { margin-top: 3px; color: var(--ops-text); font: 14px var(--ops-num); font-variant-numeric: tabular-nums; }
+.sloValueTone { color: var(--ops-tone); font-weight: 650; }
+.sloReason { margin-top: 9px; color: var(--ops-reason-color); font: 11px var(--ops-body); }
+
+
+.budgetList { display: flex; flex-direction: column; gap: 16px; }
+.budgetHead { display: flex; align-items: baseline; gap: 8px; }
+.budgetHeadWithBar { margin-bottom: 7px; }
+.budgetName { color: var(--ops-text); font: 600 13.5px var(--ops-num); font-variant-numeric: tabular-nums; }
+.budgetYield { margin-top: 6px; color: var(--ops-muted); font: 11.5px var(--ops-num); font-variant-numeric: tabular-nums; }
+.budgetUsage { margin-left: auto; color: var(--ops-muted); font: 12.5px var(--ops-body); }
+.budgetUnlimited { color: var(--ops-pos); font-weight: 600; }
+.budgetFraction { color: var(--ops-text); font-family: var(--ops-num); font-weight: 600; font-variant-numeric: tabular-nums; }
+.budgetTrack { height: 6px; overflow: hidden; border-radius: 3px; background: var(--ops-inset); }
+.budgetBar { width: var(--ops-progress); height: 100%; border-radius: 3px; background: var(--ops-tone); transition: width var(--mo-slow); }
+
+.jobsCard { overflow: hidden; display: flex; flex-direction: column; }
+.jobsHeader { padding: 20px 22px 14px; }
+.jobsList { max-height: 360px; overflow-y: auto; }
+/* Cada linha é um bloco: cabeçalho (fila · causa · janela · Replay) + próxima
+   etapa + lista expansível das apostas afetadas. */
+.jobRow { padding: 11px 22px; display: flex; flex-direction: column; gap: 5px; border-top: 1px solid var(--ops-border-soft); }
+.jobHead { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.jobDot { width: 6px; height: 6px; flex-shrink: 0; border-radius: 50%; background: var(--ops-tone); }
+.jobName { color: var(--ops-text); font: 500 13px var(--ops-num); font-variant-numeric: tabular-nums; }
+.jobStatus { margin-left: auto; color: var(--ops-job-status); font: 12.5px var(--ops-body); }
+.jobCount { color: var(--ops-muted); background: var(--ops-surface-2); border-radius: 999px; padding: 2px 8px; font: 600 11px var(--ops-body); white-space: nowrap; }
+.jobNext { color: var(--ops-muted); font: 12px var(--ops-body); padding-left: 18px; }
+.jobToggle { align-self: flex-start; margin-left: 18px; padding: 2px 0; background: none; border: none; cursor: pointer; color: var(--ops-accent); font: 600 11.5px var(--ops-body); }
+.jobBets { margin: 0; padding: 2px 0 2px 18px; list-style: none; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.jobBets a { color: var(--ops-muted); font-size: 11.5px; }
+.jobQueued { color: var(--ops-pos); display: inline-flex; align-items: center; gap: 4px; font: 12px var(--ops-body); }
+
+/* Releases: a linha reaproveita o cabeçalho da falha de job (ponto, nome,
+   estado), dentro de um cartão com respiro próprio. */
+.releaseList { margin: 0; padding: 0; list-style: none; }
+.releaseRow { padding: 12px 0; display: flex; flex-direction: column; gap: 5px; border-top: 1px solid var(--ops-border-soft); min-width: 0; }
+.releaseRow .jobName { overflow-wrap: anywhere; }
+.releaseFindings { margin: 0; padding: 0 0 0 18px; list-style: none; display: flex; flex-direction: column; gap: 3px; color: var(--ops-text); font: 12.5px/1.45 var(--ops-body); overflow-wrap: anywhere; }
+.releaseFindingsFaint { color: var(--ops-muted); }
+.releaseLinks { padding-left: 18px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.releaseLink { min-height: 32px; display: inline-flex; align-items: center; gap: 5px; color: var(--ops-accent); text-decoration: none; font: 600 12px var(--ops-body); }
+.releaseLink:hover { text-decoration: underline; }
+.releaseNote { margin: 14px 0 0; color: var(--ops-faint); font: 12px/1.5 var(--ops-body); max-width: 72ch; }
+
+.noOddsIntro { margin: -8px 0 14px; color: var(--ops-faint); font: 11.5px var(--ops-body); }
+.noOddsRow { padding: 14px 0; display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--ops-border-soft); }
+.noOddsIcon { width: 28px; height: 28px; flex-shrink: 0; display: grid; place-items: center; border-radius: 8px; background: var(--ops-surface-2); color: var(--ops-muted); }
+.noOddsBody { flex: 1; }
+.noOddsReason { color: var(--ops-text); font: 500 13.5px var(--ops-body); }
+.noOddsSegment { margin-top: 2px; color: var(--ops-muted); font: 12px var(--ops-body); }
+/* Entrada ou fechamento: o mesmo motivo pede conserto diferente. */
+.noOddsLado { color: var(--ops-text); font-weight: 600; }
+.noOddsCount { display: grid; justify-items: end; color: var(--ops-text); font: 600 15px var(--ops-num); font-variant-numeric: tabular-nums; }
+.noOddsPct { color: var(--ops-faint); font: 10.5px var(--ops-num); font-variant-numeric: tabular-nums; }
+.noOddsBase { margin: 14px 0 6px; color: var(--ops-muted); font: 600 11px var(--ops-body); letter-spacing: 0.02em; text-transform: uppercase; }
+.noOddsFoot { margin-top: auto; padding-top: 16px; color: var(--ops-faint); font: 12px/1.5 var(--ops-body); }
+
+.probationIntro { margin: -8px 0 18px; color: var(--ops-muted); font: 12.5px/1.5 var(--ops-body); }
+.probationEmpty { padding: 40px 20px; border: 1px dashed var(--ops-border); border-radius: var(--ops-radius-md); background: var(--ops-surface-2); text-align: center; }
+.probationEmptyTitle { color: var(--ops-text); font: 600 18px var(--ops-display); }
+.probationEmptyText { margin-top: 8px; color: var(--ops-faint); font: 13px/1.5 var(--ops-body); }
+.probationList { display: flex; flex-direction: column; }
+.probationRow { padding: 12px 0; display: flex; align-items: center; gap: 14px; }
+.probationDivider { border-top: 1px solid var(--ops-border-soft); }
+.probationName { color: var(--ops-text); font: 600 14px var(--ops-body); }
+.probationPhase { margin-top: 2px; color: var(--ops-faint); font: 12px var(--ops-body); }
+.probationStats { flex-shrink: 0; color: var(--ops-muted); text-align: right; font: 13px var(--ops-num); font-variant-numeric: tabular-nums; }
+.probationClv { margin-top: 2px; color: var(--ops-faint); }
+
+/* `font` resets line-height; the former inline declarations inherited the app's 1.5. */
+.pageSubtitle, .sectionTitle, .sectionCount, .sectionSub,
+.sectionHint, .engineSub, .cardTitle, .cardSubtitle,
+.emptyTitle, .emptyText, .itemDetail,
+.incidentEmptyText, .caixaDica, .acaoTitulo, .acaoResumo, .acaoQuando, .acaoMeta,
+.acaoLink, .acaoBotao, .acaoPrimario, .caixaAba, .acaoDesfecho, .sloEmpty, .sloName, .sloKind, .sloLabel,
+.sloValue, .sloReason,
+.budgetName, .budgetYield, .budgetUsage, .jobName,
+.jobStatus, .jobQueued, .jobCount, .jobNext, .jobToggle,
+.noOddsIntro, .noOddsReason, .noOddsSegment, .noOddsBase, .noOddsPct,
+.noOddsCount, .probationEmptyTitle, .probationName, .probationPhase, .probationStats {
+  line-height: inherit;
+}
+
+@media (max-width: 640px) {
+  .pageHeader { flex-wrap: wrap; }
+  .itemRow { padding-left: 18px; padding-right: 18px; }
+  /* Os botões ocupam a linha inteira: sem quebrar, o texto ficava com largura 0. */
+  .itemRow { flex-wrap: wrap; row-gap: 10px; }
+  .rowActions { width: 100%; margin-left: 0; flex-wrap: wrap; }
+  /* Caixa de ações: título e resumo em duas linhas, botões embaixo. */
+  .caixa { --caixa-pad: 16px; }
+  .caixaDica { display: none; }
+  .caixaAbas { margin-left: 0; }
+  .caixaLista { grid-template-columns: minmax(0, 1fr); }
+  .acaoTexto { display: grid; gap: 2px; }
+  .acaoTitulo { max-width: none; }
+  .acaoBotoes { padding: 0 var(--caixa-pad) 12px calc(var(--caixa-pad) + 22px); flex-wrap: wrap; opacity: 1; }
+  .acaoBotoes:empty { display: none; }
+  .acaoCorpo { padding-left: calc(var(--caixa-pad) + 22px); }
+  .evidencias { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .fichaDuas { grid-template-columns: minmax(0, 1fr); }
+  .evidenciaValor + .evidenciaChave { margin-top: 6px; }
+}
+
+/* A navegação de seções mora no kit (`kit/SegmentNav.tsx` + `segment-nav.module.css`):
+   é primitivo de TRÊS telas, e daqui ela precisava de um `styles.theme` só para
+   reinjetar os `--ops-*` no Config, que não os provê. */
+
+/* ── Resumo da fila ───────────────────────────────────────────────────────
+   Três números grandes respondem "quanto falta" sem rolar. */
+.queueResumo {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px; margin-bottom: 26px; overflow: hidden;
+  background: var(--ops-border-soft); border: 1px solid var(--ops-border);
+  border-radius: var(--ops-radius);
+}
+.queueResumoItem { padding: 20px 24px; background: var(--ops-surface); }
+.queueResumoNum {
+  font-family: var(--ops-num); font-variant-numeric: tabular-nums;
+  font-size: 30px; font-weight: 600; letter-spacing: -.02em; line-height: 1;
+}
+.queueResumoCap {
+  display: block; margin-bottom: 9px; color: var(--ops-faint);
+  font: 400 10.5px var(--ops-body); letter-spacing: .12em; text-transform: uppercase;
+}
+.queueResumoNota { margin-top: 6px; color: var(--ops-faint); font: 11px var(--ops-body); }
+
+/* ── Painel da fila ativa ─────────────────────────────────────────────── */
+.queuePainel { animation: queueFade var(--mo-base) ease; }
+@keyframes queueFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .queuePainel { animation: none; } }
+
+/* Nota da aba Manutenção: diz de quem é o trabalho, para o operador não achar
+   que a lista é dele. */
+.manutencaoNota { margin: 0 0 18px; color: var(--ops-muted); font: 13px/1.55 var(--ops-body); max-width: 62ch; }
+
+/* Abaixo da faixa larga (layout.ts): respiro menor e grades em menos colunas.
+   No compacto o `.app-main` global ainda troca o respiro. */
+@media (max-width: 1079px) {
+  .main { padding: 26px; }
+  .healthGrid { grid-template-columns: 1fr; }
+  .engineGrid { grid-template-columns: repeat(2, 1fr); }
+}

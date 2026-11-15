@@ -1,0 +1,35 @@
+# Dependências e saídas de build (sem barra final: worktrees usam symlink)
+node_modules
+.next/
+dist/
+src/generated/
+next-env.d.ts
+*.tsbuildinfo
+__pycache__/
+*.pyc
+
+# Caches e relatórios
+.eslintcache
+coverage/
+reports/
+artifacts/
+playwright-report/
+test-results/
+.playwright-mcp/
+
+# Segredos e dados
+.env
+.env.*
+!.env.example
+.runtime/
+.saved-credentials/
+*.pgdump
+.claude/settings.local.json
+
+# Logos de tipster ficam em LOGOS_DIR, fora do Git
+public/logos/*
+!public/logos/.gitkeep
+
+# Investigação descartável de uma sessão (fica em scripts/ pelo alias @/)
+scripts/.tmp-*
+scratch/

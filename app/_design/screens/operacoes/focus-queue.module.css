@@ -1,0 +1,98 @@
+/* Filas de Operações em modo foco (`focus-queue.tsx`): um caso por vez, centralizado,
+   as ações como opções grandes. `--mc-tint` é o cinza-claro das trilhas e do selo: o
+   `--ops-inset` some no tema escuro. */
+.head, .body { --mc-tint: color-mix(in srgb, var(--ops-text) 8%, transparent); }
+.head { padding: 20px 24px 16px; display: grid; gap: 12px; border-bottom: 1px solid var(--ops-border-soft); }
+.titleRow { display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap; }
+.titleText { flex: 1 1 240px; min-width: 0; }
+.aside { margin-left: auto; min-width: 0; display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
+.cadence { color: var(--ops-faint); font: 11.5px var(--ops-body); letter-spacing: .04em; }
+.progress { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; color: var(--ops-faint); font: 12.5px/1.4 var(--ops-body); }
+.count { color: var(--ops-muted); font: 600 12.5px var(--ops-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.track { flex: 1; min-width: 120px; height: 4px; overflow: hidden; border-radius: 4px; background: var(--mc-tint); }
+.trackFill { display: block; width: var(--mc-progress); height: 100%; border-radius: 4px; background: var(--ops-brand); transition: width .3s ease; }
+.hints { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.hintSep { padding: 0 3px; }
+
+.body { padding: 26px 24px 22px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.case { display: grid; gap: 7px; justify-items: center; text-align: center; border-radius: var(--ops-radius-sm); outline: none; }
+.case:focus-visible { outline: 2px solid var(--ops-accent); outline-offset: 6px; }
+/* Quebra quando o motivo é longo (Liquidar): sem isso a pílula alarga a coluna e o
+   cartão corta as opções no celular. Meia altura da linha nos cantos, para quebrar suave. */
+.reason { max-width: 100%; display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 10px; background: var(--mc-tint); color: var(--ops-muted); font: 500 11.5px/1.6 var(--ops-body); }
+.reasonToned { background: var(--mc-tone-soft); color: var(--mc-tone); font-weight: 600; }
+.reasonDot { width: 6px; height: 6px; flex-shrink: 0; border-radius: 6px; background: var(--mc-tone, var(--ops-brand)); }
+.event { margin: 2px 0 0; color: var(--ops-text); font: 600 22px/1.25 var(--ops-display); letter-spacing: -.02em; overflow-wrap: anywhere; }
+.context { color: var(--ops-faint); font: 12.5px/1.4 var(--ops-body); }
+.explain { max-width: 62ch; color: var(--ops-muted); font: 13px/1.5 var(--ops-body); }
+/* A aposta do caso (mercado, seleção, preço), na linha abaixo do jogo. */
+.bet { color: var(--ops-muted); font: 13px/1.5 var(--ops-body); overflow-wrap: anywhere; }
+.market { color: var(--ops-accent); font-weight: 600; }
+.sep { margin: 0 6px; color: var(--ops-faint); }
+.figure { color: var(--ops-text); font-family: var(--ops-num); font-weight: 600; font-variant-numeric: tabular-nums; }
+/* O que o IA-Judge achou, em caixa: é a evidência que o dono confere antes de homologar. */
+.evidence { width: 100%; max-width: 640px; margin-top: 6px; padding: 12px 14px; display: grid; gap: 6px; justify-items: start; text-align: left; border-radius: var(--ops-radius-sm); background: var(--ops-surface-2); box-shadow: inset 0 0 0 1px var(--ops-border-soft); }
+.evidenceHead { display: flex; align-items: center; gap: 6px 10px; flex-wrap: wrap; color: var(--ops-muted); font: 12.5px/1.5 var(--ops-body); }
+.evidenceText { color: var(--ops-muted); font: 13px/1.5 var(--ops-body); overflow-wrap: anywhere; }
+.evidenceMeta { color: var(--ops-faint); font: 11.5px/1.5 var(--ops-body); }
+.sourceLink { color: var(--ops-accent); font-weight: 600; text-decoration: none; }
+.sourceLink:hover { text-decoration: underline; }
+
+.options { width: 100%; max-width: 640px; margin: 0 auto; display: grid; gap: 8px; }
+.option {
+  width: 100%; min-height: 60px; padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+  border: 0; border-radius: var(--ops-radius-md); background: var(--ops-surface-2);
+  box-shadow: inset 0 0 0 1px var(--ops-border-soft); color: var(--ops-text); text-align: left; text-decoration: none;
+  cursor: pointer; transition: box-shadow var(--mo-fast), background var(--mo-fast);
+}
+.option:hover:not(:disabled) { background: var(--ops-surface); box-shadow: inset 0 0 0 1px var(--ops-border), 0 8px 20px -12px rgba(0, 0, 0, .35); }
+.option:focus-visible, .ghost:focus-visible { outline: 2px solid var(--ops-accent); outline-offset: 2px; }
+.option:disabled { cursor: default; }
+.optionStatic { cursor: default; }
+.num {
+  width: 28px; height: 28px; flex-shrink: 0; display: grid; place-items: center; border-radius: 8px;
+  background: var(--ops-surface); box-shadow: inset 0 0 0 1px var(--ops-border); color: var(--ops-muted);
+  font: 600 12px var(--ops-num); font-variant-numeric: tabular-nums;
+}
+.optionBody { flex: 1; min-width: 0; }
+.optionTitle { display: block; color: var(--ops-text); font: 600 14px/1.35 var(--ops-body); overflow-wrap: anywhere; }
+.optionSub { display: block; margin-top: 2px; color: var(--ops-muted); font: 12px/1.4 var(--ops-body); }
+.optionWarn { color: var(--ops-text); font-weight: 600; }
+.score { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.scoreTrack { width: 56px; height: 5px; overflow: hidden; border-radius: 5px; background: var(--mc-tint); }
+.scoreBar { display: block; width: var(--mc-score); height: 100%; border-radius: 5px; background: var(--mc-tone); }
+.optionDot { width: 9px; height: 9px; flex-shrink: 0; border-radius: 50%; background: var(--mc-tone); }
+.scoreValue { min-width: 36px; color: var(--mc-tone); text-align: right; font: 600 13px var(--ops-num); font-variant-numeric: tabular-nums; }
+
+.nav { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.ghost {
+  min-height: 36px; padding: 6px 10px; display: inline-flex; align-items: center; gap: 6px;
+  border: 0; border-radius: var(--ops-radius-sm); background: transparent; color: var(--ops-faint);
+  cursor: pointer; font: 12.5px var(--ops-body); transition: background var(--mo-fast), color var(--mo-fast);
+}
+.ghost:hover:not(:disabled) { background: var(--ops-surface-2); color: var(--ops-text); }
+.ghost:disabled { opacity: .45; cursor: default; }
+.ghostMain { color: var(--ops-muted); }
+
+.done { padding: 44px 24px; outline: none; display: grid; gap: 6px; justify-items: center; text-align: center; }
+.doneTitle { color: var(--ops-text); font: 600 18px var(--ops-display); letter-spacing: -.01em; }
+.doneText { color: var(--ops-faint); font: 13px/1.5 var(--ops-body); }
+.footer { padding: 12px 24px; background: var(--ops-surface-2); color: var(--ops-faint); font: 11.5px var(--ops-body); }
+
+.srOnly { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+@media (max-width: 640px) {
+  .head { padding: 18px 18px 14px; }
+  .body { padding: 22px 16px 18px; gap: 18px; }
+  .event { font-size: 19px; }
+  .option { padding: 12px; gap: 10px; }
+  .scoreTrack { display: none; }
+  /* No celular não há teclado: sem as dicas, os três botões cabem numa linha. */
+  .hints, .ghost kbd { display: none; }
+  .nav { gap: 0; }
+  .ghost { padding: 6px 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trackFill { transition: none; }
+}

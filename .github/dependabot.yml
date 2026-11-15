@@ -1,0 +1,24 @@
+version: 2
+updates:
+  # Um PR por semana com todas as atualizações minor/patch; major vem à parte,
+  # porque costuma pedir mudança de código. Cada PR ocupa a CI inteira.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm-minor-patch:
+        update-types: ["minor", "patch"]
+    # O Playwright tem imagem Docker fixada junto
+    # (scripts/run-playwright-canonical.sh): atualize à mão, os dois juntos.
+    ignore:
+      - dependency-name: "@playwright/test"
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]

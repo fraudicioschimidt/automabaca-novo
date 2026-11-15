@@ -1,0 +1,174 @@
+/* Procedência do CLV. Cores chegam por `--co-*` (setadas do tema pelo
+   componente); movimento sai de `--mo-*` (SSOT em globals.css). */
+
+/* Sem `grid-column` aqui: quem posiciona é o chamador. A ficha o coloca numa
+   grade de KPIs e precisa da linha inteira; a linha expandida do histórico não
+   é grade nenhuma. Componente que sabe do layout do pai só serve a um pai. */
+.painel {
+  background: var(--co-surface);
+  border: 1px solid var(--co-border);
+  border-radius: var(--co-radius);
+  box-shadow: var(--co-shadow);
+  padding: 22px 24px;
+  animation: co-abre var(--mo-base) var(--mo-enter);
+}
+@keyframes co-abre {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .painel {
+    animation: none;
+  }
+}
+
+.cabeca {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.titulo {
+  margin: 0;
+  font-family: var(--co-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--co-text);
+}
+.fechar {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--co-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--co-muted);
+  padding: 6px 8px;
+  border-radius: var(--co-radius-sm);
+  transition: background var(--mo-fast), color var(--mo-fast);
+}
+.fechar:hover {
+  background: var(--co-surface-2);
+  color: var(--co-text);
+}
+.fechar:focus-visible {
+  outline: 2px solid var(--co-accent);
+  outline-offset: 2px;
+}
+.sub {
+  font-family: var(--co-body);
+  font-size: 12.5px;
+  color: var(--co-faint);
+  margin-bottom: 18px;
+  max-width: 62ch;
+  line-height: 1.55;
+}
+
+/* A cadeia: cada degrau é uma conta que o operador pode refazer na mão. */
+.cadeia {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+.degrau {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--co-border-soft);
+}
+.degrau:first-child {
+  border-top: none;
+}
+.rotulo {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--co-body);
+  font-size: 13.5px;
+  color: var(--co-muted);
+}
+.rotulo small {
+  display: block;
+  font-size: 11.5px;
+  color: var(--co-faint);
+  margin-top: 1px;
+}
+.valor {
+  font-family: var(--co-num);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--co-text);
+  white-space: nowrap;
+}
+/* O degrau final é o resultado, não mais um insumo. */
+.resultado {
+  border-top: 1px solid var(--co-border);
+  margin-top: 2px;
+  padding-top: 12px;
+}
+.resultado .rotulo {
+  color: var(--co-text);
+  font-weight: 600;
+}
+.resultado .valor {
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.rodape {
+  border-top: 1px solid var(--co-border-soft);
+  padding-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  font-family: var(--co-body);
+  font-size: 11.5px;
+  color: var(--co-faint);
+}
+.rodape b {
+  font-family: var(--co-num);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--co-muted);
+}
+
+/* Ausência tem forma própria: o travessão mudo era o defeito. */
+.ausente {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--co-surface-2);
+  border: 1px solid var(--co-border-soft);
+  border-radius: var(--co-radius-md);
+  padding: 14px 16px;
+}
+.ausenteMarca {
+  width: 3px;
+  align-self: stretch;
+  border-radius: 3px;
+  background: var(--co-faint);
+  flex: 0 0 3px;
+}
+.ausenteTexto {
+  font-family: var(--co-body);
+  font-size: 13.5px;
+  color: var(--co-text);
+  line-height: 1.55;
+}
+.ausenteTexto span {
+  display: block;
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--co-muted);
+}

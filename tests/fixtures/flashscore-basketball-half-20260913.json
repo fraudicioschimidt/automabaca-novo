@@ -1,0 +1,184 @@
+{
+  "source": "flashscore4 /api/flashscore/v2/matches/details",
+  "purpose": "Public match data; two measured responses, not coverage certification",
+  "observations": [
+    {
+      "observedAt": "2026-09-13T04:09:29.826Z",
+      "requestStartedAt": "2026-09-13T04:09:29.599Z",
+      "listed": {
+        "match_id": "Ymx0yb36",
+        "match_status": {
+          "stage": "Finished",
+          "is_cancelled": false,
+          "is_postponed": false,
+          "is_started": true,
+          "is_in_progress": false,
+          "is_finished": true,
+          "is_finished_after_extra_time": false,
+          "is_finished_after_penalties": false
+        },
+        "timestamp": 1789185600,
+        "home_team": {
+          "team_id": "80fyyImF",
+          "name": "Qatar",
+          "short_name": "QAT"
+        },
+        "away_team": {
+          "team_id": "z9o8EGBk",
+          "name": "Jordan",
+          "short_name": "JOR"
+        },
+        "scores": {
+          "home": 65,
+          "away": 76
+        }
+      },
+      "body": {
+        "match_id": "Ymx0yb36",
+        "timestamp": 1789192540,
+        "sport": {
+          "sport_id": 3,
+          "sport_url": "/basketball/",
+          "name": "Basketball"
+        },
+        "match_status": {
+          "stage": "Finished",
+          "is_cancelled": false,
+          "is_postponed": false,
+          "is_started": true,
+          "is_in_progress": false,
+          "is_finished": true,
+          "is_finished_after_extra_time": false,
+          "is_finished_after_penalties": false,
+          "live_time": null,
+          "live_minute": null,
+          "winner": "away",
+          "final_winner": "away"
+        },
+        "scores": {
+          "home": 65,
+          "away": 76,
+          "home_total": 65,
+          "away_total": 76,
+          "home_1st_quarter": 14,
+          "away_1st_quarter": 19,
+          "home_2nd_quarter": 16,
+          "away_2nd_quarter": 23,
+          "home_3rd_quarter": 19,
+          "away_3rd_quarter": 22,
+          "home_4th_quarter": 16,
+          "away_4th_quarter": 12,
+          "home_overtime": null,
+          "away_overtime": null
+        },
+        "home_team": {
+          "team_id": "80fyyImF",
+          "event_participant_id": "AaQpQ1if",
+          "team_url": "/team/qatar/80fyyImF/",
+          "name": "Qatar",
+          "short_name": "QAT",
+          "image_path": "https://static.flashscore.com/res/image/data/Q1mGr3HG-IkyuUDEE.png",
+          "small_image_path": "https://static.flashscore.com/res/image/data/b7oO1c8k-IkyuUDEE.png"
+        },
+        "away_team": {
+          "team_id": "z9o8EGBk",
+          "event_participant_id": "GdThOuM6",
+          "team_url": "/team/jordan/z9o8EGBk/",
+          "name": "Jordan",
+          "short_name": "JOR",
+          "image_path": "https://static.flashscore.com/res/image/data/WOTMeDe5-dtzqTXTK.png",
+          "small_image_path": "https://static.flashscore.com/res/image/data/hEUq3L8k-dtzqTXTK.png"
+        }
+      }
+    },
+    {
+      "observedAt": "2026-09-13T04:09:30.039Z",
+      "requestStartedAt": "2026-09-13T04:09:29.826Z",
+      "listed": {
+        "match_id": "rFZvlymC",
+        "match_status": {
+          "stage": "Finished",
+          "is_cancelled": false,
+          "is_postponed": false,
+          "is_started": true,
+          "is_in_progress": false,
+          "is_finished": true,
+          "is_finished_after_extra_time": false,
+          "is_finished_after_penalties": false
+        },
+        "timestamp": 1789196400,
+        "home_team": {
+          "team_id": "ppOJjETI",
+          "name": "Bahrain",
+          "short_name": "BAH"
+        },
+        "away_team": {
+          "team_id": "hYqiMKl3",
+          "name": "China",
+          "short_name": "CHI"
+        },
+        "scores": {
+          "home": 59,
+          "away": 105
+        }
+      },
+      "body": {
+        "match_id": "rFZvlymC",
+        "timestamp": 1789203007,
+        "sport": {
+          "sport_id": 3,
+          "sport_url": "/basketball/",
+          "name": "Basketball"
+        },
+        "match_status": {
+          "stage": "Finished",
+          "is_cancelled": false,
+          "is_postponed": false,
+          "is_started": true,
+          "is_in_progress": false,
+          "is_finished": true,
+          "is_finished_after_extra_time": false,
+          "is_finished_after_penalties": false,
+          "live_time": null,
+          "live_minute": null,
+          "winner": "away",
+          "final_winner": "away"
+        },
+        "scores": {
+          "home": 59,
+          "away": 105,
+          "home_total": 59,
+          "away_total": 105,
+          "home_1st_quarter": 11,
+          "away_1st_quarter": 32,
+          "home_2nd_quarter": 18,
+          "away_2nd_quarter": 14,
+          "home_3rd_quarter": 13,
+          "away_3rd_quarter": 25,
+          "home_4th_quarter": 17,
+          "away_4th_quarter": 34,
+          "home_overtime": null,
+          "away_overtime": null
+        },
+        "home_team": {
+          "team_id": "ppOJjETI",
+          "event_participant_id": "Uw65kIK5",
+          "team_url": "/team/bahrain/ppOJjETI/",
+          "name": "Bahrain",
+          "short_name": "BAH",
+          "image_path": "https://static.flashscore.com/res/image/data/f7M4M0Ea-IkyuUDEE.png",
+          "small_image_path": "https://static.flashscore.com/res/image/data/tOjzU8Rq-IkyuUDEE.png"
+        },
+        "away_team": {
+          "team_id": "hYqiMKl3",
+          "event_participant_id": "2i4DmdkI",
+          "team_url": "/team/china/hYqiMKl3/",
+          "name": "China",
+          "short_name": "CHI",
+          "image_path": "https://static.flashscore.com/res/image/data/IkaPuewS-IkyuUDEE.png",
+          "small_image_path": "https://static.flashscore.com/res/image/data/tS6tn3jC-IkyuUDEE.png"
+        }
+      }
+    }
+  ]
+}

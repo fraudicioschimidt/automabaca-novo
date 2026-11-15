@@ -1,0 +1,83 @@
+v2.fraudicio.com.br {
+	encode zstd gzip
+	header -Server
+	# HTTPS obrigatório no navegador por 1 ano; o site só responde em HTTPS
+	# (HTTP recebe 308). Sem `preload`: entrar na lista dos navegadores é difícil de desfazer.
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	request_body {
+		max_size 3MB
+	}
+	# Rota do log: o molde da rota do Next (segmento dinâmico vira [slug],
+	# [file]...), uma linha por página, API ou pasta pública. Caminho que não
+	# está aqui vira /other: o log nunca grava o caminho que o cliente mandou.
+	# O archive_sanitize.py confere de novo com a mesma tabela.
+	map {path} {log_route} {
+		/ /
+		/login /login
+		~^/analyzer/?$ /analyzer
+		~^/aposta/?$ /aposta
+		~^/config/?$ /config
+		~^/contas/?$ /contas
+		~^/ferramentas/?$ /ferramentas
+		~^/monitoramento/?$ /monitoramento
+		~^/operacoes/?$ /operacoes
+		~^/tipsters/?$ /tipsters
+		~^/tipsters/[^/]+/analyzer/?$ /tipsters/[slug]/analyzer
+		~^/tipsters/[^/]+/?$ /tipsters/[slug]
+		/api/auth/login /api/auth/login
+		/api/auth/logout /api/auth/logout
+		~^/api/bankrolls/[^/]+/version$ /api/bankrolls/[slug]/version
+		/api/health /api/health
+		/api/health/observability /api/health/observability
+		~^/api/logos/[^/]+$ /api/logos/[file]
+		/api/telegram/webhook /api/telegram/webhook
+		/api/telemetry/browser /api/telemetry/browser
+		/manifest.webmanifest /manifest.webmanifest
+		/robots.txt /robots.txt
+		/icon.svg /icon.svg
+		/favicon.ico /favicon.ico
+		/sw.js /sw.js
+		~^/pwa-icon-[^/]+\.png$ /pwa-icon-[size].png
+		~^/_next/static/ /_next/static/[asset]
+		~^/_next/image$ /_next/image
+		~^/fonts/ /fonts/[font]
+		~^/bookmakers/ /bookmakers/[file]
+		~^/sports-icons/ /sports-icons/[file]
+		default /other
+	}
+	map {method} {log_method} {
+		GET GET
+		POST POST
+		PUT PUT
+		PATCH PATCH
+		DELETE DELETE
+		HEAD HEAD
+		OPTIONS OPTIONS
+		default OTHER
+	}
+	log automabaca_v2 {
+		output stdout
+		format filter {
+			request delete
+			resp_headers delete
+			user_id delete
+			wrap json
+		}
+	}
+	log_append eventCode EDGE_REQUEST_COMPLETED
+	log_append module edge
+	log_append route {log_route}
+	log_append method {log_method}
+	log_append correlationId {http.response.header.X-Correlation-Id}
+	# Separam Server Action, navegação RSC e prefetch do carregamento da página,
+	# que têm a mesma rota. Next-Action é o id (hash) da action, não um segredo;
+	# o Next-Router-State-Tree fica de fora porque carrega os parâmetros da URL.
+	log_append nextAction {http.request.header.Next-Action}
+	log_append rsc {http.request.header.RSC}
+	log_append nextRouterPrefetch {http.request.header.Next-Router-Prefetch}
+	reverse_proxy 127.0.0.1:3101 {
+		transport http {
+			keepalive 3s
+		}
+	}
+}

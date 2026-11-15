@@ -1,0 +1,110 @@
+{
+  "event": {
+    "id": 1634172613,
+    "name": "Union de Santa Fe vs Sarmiento de Junin",
+    "startTime": "2026-08-28T19:00:00-03:00",
+    "status": { "isStarted": false, "isInProgress": false, "isInterrupted": false },
+    "live": null,
+    "score": { "home": 0, "away": 0 },
+    "result": null,
+    "sport": { "id": 29, "name": "Soccer" },
+    "league": { "id": 210697, "name": "Liga Pro", "country": "Argentina" },
+    "homeTeam": { "name": "Union de Santa Fe" },
+    "awayTeam": { "name": "Sarmiento de Junin" },
+    "units": "Regular"
+  },
+  "markets": [
+    {
+      "name": "Money Line – Match",
+      "type": "moneyline",
+      "period": 0,
+      "periodName": "Match",
+      "team": null,
+      "units": "Regular",
+      "special": null,
+      "isLive": false,
+      "line": null,
+      "status": "open",
+      "cutoffAt": "2026-08-28T22:00:00Z",
+      "limits": [{ "amount": 450, "type": "maxRiskStake" }],
+      "outcomes": [
+        { "designation": "home", "name": "Union de Santa Fe", "line": null, "oddsAmerican": -124, "oddsDecimal": 1.806 },
+        { "designation": "draw", "name": "Draw", "line": null, "oddsAmerican": 257, "oddsDecimal": 3.57 },
+        { "designation": "away", "name": "Sarmiento de Junin", "line": null, "oddsAmerican": 356, "oddsDecimal": 4.56 }
+      ]
+    },
+    {
+      "name": "Handicap – Match",
+      "type": "spread",
+      "period": 0,
+      "periodName": "Match",
+      "team": null,
+      "units": "Regular",
+      "special": null,
+      "isLive": false,
+      "line": -0.25,
+      "status": "open",
+      "cutoffAt": "2026-08-28T22:00:00Z",
+      "limits": [{ "amount": 300, "type": "maxRiskStake" }],
+      "outcomes": [
+        { "designation": "home", "name": "Union de Santa Fe", "line": -0.25, "oddsAmerican": -105, "oddsDecimal": 1.952 },
+        { "designation": "away", "name": "Sarmiento de Junin", "line": 0.25, "oddsAmerican": -115, "oddsDecimal": 1.87 }
+      ]
+    },
+    {
+      "name": "Total – Match",
+      "type": "total",
+      "period": 0,
+      "periodName": "Match",
+      "team": null,
+      "units": "Regular",
+      "special": null,
+      "isLive": false,
+      "line": 2.5,
+      "status": "open",
+      "cutoffAt": "2026-08-28T22:00:00Z",
+      "limits": [{ "amount": 400, "type": "maxRiskStake" }],
+      "outcomes": [
+        { "designation": "over", "name": "Over", "line": 2.5, "oddsAmerican": 100, "oddsDecimal": 2.0 },
+        { "designation": "under", "name": "Under", "line": 2.5, "oddsAmerican": -120, "oddsDecimal": 1.833 }
+      ]
+    },
+    {
+      "name": "Team Total – Match",
+      "type": "team_total",
+      "period": 0,
+      "periodName": "Match",
+      "team": "Union de Santa Fe",
+      "units": "Regular",
+      "special": null,
+      "isLive": false,
+      "line": 1.5,
+      "status": "open",
+      "cutoffAt": "2026-08-28T22:00:00Z",
+      "limits": [{ "amount": 180, "type": "maxRiskStake" }],
+      "outcomes": [
+        { "designation": "over", "name": "Over", "line": 1.5, "oddsAmerican": 110, "oddsDecimal": 2.1 },
+        { "designation": "under", "name": "Under", "line": 1.5, "oddsAmerican": -130, "oddsDecimal": 1.769 }
+      ]
+    },
+    {
+      "name": "Money Line – 1st Half",
+      "type": "moneyline",
+      "period": 1,
+      "periodName": "1st Half",
+      "team": null,
+      "units": "Regular",
+      "special": null,
+      "isLive": false,
+      "line": null,
+      "status": "open",
+      "cutoffAt": "2026-08-28T22:00:00Z",
+      "limits": [{ "amount": 100, "type": "maxRiskStake" }],
+      "outcomes": [
+        { "designation": "home", "name": "Union de Santa Fe", "line": null, "oddsAmerican": 145, "oddsDecimal": 2.45 },
+        { "designation": "draw", "name": "Draw", "line": null, "oddsAmerican": 120, "oddsDecimal": 2.2 },
+        { "designation": "away", "name": "Sarmiento de Junin", "line": null, "oddsAmerican": 280, "oddsDecimal": 3.8 }
+      ]
+    }
+  ]
+}

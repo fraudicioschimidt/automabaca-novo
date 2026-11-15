@@ -1,0 +1,6 @@
+/* Respiro lateral das linhas dos cartões da Config: menor no compacto. */
+.card { --config-pad-x: 26px; }
+
+@media (max-width: 1023px) {
+  .card { --config-pad-x: 18px; }
+}

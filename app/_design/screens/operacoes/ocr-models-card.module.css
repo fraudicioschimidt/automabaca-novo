@@ -1,0 +1,28 @@
+.card { background: var(--ops-surface); color: var(--ops-text); border: 1px solid var(--ops-border); border-radius: 16px; padding: 24px; }
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.header h2 { margin: 0 0 8px; font-size: 20px; }
+.header p, .note { color: var(--ops-muted); font-size: 13px; line-height: 1.6; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin: 18px 0; font-size: 13px; }
+.periods { display: flex; gap: 6px; }
+.card button, .card select { font: inherit; color: var(--ops-text); background: var(--ops-surface-2); border: 1px solid var(--ops-border); border-radius: 7px; padding: 9px 12px; cursor: pointer; }
+.card button[aria-pressed="true"] { background: var(--ops-accent-soft); border-color: var(--ops-accent); }
+.card button:focus-visible, .card select:focus-visible, .scroll:focus-visible, .details summary:focus-visible { outline: 2px solid var(--ops-accent); outline-offset: 3px; }
+.scroll { overflow-x: auto; margin: 20px 0; }
+.card table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+.card th, .card td { text-align: left; padding: 13px 12px; border-bottom: 1px solid var(--ops-border); vertical-align: top; }
+.card thead th { color: var(--ops-muted); font-weight: 500; }
+.card tbody th { min-width: 230px; font-weight: 400; }
+.card td { min-width: 85px; }
+.card th span, .card td span { display: block; color: var(--ops-muted); margin-top: 6px; font-size: 11px; line-height: 1.5; }
+.details { border-top: 1px solid var(--ops-border); padding-top: 16px; font-size: 13px; }
+.details summary { cursor: pointer; padding: 6px 0; }
+.details div { padding: 10px 0; border-bottom: 1px solid var(--ops-border); }
+.details p { color: var(--ops-muted); line-height: 1.6; }
+.details h3 { font-size: 13px; }
+.details ul { margin: 8px 0 0; padding-left: 18px; }
+.details li { color: var(--ops-muted); font-size: 12px; line-height: 1.7; font-variant-numeric: tabular-nums; }
+.details li span { display: block; font-size: 11px; }
+.fair { border: 1px solid var(--ops-border); border-radius: 12px; padding: 16px 18px; margin: 18px 0; background: var(--ops-surface-2); }
+.fair h3, .card > h3 { font-size: 15px; margin: 0 0 8px; }
+.buckets { font-size: 13px; margin: 0 0 4px; }
+@media (max-width: 640px) { .card { padding: 16px; } .header { flex-wrap: wrap; } }

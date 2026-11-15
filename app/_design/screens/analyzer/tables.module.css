@@ -1,0 +1,26 @@
+/* Linha de tabela que abre a gaveta com as apostas por trás do número.
+   Vars `--tb-*` vêm de `T` na raiz da tabela e cascateiam. */
+
+.linhaAbre {
+  font: inherit;
+  text-align: inherit;
+  border: none;
+  border-bottom: 1px solid var(--tb-border);
+  background: transparent;
+  width: 100%;
+  cursor: pointer;
+  transition: background var(--tb-fast);
+}
+
+.linhaAbre:hover, .linhaAbre:focus-visible { background: var(--tb-hover); }
+
+/* Afordância: coluna própria de 16px, para não sobrepor o número da última
+   coluna (que é alinhado à direita). */
+.seta {
+  color: var(--tb-faint);
+  text-align: center;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.linhaAbre:hover .seta, .linhaAbre:focus-visible .seta { color: var(--tb-accent); }

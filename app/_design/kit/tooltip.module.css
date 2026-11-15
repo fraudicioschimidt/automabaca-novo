@@ -1,0 +1,104 @@
+/* Tooltip do kit — forma e movimento. As cores chegam por `--tt-*`, setadas
+   pelo componente a partir de `T` (mesmo padrão dos `--ops-*` do Monitoramento).
+   Movimento sai de `--mo-*` (SSOT em globals.css). */
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: help;
+  /* Sublinhado pontilhado: sinaliza "isto tem explicação" sem virar link. */
+  border-bottom: 1px dotted var(--tt-hint);
+  /* O tracejado herda a caixa do filho; sem isto ele encosta no texto. */
+  padding-bottom: 1px;
+}
+
+/**
+ * Modo bloco — para rótulo que JÁ é bloco (o eyebrow de um cartão de KPI).
+ *
+ * `inline-flex` num pai de bloco cria uma linha de texto, e a linha traz o
+ * `line-height` herdado junto: +5px de descida além dos 2px do sublinhado. Num
+ * cartão de KPI isso empurraria a página inteira e reprovaria as baselines
+ * visuais. `flex` é nível de bloco:
+ * não abre linha de texto, e `fit-content` mantém o alvo do tamanho do rótulo
+ * em vez de esticar o sublinhado pela largura do cartão.
+ */
+.triggerBloco {
+  display: flex;
+  width: fit-content;
+}
+.trigger:focus-visible {
+  outline: 2px solid var(--tt-ring);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+/* Dedo não tem hover: no toque o alvo precisa ser tocável de fato. */
+@media (pointer: coarse) {
+  .trigger {
+    min-height: 44px;
+  }
+}
+
+/* Texto só para leitor de tela — existe sempre, então a definição é acessível
+   mesmo sem hover nem foco, que é onde `title=` falhava. */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* `fixed` + portal no body: a ficha e o histórico têm `overflow: hidden`, que
+   recortava qualquer camada posicionada no fluxo. */
+.bolha {
+  position: fixed;
+  z-index: 1200;
+  max-width: 280px;
+  padding: 9px 12px;
+  border-radius: var(--tt-radius);
+  background: var(--tt-bg);
+  color: var(--tt-fg);
+  border: 1px solid var(--tt-border);
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.45);
+  font-family: var(--tt-font);
+  font-size: 12.5px;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(3px);
+  transition:
+    opacity var(--mo-base) var(--mo-enter),
+    transform var(--mo-base) var(--mo-enter);
+}
+.bolhaAberta {
+  opacity: 1;
+  transform: none;
+}
+
+.titulo {
+  display: block;
+  font-weight: 600;
+  color: var(--tt-fg);
+  margin-bottom: 3px;
+}
+.corpo {
+  display: block;
+  color: var(--tt-fg-muted);
+}
+.formula {
+  display: block;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--tt-border);
+  font-family: var(--tt-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  color: var(--tt-fg-muted);
+}

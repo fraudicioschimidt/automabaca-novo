@@ -1,0 +1,14 @@
+/* Régua sob o número: quanto ele mudou contra a janela anterior.
+   Cor por `--dv-cor`, setada pelo componente a partir de `T`. */
+
+.delta {
+  font-size: 11px;
+  margin-top: 6px;
+  font-family: var(--dv-font);
+  color: var(--dv-cor);
+}
+
+/* Só a linha com número precisa de tabular: as de recusa são texto. */
+.deltaNumero {
+  font-variant-numeric: tabular-nums;
+}

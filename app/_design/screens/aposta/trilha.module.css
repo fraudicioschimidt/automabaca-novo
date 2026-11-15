@@ -1,0 +1,145 @@
+/* Histórico da aposta. Cores chegam por `--tr-*` (setadas do tema pelo
+   componente), como em `clv-origem.module.css`. */
+
+.trilha {
+  display: block;
+}
+
+.titulo {
+  margin: 0 0 4px;
+  font-family: var(--tr-font-display);
+  font-size: var(--tr-display-size);
+  font-weight: var(--tr-display-weight);
+  color: var(--tr-text);
+  letter-spacing: -0.01em;
+}
+
+.sub {
+  margin: 0 0 18px;
+  font-family: var(--tr-font-body);
+  font-size: 12.5px;
+  color: var(--tr-faint);
+}
+
+.dia + .dia {
+  margin-top: 18px;
+}
+
+/* Cabeçalho de dia — a Vercel agrupa por mês; uma aposta vive dias. */
+.diaRotulo {
+  font-family: var(--tr-font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tr-faint);
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--tr-border-soft);
+}
+
+.lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linha {
+  display: grid;
+  /* Coluna fixa para a hora: com os horários alinhados, a coluna vira régua e
+     a frase começa sempre no mesmo x — que é o que torna a pilha escaneável. */
+  grid-template-columns: 46px 1fr;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.linha + .linha {
+  border-top: 1px solid var(--tr-border-soft);
+}
+
+.hora {
+  font-size: 12.5px;
+  color: var(--tr-faint);
+  line-height: 1.5;
+  padding-top: 1px;
+}
+
+.corpo {
+  min-width: 0;
+}
+
+.frase {
+  margin: 0;
+  font-family: var(--tr-font-body);
+  font-size: 13.5px;
+  line-height: 1.5;
+  /* O conectivo é MUTED e o negrito é TEXT: o contraste entre os dois é o que
+     faz o olho pousar na parte variável. Igualar os dois mata a técnica. */
+  color: var(--tr-muted);
+  overflow-wrap: anywhere;
+}
+
+.forte {
+  font-weight: 600;
+  color: var(--tr-text);
+}
+
+.falhou {
+  color: var(--tr-neg);
+  font-weight: 600;
+}
+
+.mudancas {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+
+.mudanca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--tr-font-body);
+  font-size: 12.5px;
+  background: var(--tr-surface-2);
+  border-radius: var(--tr-radius-sm);
+  padding: 5px 9px;
+}
+
+.campo {
+  color: var(--tr-faint);
+  min-width: 78px;
+}
+
+.de {
+  color: var(--tr-muted);
+  text-decoration: line-through;
+  overflow-wrap: anywhere;
+}
+
+.seta {
+  color: var(--tr-faint);
+}
+
+.para {
+  color: var(--tr-text);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.vazio,
+.horizonte {
+  margin: 0;
+  font-family: var(--tr-font-body);
+  font-size: 12.5px;
+  color: var(--tr-faint);
+  line-height: 1.5;
+}
+
+.horizonte {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--tr-border-soft);
+}

@@ -1,0 +1,112 @@
+{
+  "writes": {
+    "title": "Escritas fora do fluxo automático",
+    "actionType": "incident.review",
+    "description": "🧾 Mudanças feitas fora do fluxo normal (24h até 2026-09-25)\n0 sem autor identificado, 1 feitas por agente a seu pedido.\n🤝 agent:claude:por:fabricio: 10 (pgboss_queue.delete, ops.apagar_apostas, operational_action.auto_resolved)\n👉 Confira se cada uma foi pedida por você e está correta.",
+    "evidence": {
+      "dia": "2026-09-25",
+      "message": "🧾 Mudanças feitas fora do fluxo normal (24h até 2026-09-25)\n0 sem autor identificado, 1 feitas por agente a seu pedido.\n🤝 agent:claude:por:fabricio: 10 (pgboss_queue.delete, ops.apagar_apostas, operational_action.auto_resolved)\n👉 Confira se cada uma foi pedida por você e está correta.",
+      "escritas": [
+        {
+          "quem": "agent:claude:por:fabricio",
+          "acoes": [
+            "pgboss_queue.delete",
+            "ops.apagar_apostas",
+            "operational_action.auto_resolved"
+          ],
+          "origem": "delegated",
+          "eventos": 10
+        }
+      ],
+      "autoResolve": false
+    }
+  },
+  "writesLegacyNewlines": {
+    "title": "Escritas fora do fluxo automático",
+    "actionType": "incident.review",
+    "description": "🧾 Mudanças feitas fora do fluxo normal (24h até 2026-09-24)\\n0 sem autor identificado, 1 feitas por agente a seu pedido.\\n🤝 agent:claude:por:fabricio: 106 (bet_result.copy_from_closing, market.create, ops.apagar_apostas, bet_sharp.reopen_providerless_identity)\\n👉 Confira se cada uma foi pedida por você e está correta.",
+    "evidence": {
+      "dia": "2026-09-24",
+      "message": "🧾 Mudanças feitas fora do fluxo normal (24h até 2026-09-24)\\n0 sem autor identificado, 1 feitas por agente a seu pedido.\\n🤝 agent:claude:por:fabricio: 106 (bet_result.copy_from_closing, market.create, ops.apagar_apostas, bet_sharp.reopen_providerless_identity)\\n👉 Confira se cada uma foi pedida por você e está correta.",
+      "escritas": [
+        {
+          "quem": "agent:claude:por:fabricio",
+          "acoes": [
+            "bet_result.copy_from_closing",
+            "market.create",
+            "ops.apagar_apostas",
+            "bet_sharp.reopen_providerless_identity",
+            "market_alias.create",
+            "operational_action.auto_resolved",
+            "team_provider_alias.revoke"
+          ],
+          "origem": "delegated",
+          "eventos": 106
+        }
+      ],
+      "autoResolve": false
+    }
+  },
+  "refusals": {
+    "title": "Jorge Neves: recusas repetidas (Total sem dizer a unidade (gols, escanteios ou cartões))",
+    "actionType": "incident.review",
+    "description": "🔁 Recusas repetidas · Jorge Neves\n4 posts recusados em 24 h pelo mesmo motivo: Total sem dizer a unidade (gols, escanteios ou cartões).\n👉 Se o canal não é de futebol, defina os esportes dele em Config › Bancas; se é, só o post dizendo a unidade do total resolve.\nEnquanto isso, as próximas recusas deste motivo ficam só na caixa de ações, cada post com a sua pendência.\nÚltimo post: https://t.me/c/4496161582/411",
+    "evidence": {
+      "posts": 4,
+      "reason": "mercado_total_ambiguo",
+      "message": "🔁 Recusas repetidas · Jorge Neves\n4 posts recusados em 24 h pelo mesmo motivo: Total sem dizer a unidade (gols, escanteios ou cartões).\n👉 Se o canal não é de futebol, defina os esportes dele em Config › Bancas; se é, só o post dizendo a unidade do total resolve.\nEnquanto isso, as próximas recusas deste motivo ficam só na caixa de ações, cada post com a sua pendência.\nÚltimo post: https://t.me/c/4496161582/411",
+      "lastMessageId": 411
+    }
+  },
+  "ticket": {
+    "title": "Target: conferir bilhete da mensagem 633",
+    "actionType": "capture_review",
+    "description": "A extração não preservou todos os confrontos, seleções ou evidências da mensagem. Confira a fonte original.",
+    "evidence": {
+      "link": "https://t.me/c/4403068924/633",
+      "reason": "incomplete_fixture",
+      "caption": "Tipster: Target\\nData: 24/09/2026\\nJogo: TRIPLA\\nEntrada: Anadolu and Olympiacos and Maccabi ML\\nODD: 4.33\\nMínima: 3.5\\nStake: 0.5u",
+      "editDate": null,
+      "postDate": "2026-09-23T23:40:17.000Z",
+      "extraction": {
+        "odds": 4.33,
+        "stake": 0.5,
+        "mercado": "Múltipla",
+        "selecao": "Anadolu, Olympiacos, Maccabi",
+        "evento": "Anadolu",
+        "dataTexto": "24/09/2026",
+        "ticketType": "accumulator",
+        "items": [
+          {
+            "evento": "Anadolu",
+            "mercado": "Money Line – Match",
+            "selecao": "Anadolu",
+            "dataTexto": "24/09/2026"
+          },
+          {
+            "evento": "Olympiacos",
+            "mercado": "Money Line – Match",
+            "selecao": "Olympiacos",
+            "dataTexto": "24/09/2026"
+          },
+          {
+            "evento": "Maccabi",
+            "mercado": "Money Line – Match",
+            "selecao": "Maccabi",
+            "dataTexto": "24/09/2026"
+          }
+        ],
+        "ocrEvidence": {
+          "readers": [
+            {
+              "model": "gemini-3.5-flash",
+              "contractVersion": "bet-extraction-v4"
+            }
+          ]
+        }
+      },
+      "autoResolve": false,
+      "mediaFileId": null
+    }
+  }
+}

@@ -1,0 +1,1103 @@
+@layer base, components;
+
+/* ---------- tokens de movimento (SSOT) ----------
+   Duração e easing saem daqui, como todo valor visual sai do tema: nada de
+   duração ou curva cravada em componente.
+
+   Ficam em variável CSS, e não em objeto JS, porque só assim UM valor serve os
+   três consumidores: `globals.css`, os CSS Modules das telas e o `style={{}}`
+   inline (via `T.motion.*`, que aponta para cá — ver app/_design/theme.ts).
+
+   O bloco `prefers-reduced-motion` abaixo zera a duração na raiz e desliga
+   TODA transição do app de uma vez, inclusive a inline. */
+:root {
+  --mo-fast: 140ms; /* hover, chip, botão, troca de cor */
+  --mo-base: 200ms; /* popover, tooltip, aba, expandir linha */
+  --mo-slow: 320ms; /* drawer, modal, sanfona */
+  --mo-page: 520ms; /* entrada de página (panel-rise) */
+  --mo-stagger: 60ms; /* passo entre painéis na entrada */
+  --mo-spin: 1s; /* giro de carregamento */
+  --mo-brilho: 1400ms; /* varredura do esqueleto de carregamento */
+  --mo-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --mo-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --mo-exit: cubic-bezier(0.4, 0, 1, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --mo-fast: 0.01ms;
+    --mo-base: 0.01ms;
+    --mo-slow: 0.01ms;
+    --mo-page: 0.01ms;
+    --mo-stagger: 0.01ms;
+  }
+}
+
+/* ---------- reset base (preflight) ----------
+   Cópia fiel do preflight do Tailwind v4.3.2 (MIT); o Tailwind não é
+   dependência do projeto. NÃO é enfeite: os modais do app fora das telas
+   verbatim dependem do `font: inherit` nos controles de formulário, e um reset
+   "mínimo" escrito à mão muda alturas e reprova as baselines visuais.
+   As únicas edições são as funções `--theme(...)`, trocadas pelos próprios
+   fallbacks porque elas eram sintaxe do compilador Tailwind. O bloco
+   `.design-reset` no fim do arquivo continua desfazendo, e só dentro das telas
+   do design, as duas regras que o protótipo não tinha.
+
+   A CAMADA É PARTE DO RESET, não enfeite: em CSS, regra fora de `@layer`
+   vence regra dentro de `@layer`, seja qual for a especificidade. O Tailwind
+   declarava `@layer theme, base, components, utilities` e punha o preflight
+   em `base`, abaixo dos nossos `.btn`/`.input` em `components`. Vendorizado
+   solto, o preflight passou a GANHAR deles — o botão do login perdeu o fundo
+   dourado e o campo de senha perdeu a borda. */
+@layer base {
+  /*
+    1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+    2. Remove default margins and padding
+    3. Reset all borders.
+  */
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    box-sizing: border-box; /* 1 */
+    margin: 0; /* 2 */
+    padding: 0; /* 2 */
+    border: 0 solid; /* 3 */
+  }
+
+  /*
+    1. Use a consistent sensible line-height in all browsers.
+    2. Prevent adjustments of font size after orientation changes in iOS.
+    3. Use a more readable tab size.
+    4. Use the user's configured `sans` font-family by default.
+    5. Use the user's configured `sans` font-feature-settings by default.
+    6. Use the user's configured `sans` font-variation-settings by default.
+    7. Disable tap highlights on iOS.
+  */
+
+  html,
+  :host {
+    line-height: 1.5; /* 1 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+    tab-size: 4; /* 3 */
+    font-family:
+      ui-sans-serif,
+      system-ui,
+      sans-serif,
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol",
+      "Noto Color Emoji"; /* 4 */
+    font-feature-settings: normal; /* 5 */
+    font-variation-settings: normal; /* 6 */
+    -webkit-tap-highlight-color: transparent; /* 7 */
+  }
+
+  /*
+    1. Add the correct height in Firefox.
+    2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+    3. Reset the default border style to a 1px solid border.
+  */
+
+  hr {
+    height: 0; /* 1 */
+    color: inherit; /* 2 */
+    border-top-width: 1px; /* 3 */
+  }
+
+  /*
+    Add the correct text decoration in Chrome, Edge, and Safari.
+  */
+
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+
+  /*
+    Remove the default font size and weight for headings.
+  */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  /*
+    Reset links to optimize for opt-in styling instead of opt-out.
+  */
+
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+
+  /*
+    Add the correct font weight in Edge and Safari.
+  */
+
+  b,
+  strong {
+    font-weight: bolder;
+  }
+
+  /*
+    1. Use the user's configured `mono` font-family by default.
+    2. Use the user's configured `mono` font-feature-settings by default.
+    3. Use the user's configured `mono` font-variation-settings by default.
+    4. Correct the odd `em` font sizing in all browsers.
+  */
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family:
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace; /* 1 */
+    font-feature-settings: normal; /* 2 */
+    font-variation-settings: normal; /* 3 */
+    font-size: 1em; /* 4 */
+  }
+
+  /*
+    Add the correct font size in all browsers.
+  */
+
+  small {
+    font-size: 80%;
+  }
+
+  /*
+    Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+  */
+
+  sub,
+  sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+
+  sub {
+    bottom: -0.25em;
+  }
+
+  sup {
+    top: -0.5em;
+  }
+
+  /*
+    1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+    2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+    3. Remove gaps between table borders by default.
+  */
+
+  table {
+    text-indent: 0; /* 1 */
+    border-color: inherit; /* 2 */
+    border-collapse: collapse; /* 3 */
+  }
+
+  /*
+    Use the modern Firefox focus style for all focusable elements.
+  */
+
+  :-moz-focusring {
+    outline: auto;
+  }
+
+  /*
+    Add the correct vertical alignment in Chrome and Firefox.
+  */
+
+  progress {
+    vertical-align: baseline;
+  }
+
+  /*
+    Add the correct display in Chrome and Safari.
+  */
+
+  summary {
+    display: list-item;
+  }
+
+  /*
+    Make lists unstyled by default.
+  */
+
+  ol,
+  ul,
+  menu {
+    list-style: none;
+  }
+
+  /*
+    1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+    2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+        This can trigger a poorly considered lint error in some tools but is included by design.
+  */
+
+  img,
+  svg,
+  video,
+  canvas,
+  audio,
+  iframe,
+  embed,
+  object {
+    display: block; /* 1 */
+    vertical-align: middle; /* 2 */
+  }
+
+  /*
+    Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+  */
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /*
+    1. Inherit font styles in all browsers.
+    2. Remove border radius in all browsers.
+    3. Remove background color in all browsers.
+    4. Ensure consistent opacity for disabled states in all browsers.
+  */
+
+  button,
+  input,
+  select,
+  optgroup,
+  textarea,
+  ::file-selector-button {
+    font: inherit; /* 1 */
+    font-feature-settings: inherit; /* 1 */
+    font-variation-settings: inherit; /* 1 */
+    letter-spacing: inherit; /* 1 */
+    color: inherit; /* 1 */
+    border-radius: 0; /* 2 */
+    background-color: transparent; /* 3 */
+    opacity: 1; /* 4 */
+  }
+
+  /*
+    Restore default font weight.
+  */
+
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+
+  /*
+    Restore indentation.
+  */
+
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+
+  /*
+    Restore space after button.
+  */
+
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+
+  /*
+    Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+  */
+
+  ::placeholder {
+    opacity: 1;
+  }
+
+  /*
+    Set the default placeholder color to a semi-transparent version of the current text color in browsers that do not
+    crash when using `color-mix(…)` with `currentcolor`. (https://github.com/tailwindlabs/tailwindcss/issues/17194)
+  */
+
+  @supports (not (-webkit-appearance: -apple-pay-button)) /* Not Safari */ or
+    (contain-intrinsic-size: 1px) /* Safari 17+ */ {
+    ::placeholder {
+      color: color-mix(in oklab, currentcolor 50%, transparent);
+    }
+  }
+
+  /*
+    Prevent resizing textareas horizontally by default.
+  */
+
+  textarea {
+    resize: vertical;
+  }
+
+  /*
+    Remove the inner padding in Chrome and Safari on macOS.
+  */
+
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+
+  /*
+    1. Ensure date/time inputs have the same height when empty in iOS Safari.
+    2. Ensure text alignment can be changed on date/time inputs in iOS Safari.
+  */
+
+  ::-webkit-date-and-time-value {
+    min-height: 1lh; /* 1 */
+    text-align: inherit; /* 2 */
+  }
+
+  /*
+    Prevent height from changing on date/time inputs in macOS Safari when the input is set to `display: block`.
+  */
+
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+
+  /*
+    Remove excess padding from pseudo-elements in date/time inputs to ensure consistent height across browsers.
+  */
+
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+
+  ::-webkit-datetime-edit,
+  ::-webkit-datetime-edit-year-field,
+  ::-webkit-datetime-edit-month-field,
+  ::-webkit-datetime-edit-day-field,
+  ::-webkit-datetime-edit-hour-field,
+  ::-webkit-datetime-edit-minute-field,
+  ::-webkit-datetime-edit-second-field,
+  ::-webkit-datetime-edit-millisecond-field,
+  ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+
+  /*
+    Center dropdown marker shown on inputs with paired `<datalist>`s in Chrome. (https://github.com/tailwindlabs/tailwindcss/issues/18499)
+  */
+
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
+
+  /*
+    Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+  */
+
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+
+  /*
+    Correct the inability to style the border radius in iOS Safari.
+  */
+
+  button,
+  input:where([type='button'], [type='reset'], [type='submit']),
+  ::file-selector-button {
+    appearance: button;
+  }
+
+  /*
+    Correct the cursor style of increment and decrement buttons in Safari.
+  */
+
+  ::-webkit-inner-spin-button,
+  ::-webkit-outer-spin-button {
+    height: auto;
+  }
+
+  /*
+    Make elements with the HTML hidden attribute stay hidden by default.
+  */
+
+  [hidden]:where(:not([hidden='until-found'])) {
+    display: none !important;
+  }
+}
+
+/**
+ * Design system AutomaBACA — Refino (docs/DESIGN.md).
+ * Apple/Stripe light-first: papel quente (--canvas), superfícies brancas,
+ * hairlines discretas, sombras suaves em camadas (sem vidro, sem grão),
+ * família única Geist e muito respiro. O produto é um instrumento financeiro:
+ * o dinheiro fala mais alto em cor (verde/vermelho).
+ *
+ * Cor: tokens sem sufixo são acessíveis para texto e controles; os tokens
+ * *-display recuperam a vivacidade original apenas na marca, KPIs e gráficos.
+ */
+
+.design-overlay-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 310;
+  display: grid;
+  place-items: center;
+  color: var(--ink-3);
+  background: rgb(20 17 12 / 0.42);
+  backdrop-filter: blur(5px);
+  font: 600 13px var(--font-sans);
+}
+
+.design-section-loading {
+  min-height: 278px;
+  margin-bottom: 24px;
+  display: grid;
+  place-items: center;
+  color: var(--ink-3);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  font: 600 13px var(--font-sans);
+}
+
+.design-section-loading--history {
+  min-height: 340px;
+  margin-bottom: 0;
+}
+
+/* ============ REFINO ============
+   Apple light-first: branco sobre papel quente, dourado-champanhe como
+   acento da casa, números em Geist Mono.
+   Cor: VERDE/VERMELHO = dinheiro · DOURADO = marca/interação · AZUL =
+   comparação. As variantes display são exclusivas de marca e dados grandes. */
+:root {
+  /* Famílias: referenciadas por `body`, `.eyebrow`, `.num` e pelo preflight —
+     sem esta declaração o painel inteiro cai para a fonte genérica e TODA a
+     métrica de texto muda (e os baselines visuais reprovam). */
+  --font-sans: "Geist", -apple-system, system-ui, sans-serif;
+  --font-display: "Geist", -apple-system, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+:root,
+[data-theme="light"] {
+  --canvas: #f6f5f2; /* papel quente */
+  --surface: #ffffff;
+  --surface-solid: #ffffff; /* contexto opaco (sticky, menus) */
+  --surface-2: #faf9f6;
+  --surface-3: #f2f0ec;
+  --sidebar: #ffffff;
+  --line: rgba(20, 18, 14, 0.09);
+  --line-2: rgba(20, 18, 14, 0.14);
+  --line-soft: rgba(20, 18, 14, 0.055); /* divisor de linhas — quase ar */
+  --rule: #785822; /* dourado profundo — AA em texto sobre papel */
+  --lux: #785822;
+  --lux-dim: rgba(120, 88, 34, 0.12);
+  --ink: #1b1a17;
+  --ink-2: #595853;
+  --ink-3: #686763;
+  --accent: #785822; /* dourado — marca e interação, contraste WCAG AA */
+  --brand-accent: #a9803c; /* dourado original — marca e grandes destaques */
+  --accent-2: #694a19;
+  --accent-dim: rgba(120, 88, 34, 0.12);
+  --on-accent: #ffffff;
+  --gain: #11734e;
+  --gain-display: #1f9d6b;
+  --gain-dim: rgba(17, 115, 78, 0.1);
+  --loss: #a23f2b;
+  --loss-display: #d4654a;
+  --loss-dim: rgba(162, 63, 43, 0.1);
+  --pend: #656256;
+  --shadow:
+    0 1px 2px rgba(20, 18, 14, 0.04),
+    0 22px 50px -34px rgba(20, 18, 14, 0.22);
+}
+[data-theme="dark"] {
+  --canvas: #0f0f11;
+  --surface: #17171a;
+  --surface-solid: #17171a;
+  --surface-2: #1e1e22;
+  --surface-3: #26262b;
+  --sidebar: #0b0b0d;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-2: rgba(255, 255, 255, 0.14);
+  --line-soft: rgba(255, 255, 255, 0.05);
+  --rule: #d7ab63;
+  --lux: #d7ab63;
+  --lux-dim: rgba(215, 171, 99, 0.14);
+  --ink: #f4f3f1;
+  --ink-2: #b8b7b2;
+  --ink-3: #a4a39f;
+  --accent: #d7ab63;
+  --brand-accent: #d7ab63;
+  --accent-2: #e0ba78;
+  --accent-dim: rgba(215, 171, 99, 0.14);
+  --on-accent: #1a1408;
+  --gain: #5ed1a0;
+  --gain-display: #5ed1a0;
+  --gain-dim: rgba(94, 209, 160, 0.13);
+  --loss: #f08a76;
+  --loss-display: #f08a76;
+  --loss-dim: rgba(240, 138, 118, 0.13);
+  --pend: #8e8d86;
+  --shadow:
+    0 1px 0 rgba(255, 255, 255, 0.02),
+    0 20px 50px -30px rgba(0, 0, 0, 0.7);
+}
+
+html {
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Papel quente, plano: sem gradiente de atmosfera, sem grão — a luz vem do
+   branco das superfícies e das sombras suaves. */
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+}
+
+/* Chrome estrutural do painel. Estas regras precisam viver no CSS versionado,
+   não em <style> criado pelo client: se uma aba atravessar um deploy/CSP, o
+   header compacto nunca pode aparecer junto da sidebar nem cobrir o conteúdo.
+   Breakpoint sincronizado com app/_design/layout.ts (1024px). */
+.app-shell {
+  min-width: 0;
+}
+.app-main {
+  box-sizing: border-box;
+}
+/* Respiro dos cartões e das linhas da banca. No :root, e não na tela, porque as
+   gavetas da banca são portal no <body>. */
+:root {
+  --bk-pad: 28px;
+  --bk-row-py: 20px;
+}
+.app-scroll-region {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+.app-sidebar-desktop {
+  display: flex;
+}
+.app-mobile-header,
+.app-mobile-layer {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  :root {
+    --bk-pad: 18px;
+    --bk-row-py: 14px;
+  }
+  .app-shell {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 100dvh !important;
+  }
+  .app-main {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 84px 16px 28px !important;
+  }
+  .app-sidebar-desktop {
+    display: none !important;
+  }
+  .app-mobile-header {
+    display: flex !important;
+  }
+  .app-mobile-layer {
+    display: block;
+  }
+  .app-shell button,
+  .app-shell input:not([type="hidden"]),
+  .app-shell select,
+  .app-shell textarea {
+    min-height: 44px;
+  }
+  .app-shell button[aria-label] {
+    min-width: 44px;
+  }
+}
+
+@media (max-width: 420px) {
+  .app-main {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}
+
+/* ---------- utilitários de tipo ---------- */
+/* Label de dado/seção: Geist micro-caps (Refino usa a família do corpo). */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+/* Número/dado: Geist Mono tabular. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
+}
+/* Entrada de página: revelação orquestrada — os blocos sobem em cascata
+   curta (um momento bem coreografado > microefeitos espalhados). */
+.page-fade {
+  animation: page-fadein var(--mo-base) ease;
+}
+.page-fade > * > * {
+  opacity: 0;
+  animation: panel-rise var(--mo-page) var(--mo-enter) forwards;
+}
+/* A cascata sai de UM passo (`--mo-stagger`), não de seis números digitados. */
+.page-fade > * > *:nth-child(1) { animation-delay: 0ms; }
+.page-fade > * > *:nth-child(2) { animation-delay: var(--mo-stagger); }
+.page-fade > * > *:nth-child(3) { animation-delay: calc(var(--mo-stagger) * 2); }
+.page-fade > * > *:nth-child(4) { animation-delay: calc(var(--mo-stagger) * 3); }
+.page-fade > * > *:nth-child(5) { animation-delay: calc(var(--mo-stagger) * 4); }
+.page-fade > * > *:nth-child(n + 6) { animation-delay: calc(var(--mo-stagger) * 5); }
+@keyframes panel-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes page-fadein {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-fade,
+  .page-fade > * > * {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Batimento do motor no Dashboard: um trecho claro percorre o traço do ECG. */
+.batimento-vivo {
+  stroke-dasharray: 20 60;
+  animation: batimento 1.6s linear infinite;
+}
+@keyframes batimento {
+  from { stroke-dashoffset: 80; }
+  to { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .batimento-vivo {
+    animation: none;
+    stroke-dasharray: none;
+  }
+}
+
+/* O sol ou a lua da saudação do Dashboard: entram com um pulinho e depois só respiram. */
+.sky-pop { animation: sky-pop .75s cubic-bezier(.34, 1.56, .64, 1) both; }
+@keyframes sky-pop {
+  from { transform: scale(.35) rotate(-14deg); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.sky-spin { transform-origin: 32px 32px; animation: sky-spin 50s linear infinite; }
+@keyframes sky-spin { to { transform: rotate(360deg); } }
+.sky-drift { animation: sky-drift 5s ease-in-out infinite alternate; }
+@keyframes sky-drift {
+  from { transform: translateX(-1.3px); }
+  to { transform: translateX(1.5px); }
+}
+.sky-rise { animation: sky-rise 1.7s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes sky-rise { from { transform: translateY(11px); } }
+.sky-sink { animation: sky-sink 1.7s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes sky-sink { from { transform: translateY(-7px); } }
+.sky-breathe { animation: sky-breathe 5s ease-in-out infinite; }
+@keyframes sky-breathe {
+  0%, 100% { opacity: .78; }
+  50% { opacity: 1; }
+}
+.sky-twinkle { transform-box: fill-box; transform-origin: center; animation: sky-twinkle 2.8s ease-in-out infinite; }
+.sky-twinkle-2 { animation-delay: .9s; }
+.sky-twinkle-3 { animation-delay: 1.8s; }
+@keyframes sky-twinkle {
+  0%, 100% { transform: scale(.55); opacity: .55; }
+  50% { transform: scale(1); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sky-pop, .sky-spin, .sky-drift, .sky-rise, .sky-sink, .sky-breathe, .sky-twinkle { animation: none; }
+}
+
+@layer components {
+  /* Botão secundário: contorno hairline sobre papel branco. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line-2);
+    color: var(--ink-2);
+    font-weight: 600;
+    font-size: 13px;
+    background: var(--surface);
+    cursor: pointer;
+    transition:
+      border-color var(--mo-fast),
+      color var(--mo-fast),
+      background var(--mo-fast);
+  }
+  .btn:hover {
+    color: var(--ink);
+    border-color: var(--ink-3);
+    background: var(--surface-2);
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+  .btn-danger:hover {
+    color: var(--loss);
+    border-color: var(--loss);
+    background: var(--loss-dim);
+  }
+  .btn-primary {
+    /* CTA Refino: dourado sólido, texto claro, sombra dourada suave. */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 14px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    background: var(--accent);
+    color: var(--on-accent);
+    box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--accent) 55%, transparent);
+    transition:
+      filter var(--mo-fast),
+      box-shadow var(--mo-fast),
+      background var(--mo-fast);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.04);
+    box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--accent) 65%, transparent);
+  }
+
+  /* Campo de formulário: papel branco com contorno de tinta. */
+  .input {
+    border-radius: 12px;
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+    padding: 10px 13px;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition:
+      border-color var(--mo-fast),
+      box-shadow var(--mo-fast);
+  }
+  .input::placeholder {
+    color: var(--ink-3);
+  }
+  .input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+  .input:focus-visible {
+    outline: none;
+  }
+
+  /* Painel flutuante (dropdowns/popovers): superfície opaca, sombra suave. */
+  .menu {
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--surface-solid);
+    box-shadow:
+      0 1px 2px rgba(20, 18, 14, 0.05),
+      0 20px 48px -18px rgba(20, 18, 14, 0.32);
+  }
+
+  /* Prancha padrão (mesma receita do componente Card). */
+  .card {
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  /* Controle segmentado: trilho de papel, ativo vira prancha branca. */
+  .seg {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    border-radius: 12px;
+    background: var(--surface-2);
+    padding: 3px;
+  }
+  .seg-item {
+    border-radius: 9px;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    white-space: nowrap;
+    transition:
+      color var(--mo-fast),
+      background-color var(--mo-fast);
+  }
+  .seg-item:hover {
+    color: var(--ink);
+  }
+  .seg-item[data-on="true"] {
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow:
+      0 1px 2px rgba(20, 18, 14, 0.06),
+      inset 0 0 0 1px var(--line);
+  }
+
+  /* ---------- filtros: abas de texto ---------- */
+  .ftabs {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: wrap;
+  }
+  .ftab {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--ink-3);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    transition:
+      color var(--mo-fast),
+      background var(--mo-fast);
+  }
+  .ftab:hover {
+    color: var(--ink-2);
+    background: var(--surface-2);
+  }
+  .ftab[data-on="true"] {
+    color: var(--accent);
+    background: var(--accent-dim);
+    font-weight: 600;
+  }
+  .ftab .count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .ftab-sep {
+    width: 1px;
+    height: 14px;
+    background: var(--line-2);
+    margin: 0 6px;
+    align-self: center;
+  }
+
+  /* ---------- cabeçalho de colunas do histórico ---------- */
+  .cols {
+    display: grid;
+    gap: 14px;
+    align-items: center;
+    grid-template-columns: minmax(300px, 1.7fr) 94px 74px 74px 70px 84px 56px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    background: color-mix(in srgb, var(--surface-solid) 94%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 2;
+  }
+  .cols span {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- agrupamento do histórico ---------- */
+  .group {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 26px 24px 6px;
+  }
+  .group.sub {
+    align-items: center;
+    min-height: 30px;
+    padding: 14px 24px 5px;
+  }
+  .group-label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .group.sub .group-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    color: var(--ink);
+  }
+  .group-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .leader {
+    flex: 1;
+    border-bottom: 1px solid var(--line-soft);
+    transform: translateY(-3px);
+  }
+  .group-total {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- responsivo ---------- */
+  @media (max-width: 1180px) {
+    .cols {
+      display: none;
+    }
+    .group.sub {
+      padding-left: 24px;
+    }
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Detalhes de sistema. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-2) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::selection {
+  background: var(--accent-dim);
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+/* Campos de texto: o anel do .input:focus já sinaliza (fora do @layer p/ vencer). */
+.input:focus-visible {
+  outline: none;
+}
+
+/* Transições globais: `--mo-fast`, só nas propriedades baratas. */
+* {
+  transition:
+    background-color var(--mo-fast),
+    color var(--mo-fast),
+    border-color var(--mo-fast),
+    opacity var(--mo-fast);
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none;
+  }
+}
+
+/* ===== Telas do design (app/_design via DesignScreen) =====
+   Renderizam dentro de .design-reset. O mockup roda SEM Tailwind/preflight; aqui
+   o preflight reseta coisas que o mockup não tem (svg display:block, font:inherit
+   em form controls), o que desloca o layout. Neutralizamos SÓ dentro de
+   .design-reset p/ bater pixel-a-pixel com o render do próprio design — sem mexer
+   nas telas portadas (verbatim) nem no chrome real do app. */
+.design-reset svg {
+  display: inline;
+  vertical-align: baseline;
+}
+.design-reset button,
+.design-reset input,
+.design-reset select,
+.design-reset optgroup,
+.design-reset textarea {
+  /* Reverte o `font:inherit` do preflight nos form controls — MAS sem mexer no
+     line-height (o `font:revert` shorthand estragava a altura dos botões que
+     definem família/tamanho inline, ex. "Ignorar" no Operações). Line-height
+     fica herdado = normal, igual ao render do próprio design. */
+  font-size: revert;
+  font-family: revert;
+  font-weight: revert;
+  font-style: revert;
+  font-feature-settings: revert;
+  letter-spacing: revert;
+}

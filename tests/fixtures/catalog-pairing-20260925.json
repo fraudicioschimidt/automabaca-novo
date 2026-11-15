@@ -1,0 +1,691 @@
+{
+ "source": "sonda de 25/09/2026: Pinnacle17 /sport/matches (futebol, dia UTC) e FlashScore /matches/list-by-date (futebol, dia de São Paulo), só os jogos dos testes",
+ "pinnacle17": [
+  {
+   "id": 1637221049,
+   "name": "Italy vs England",
+   "startTime": "2026-09-25T09:30:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 2113,
+    "name": "Friendlies U20",
+    "country": "World"
+   },
+   "homeTeam": {
+    "name": "Italy"
+   },
+   "awayTeam": {
+    "name": "England"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1637183923,
+   "name": "Tanzania vs Guinea-Bissau",
+   "startTime": "2026-09-25T13:00:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 1713,
+    "name": "Africa Cup of Nations Qualifiers",
+    "country": "Africa"
+   },
+   "homeTeam": {
+    "name": "Tanzania"
+   },
+   "awayTeam": {
+    "name": "Guinea-Bissau"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1636950898,
+   "name": "MFK Karvina II vs Artis Brno II",
+   "startTime": "2026-09-25T13:30:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 201192,
+    "name": "3. Liga",
+    "country": "Czech Republic"
+   },
+   "homeTeam": {
+    "name": "MFK Karvina II"
+   },
+   "awayTeam": {
+    "name": "Artis Brno II"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1637165249,
+   "name": "France vs Italy",
+   "startTime": "2026-09-25T13:30:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 2112,
+    "name": "Friendlies U19",
+    "country": "World"
+   },
+   "homeTeam": {
+    "name": "France"
+   },
+   "awayTeam": {
+    "name": "Italy"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1636953734,
+   "name": "Pohronie vs Inter Bratislava",
+   "startTime": "2026-09-25T14:30:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 201139,
+    "name": "2. Liga",
+    "country": "Slovakia"
+   },
+   "homeTeam": {
+    "name": "Pohronie"
+   },
+   "awayTeam": {
+    "name": "Inter Bratislava"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1636953769,
+   "name": "Bodo Glimt vs Roa IL",
+   "startTime": "2026-09-25T16:00:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 196861,
+    "name": "Toppserien Women",
+    "country": "Norway"
+   },
+   "homeTeam": {
+    "name": "Bodo Glimt"
+   },
+   "awayTeam": {
+    "name": "Roa IL"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1636611814,
+   "name": "Havelse vs Fortuna Koln",
+   "startTime": "2026-09-25T17:00:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 1844,
+    "name": "3. Liga",
+    "country": "Germany"
+   },
+   "homeTeam": {
+    "name": "Havelse"
+   },
+   "awayTeam": {
+    "name": "Fortuna Koln"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1636953825,
+   "name": "Colon de Santa Fe vs Union de Santa Fe",
+   "startTime": "2026-09-25T18:00:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 226450,
+    "name": "Liga Pro Reserves",
+    "country": "Argentina"
+   },
+   "homeTeam": {
+    "name": "Colon de Santa Fe"
+   },
+   "awayTeam": {
+    "name": "Union de Santa Fe"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1636346498,
+   "name": "Italy vs Belgium",
+   "startTime": "2026-09-25T18:45:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 200719,
+    "name": "Nations League A",
+    "country": "Europe"
+   },
+   "homeTeam": {
+    "name": "Italy"
+   },
+   "awayTeam": {
+    "name": "Belgium"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1636875800,
+   "name": "Coleraine vs Linfield",
+   "startTime": "2026-09-25T18:45:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 2259,
+    "name": "Premiership",
+    "country": "Ireland"
+   },
+   "homeTeam": {
+    "name": "Coleraine"
+   },
+   "awayTeam": {
+    "name": "Linfield"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1636986857,
+   "name": "Colo Colo vs Audax Italiano",
+   "startTime": "2026-09-25T23:00:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 1856,
+    "name": "Cup",
+    "country": "Chile"
+   },
+   "homeTeam": {
+    "name": "Colo Colo"
+   },
+   "awayTeam": {
+    "name": "Audax Italiano"
+   },
+   "units": "Regular"
+  },
+  {
+   "id": 1636928838,
+   "name": "Tersana vs Baladiyyat Al Mehalla",
+   "startTime": "2026-09-25T13:30:00+00:00",
+   "status": {
+    "isStarted": false,
+    "isInProgress": false,
+    "isInterrupted": false
+   },
+   "sport": {
+    "id": 29,
+    "name": "Soccer"
+   },
+   "league": {
+    "id": 210213,
+    "name": "2nd Division A",
+    "country": "Egypt"
+   },
+   "homeTeam": {
+    "name": "Tersana"
+   },
+   "awayTeam": {
+    "name": "Baladiyyat Al Mehalla"
+   },
+   "units": "Regular"
+  }
+ ],
+ "flashscore": [
+  {
+   "tournament_id": "afgit4mc",
+   "name": "AFRICA: Africa Cup of Nations - Qualification",
+   "country_name": "Africa",
+   "matches": [
+    {
+     "match_id": "hbhUj0Pk",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790341200,
+     "home_team": {
+      "team_id": "KzAbFwJ7",
+      "name": "Tanzania"
+     },
+     "away_team": {
+      "team_id": "0rJs9H8F",
+      "name": "Guinea Bissau"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "p6bnd8qp",
+   "name": "ARGENTINA: Reserve League - Clausura",
+   "country_name": "Argentina",
+   "matches": [
+    {
+     "match_id": "YDZz3eJE",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790359200,
+     "home_team": {
+      "team_id": "GSo1yNYr",
+      "name": "Colon Santa Fe 2"
+     },
+     "away_team": {
+      "team_id": "IwiYo4sG",
+      "name": "Union de Santa Fe 2"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "8nvkdvmi",
+   "name": "CHILE: Copa Chile - Play Offs",
+   "country_name": "Chile",
+   "matches": [
+    {
+     "match_id": "0OPnB2V6",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790377200,
+     "home_team": {
+      "team_id": "th4HPIws",
+      "name": "Colo Colo"
+     },
+     "away_team": {
+      "team_id": "rN3Jxc8g",
+      "name": "A. Italiano"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "p2mdkmkd",
+   "name": "CZECH REPUBLIC: 3. MSFL",
+   "country_name": "Czech Republic",
+   "matches": [
+    {
+     "match_id": "tCSQMwV8",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790343000,
+     "home_team": {
+      "team_id": "zXlxVX0c",
+      "name": "Karvina B"
+     },
+     "away_team": {
+      "team_id": "WSmIjZR5",
+      "name": "Artis Brno B"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "a1ugxggk",
+   "name": "EUROPE: UEFA Nations League - League A",
+   "country_name": "Europe",
+   "matches": [
+    {
+     "match_id": "tdpJ30MO",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790361900,
+     "home_team": {
+      "team_id": "hlKvieGH",
+      "name": "Italy"
+     },
+     "away_team": {
+      "team_id": "GbB957na",
+      "name": "Belgium"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "6lruhxdc",
+   "name": "EUROPE: Elite League U20",
+   "country_name": "Europe",
+   "matches": [
+    {
+     "match_id": "lEJeKVSa",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790328600,
+     "home_team": {
+      "team_id": "vgn4eSmb",
+      "name": "Italy U20"
+     },
+     "away_team": {
+      "team_id": "pEqnyyJ5",
+      "name": "England U20"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "xzz5huf5",
+   "name": "GERMANY: 3. Liga",
+   "country_name": "Germany",
+   "matches": [
+    {
+     "match_id": "IDXOLS2U",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790355600,
+     "home_team": {
+      "team_id": "ChZUX0PS",
+      "name": "TSV Havelse"
+     },
+     "away_team": {
+      "team_id": "rgXMAZDK",
+      "name": "Fortuna Koln"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "eqiteng3",
+   "name": "NORTHERN IRELAND: NIFL Premiership",
+   "country_name": "Northern Ireland",
+   "matches": [
+    {
+     "match_id": "EFZyTRlS",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790361900,
+     "home_team": {
+      "team_id": "2B9zTTrh",
+      "name": "Coleraine"
+     },
+     "away_team": {
+      "team_id": "YiTk9JCq",
+      "name": "Linfield"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "bud1joyq",
+   "name": "NORWAY: Toppserien Women",
+   "country_name": "Norway",
+   "matches": [
+    {
+     "match_id": "SYMZQvy9",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790352000,
+     "home_team": {
+      "team_id": "rBKhemtg",
+      "name": "Bodo/Glimt W"
+     },
+     "away_team": {
+      "team_id": "lbOCvuLa",
+      "name": "Roa W"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "zvzzl1mf",
+   "name": "SLOVAKIA: 2. liga",
+   "country_name": "Slovakia",
+   "matches": [
+    {
+     "match_id": "GOe1DccM",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790346600,
+     "home_team": {
+      "team_id": "GSTtsLqt",
+      "name": "Pohronie"
+     },
+     "away_team": {
+      "team_id": "WKAu7QHk",
+      "name": "I. Bratislava"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "k4p7drcd",
+   "name": "WORLD: Friendly International",
+   "country_name": "World",
+   "matches": [
+    {
+     "match_id": "0jQlqmVI",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790343000,
+     "home_team": {
+      "team_id": "YL4McSPu",
+      "name": "France U19"
+     },
+     "away_team": {
+      "team_id": "jyUxg2OT",
+      "name": "Italy U19"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  },
+  {
+   "tournament_id": "iogmpakq",
+   "name": "EGYPT: Division 2 A",
+   "country_name": "Egypt",
+   "matches": [
+    {
+     "match_id": "jXEJ4p8F",
+     "match_status": {
+      "stage": null,
+      "is_cancelled": false,
+      "is_postponed": false,
+      "is_started": false,
+      "is_in_progress": false,
+      "is_finished": false
+     },
+     "timestamp": 1790343000,
+     "home_team": {
+      "team_id": "Onos85dp",
+      "name": "Tersana"
+     },
+     "away_team": {
+      "team_id": "4t3wxbUl",
+      "name": "Baladiyat El Mahalla"
+     },
+     "scores": {
+      "home": null,
+      "away": null
+     }
+    }
+   ]
+  }
+ ]
+}

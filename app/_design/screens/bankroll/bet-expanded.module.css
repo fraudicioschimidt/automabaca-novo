@@ -1,0 +1,210 @@
+.root {
+  background: var(--detail-bg);
+  border-top: 1px solid var(--detail-soft-border);
+  padding: 20px var(--bk-pad) 22px calc(var(--bk-pad) + 32px);
+}
+
+.tracks {
+  display: flex;
+  flex-direction: row;
+  gap: 48px;
+  margin-bottom: 22px;
+}
+
+.trackSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1.3;
+}
+
+.oddsLabel {
+  width: 36px;
+  writing-mode: horizontal-tb;
+}
+
+.liquidityLabel {
+  width: 50px;
+}
+
+.track {
+  flex: 1;
+}
+
+.trackLabels,
+.trackValues {
+  display: flex;
+  justify-content: space-between;
+}
+
+.trackLabels {
+  margin-bottom: 12px;
+}
+
+.leg {
+  flex: 1;
+}
+
+.left {
+  text-align: left;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.trackRail {
+  position: relative;
+  height: 24px;
+  margin-bottom: 8px;
+}
+
+.trackLine {
+  position: absolute;
+  inset: 11px 4px auto;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--detail-border);
+}
+
+.marker {
+  position: absolute;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--marker-border);
+  border-radius: 12px;
+  background: var(--marker-bg);
+}
+
+.markerLeft {
+  left: 4px;
+}
+
+.markerCenter {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.markerRight {
+  right: 4px;
+}
+
+.trackValue {
+  display: inline-block;
+  padding: var(--value-padding);
+  border-radius: var(--detail-radius-sm);
+  color: var(--value-color);
+  background: var(--value-bg);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.fieldLabel {
+  margin-bottom: 6px;
+}
+
+.fieldValue {
+  color: var(--detail-text);
+  font-family: var(--detail-body);
+  font-size: 13px;
+}
+
+.movementSection {
+  padding-top: 14px;
+  border-top: 1px solid var(--detail-soft-border);
+}
+
+.movementLabel {
+  margin-bottom: 7px;
+}
+
+.movement {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  color: var(--detail-muted);
+  font-family: var(--detail-body);
+  font-size: 13px;
+}
+
+.movementValue {
+  color: var(--movement-color);
+}
+
+.faint {
+  color: var(--detail-faint);
+}
+
+.move {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--move-color);
+  font-weight: 600;
+}
+
+.fullLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  margin-left: auto;
+  padding: 3px 2px;
+  color: var(--detail-accent);
+  font-family: var(--detail-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (max-width: 1023px) {
+  .root { padding: 18px var(--bk-pad) 20px; }
+  .tracks { flex-direction: column; gap: 24px; }
+  .fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fullLink { min-height: 44px; margin-left: 0; padding: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root * {
+    scroll-behavior: auto;
+  }
+}
+
+/* CLV com procedência dentro da linha expandida — a métrica que decide se o
+   canal presta não pode exigir navegação para ser conferida. */
+.origemBotao {
+  border: none;
+  background: transparent;
+  padding: 3px 6px;
+  border-radius: var(--detail-radius-sm);
+  color: var(--detail-accent);
+  font-family: var(--detail-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--mo-fast);
+}
+.origemBotao:hover {
+  background: var(--detail-border);
+}
+.origemBotao:focus-visible {
+  outline: 2px solid var(--detail-accent);
+  outline-offset: 2px;
+}
+.origemPainel {
+  margin-top: 14px;
+  max-width: 560px;
+}

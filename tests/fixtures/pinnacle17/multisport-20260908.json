@@ -1,0 +1,4548 @@
+[
+  {
+    "event": {
+      "id": 1635842404,
+      "name": "9z vs Golden Lions",
+      "startTime": "2026-09-08T20:00:00.000Z",
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "sport": {
+        "id": 12,
+        "name": "E Sports"
+      },
+      "league": {
+        "id": 288625,
+        "name": "LRS",
+        "country": "Latin America"
+      },
+      "homeTeam": {
+        "name": "9z"
+      },
+      "awayTeam": {
+        "name": "Golden Lions"
+      },
+      "units": "Regular"
+    },
+    "observedAt": "2026-09-08T19:19:16.717Z",
+    "markets": [
+      {
+        "name": "Money Line – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 250,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z",
+            "line": null,
+            "oddsAmerican": -411,
+            "oddsDecimal": 1.243
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions",
+            "line": null,
+            "oddsAmerican": 251,
+            "oddsDecimal": 3.51
+          }
+        ]
+      },
+      {
+        "name": "Handicap – Match",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -2.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 250,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z -2.5",
+            "line": -2.5,
+            "oddsAmerican": 184,
+            "oddsDecimal": 2.84
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions +2.5",
+            "line": 2.5,
+            "oddsAmerican": -284,
+            "oddsDecimal": 1.352
+          }
+        ]
+      },
+      {
+        "name": "Total – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 3.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 250,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 3.5",
+            "line": 3.5,
+            "oddsAmerican": -233,
+            "oddsDecimal": 1.429
+          },
+          {
+            "designation": "under",
+            "name": "Under 3.5",
+            "line": 3.5,
+            "oddsAmerican": 149,
+            "oddsDecimal": 2.49
+          }
+        ]
+      },
+      {
+        "name": "Money Line – Map 1",
+        "type": "moneyline",
+        "period": 1,
+        "periodName": "Map 1",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 125,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z",
+            "line": null,
+            "oddsAmerican": -228,
+            "oddsDecimal": 1.438
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions",
+            "line": null,
+            "oddsAmerican": 162,
+            "oddsDecimal": 2.62
+          }
+        ]
+      },
+      {
+        "name": "Money Line – Map 2",
+        "type": "moneyline",
+        "period": 2,
+        "periodName": "Map 2",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 125,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z",
+            "line": null,
+            "oddsAmerican": -228,
+            "oddsDecimal": 1.438
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions",
+            "line": null,
+            "oddsAmerican": 162,
+            "oddsDecimal": 2.62
+          }
+        ]
+      },
+      {
+        "name": "Money Line – Map 3",
+        "type": "moneyline",
+        "period": 3,
+        "periodName": "Map 3",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 125,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z",
+            "line": null,
+            "oddsAmerican": -228,
+            "oddsDecimal": 1.438
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions",
+            "line": null,
+            "oddsAmerican": 162,
+            "oddsDecimal": 2.62
+          }
+        ]
+      },
+      {
+        "name": "Money Line (Kills) – Map 1",
+        "type": "moneyline",
+        "period": 1,
+        "periodName": "Map 1",
+        "team": null,
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z",
+            "line": null,
+            "oddsAmerican": -238,
+            "oddsDecimal": 1.42
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions",
+            "line": null,
+            "oddsAmerican": 152,
+            "oddsDecimal": 2.52
+          }
+        ]
+      },
+      {
+        "name": "Handicap (Kills) – Map 1",
+        "type": "spread",
+        "period": 1,
+        "periodName": "Map 1",
+        "team": null,
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": -8.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z -8.5",
+            "line": -8.5,
+            "oddsAmerican": -106,
+            "oddsDecimal": 1.943
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions +8.5",
+            "line": 8.5,
+            "oddsAmerican": -138,
+            "oddsDecimal": 1.724
+          }
+        ]
+      },
+      {
+        "name": "Total (Kills) – Map 1",
+        "type": "total",
+        "period": 1,
+        "periodName": "Map 1",
+        "team": null,
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": 33.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 33.5",
+            "line": 33.5,
+            "oddsAmerican": -134,
+            "oddsDecimal": 1.746
+          },
+          {
+            "designation": "under",
+            "name": "Under 33.5",
+            "line": 33.5,
+            "oddsAmerican": -110,
+            "oddsDecimal": 1.909
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Kills) – Map 1",
+        "type": "team_total",
+        "period": 1,
+        "periodName": "Map 1",
+        "team": "9z",
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": 20.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 20.5",
+            "line": 20.5,
+            "oddsAmerican": -108,
+            "oddsDecimal": 1.925
+          },
+          {
+            "designation": "under",
+            "name": "Under 20.5",
+            "line": 20.5,
+            "oddsAmerican": -133,
+            "oddsDecimal": 1.751
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Kills) – Map 1",
+        "type": "team_total",
+        "period": 1,
+        "periodName": "Map 1",
+        "team": "Golden Lions",
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": 14.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 14.5",
+            "line": 14.5,
+            "oddsAmerican": -120,
+            "oddsDecimal": 1.833
+          },
+          {
+            "designation": "under",
+            "name": "Under 14.5",
+            "line": 14.5,
+            "oddsAmerican": -120,
+            "oddsDecimal": 1.833
+          }
+        ]
+      },
+      {
+        "name": "Money Line (Kills) – Map 2",
+        "type": "moneyline",
+        "period": 2,
+        "periodName": "Map 2",
+        "team": null,
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z",
+            "line": null,
+            "oddsAmerican": -238,
+            "oddsDecimal": 1.42
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions",
+            "line": null,
+            "oddsAmerican": 152,
+            "oddsDecimal": 2.52
+          }
+        ]
+      },
+      {
+        "name": "Handicap (Kills) – Map 2",
+        "type": "spread",
+        "period": 2,
+        "periodName": "Map 2",
+        "team": null,
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": -8.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z -8.5",
+            "line": -8.5,
+            "oddsAmerican": -106,
+            "oddsDecimal": 1.943
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions +8.5",
+            "line": 8.5,
+            "oddsAmerican": -138,
+            "oddsDecimal": 1.724
+          }
+        ]
+      },
+      {
+        "name": "Total (Kills) – Map 2",
+        "type": "total",
+        "period": 2,
+        "periodName": "Map 2",
+        "team": null,
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": 33.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 33.5",
+            "line": 33.5,
+            "oddsAmerican": -134,
+            "oddsDecimal": 1.746
+          },
+          {
+            "designation": "under",
+            "name": "Under 33.5",
+            "line": 33.5,
+            "oddsAmerican": -110,
+            "oddsDecimal": 1.909
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Kills) – Map 2",
+        "type": "team_total",
+        "period": 2,
+        "periodName": "Map 2",
+        "team": "9z",
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": 20.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 20.5",
+            "line": 20.5,
+            "oddsAmerican": -109,
+            "oddsDecimal": 1.917
+          },
+          {
+            "designation": "under",
+            "name": "Under 20.5",
+            "line": 20.5,
+            "oddsAmerican": -132,
+            "oddsDecimal": 1.757
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Kills) – Map 2",
+        "type": "team_total",
+        "period": 2,
+        "periodName": "Map 2",
+        "team": "Golden Lions",
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": 14.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 14.5",
+            "line": 14.5,
+            "oddsAmerican": -120,
+            "oddsDecimal": 1.833
+          },
+          {
+            "designation": "under",
+            "name": "Under 14.5",
+            "line": 14.5,
+            "oddsAmerican": -120,
+            "oddsDecimal": 1.833
+          }
+        ]
+      },
+      {
+        "name": "Money Line (Kills) – Map 3",
+        "type": "moneyline",
+        "period": 3,
+        "periodName": "Map 3",
+        "team": null,
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z",
+            "line": null,
+            "oddsAmerican": -237,
+            "oddsDecimal": 1.421
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions",
+            "line": null,
+            "oddsAmerican": 151,
+            "oddsDecimal": 2.51
+          }
+        ]
+      },
+      {
+        "name": "Handicap (Kills) – Map 3",
+        "type": "spread",
+        "period": 3,
+        "periodName": "Map 3",
+        "team": null,
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": -8.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "9z -8.5",
+            "line": -8.5,
+            "oddsAmerican": -106,
+            "oddsDecimal": 1.943
+          },
+          {
+            "designation": "away",
+            "name": "Golden Lions +8.5",
+            "line": 8.5,
+            "oddsAmerican": -139,
+            "oddsDecimal": 1.719
+          }
+        ]
+      },
+      {
+        "name": "Total (Kills) – Map 3",
+        "type": "total",
+        "period": 3,
+        "periodName": "Map 3",
+        "team": null,
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": 32.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 32.5",
+            "line": 32.5,
+            "oddsAmerican": -164,
+            "oddsDecimal": 1.609
+          },
+          {
+            "designation": "under",
+            "name": "Under 32.5",
+            "line": 32.5,
+            "oddsAmerican": 110,
+            "oddsDecimal": 2.1
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Kills) – Map 3",
+        "type": "team_total",
+        "period": 3,
+        "periodName": "Map 3",
+        "team": "9z",
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": 19.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 19.5",
+            "line": 19.5,
+            "oddsAmerican": -127,
+            "oddsDecimal": 1.787
+          },
+          {
+            "designation": "under",
+            "name": "Under 19.5",
+            "line": 19.5,
+            "oddsAmerican": -113,
+            "oddsDecimal": 1.884
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Kills) – Map 3",
+        "type": "team_total",
+        "period": 3,
+        "periodName": "Map 3",
+        "team": "Golden Lions",
+        "units": "Kills",
+        "special": null,
+        "isLive": false,
+        "line": 14.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T03:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 14.5",
+            "line": 14.5,
+            "oddsAmerican": -120,
+            "oddsDecimal": 1.833
+          },
+          {
+            "designation": "under",
+            "name": "Under 14.5",
+            "line": 14.5,
+            "oddsAmerican": -120,
+            "oddsDecimal": 1.833
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1630865288,
+      "name": "Seattle Seahawks vs New England Patriots",
+      "startTime": "2026-09-10T00:20:00.000Z",
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "sport": {
+        "id": 15,
+        "name": "Football"
+      },
+      "league": {
+        "id": 889,
+        "name": "NFL",
+        "country": "USA"
+      },
+      "homeTeam": {
+        "name": "Seattle Seahawks"
+      },
+      "awayTeam": {
+        "name": "New England Patriots"
+      },
+      "units": "Regular"
+    },
+    "observedAt": "2026-09-08T19:24:04.753Z",
+    "markets": [
+      {
+        "name": "Money Line – Game",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Game",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 30000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Seattle Seahawks",
+            "line": null,
+            "oddsAmerican": -167,
+            "oddsDecimal": 1.598
+          },
+          {
+            "designation": "away",
+            "name": "New England Patriots",
+            "line": null,
+            "oddsAmerican": 147,
+            "oddsDecimal": 2.47
+          }
+        ]
+      },
+      {
+        "name": "Handicap – Game",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Game",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -7.5,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 50000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Seattle Seahawks -7.5",
+            "line": -7.5,
+            "oddsAmerican": 193,
+            "oddsDecimal": 2.93
+          },
+          {
+            "designation": "away",
+            "name": "New England Patriots +7.5",
+            "line": 7.5,
+            "oddsAmerican": -232,
+            "oddsDecimal": 1.431
+          }
+        ]
+      },
+      {
+        "name": "Total – Game",
+        "type": "total",
+        "period": 0,
+        "periodName": "Game",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 37.5,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 10000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 37.5",
+            "line": 37.5,
+            "oddsAmerican": -269,
+            "oddsDecimal": 1.371
+          },
+          {
+            "designation": "under",
+            "name": "Under 37.5",
+            "line": 37.5,
+            "oddsAmerican": 216,
+            "oddsDecimal": 3.16
+          }
+        ]
+      },
+      {
+        "name": "Team Total – Game",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Game",
+        "team": "New England Patriots",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 19.5,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 3000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 19.5",
+            "line": 19.5,
+            "oddsAmerican": -150,
+            "oddsDecimal": 1.666
+          },
+          {
+            "designation": "under",
+            "name": "Under 19.5",
+            "line": 19.5,
+            "oddsAmerican": 127,
+            "oddsDecimal": 2.27
+          }
+        ]
+      },
+      {
+        "name": "Team Total – Game",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Game",
+        "team": "Seattle Seahawks",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 24.5,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 3000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 24.5",
+            "line": 24.5,
+            "oddsAmerican": 121,
+            "oddsDecimal": 2.21
+          },
+          {
+            "designation": "under",
+            "name": "Under 24.5",
+            "line": 24.5,
+            "oddsAmerican": -142,
+            "oddsDecimal": 1.704
+          }
+        ]
+      },
+      {
+        "name": "Money Line – 1st Half",
+        "type": "moneyline",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 3000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Seattle Seahawks",
+            "line": null,
+            "oddsAmerican": -157,
+            "oddsDecimal": 1.636
+          },
+          {
+            "designation": "away",
+            "name": "New England Patriots",
+            "line": null,
+            "oddsAmerican": 139,
+            "oddsDecimal": 2.39
+          }
+        ]
+      },
+      {
+        "name": "Handicap – 1st Half",
+        "type": "spread",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -6,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 5000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Seattle Seahawks -6",
+            "line": -6,
+            "oddsAmerican": 177,
+            "oddsDecimal": 2.77
+          },
+          {
+            "designation": "away",
+            "name": "New England Patriots +6",
+            "line": 6,
+            "oddsAmerican": -211,
+            "oddsDecimal": 1.473
+          }
+        ]
+      },
+      {
+        "name": "Total – 1st Half",
+        "type": "total",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 19,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 3000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 19",
+            "line": 19,
+            "oddsAmerican": -187,
+            "oddsDecimal": 1.534
+          },
+          {
+            "designation": "under",
+            "name": "Under 19",
+            "line": 19,
+            "oddsAmerican": 155,
+            "oddsDecimal": 2.55
+          }
+        ]
+      },
+      {
+        "name": "Team Total – 1st Half",
+        "type": "team_total",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": "New England Patriots",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 9.5,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 1000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 9.5",
+            "line": 9.5,
+            "oddsAmerican": -121,
+            "oddsDecimal": 1.826
+          },
+          {
+            "designation": "under",
+            "name": "Under 9.5",
+            "line": 9.5,
+            "oddsAmerican": 106,
+            "oddsDecimal": 2.06
+          }
+        ]
+      },
+      {
+        "name": "Team Total – 1st Half",
+        "type": "team_total",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": "Seattle Seahawks",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 12.5,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 1000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 12.5",
+            "line": 12.5,
+            "oddsAmerican": -105,
+            "oddsDecimal": 1.952
+          },
+          {
+            "designation": "under",
+            "name": "Under 12.5",
+            "line": 12.5,
+            "oddsAmerican": -109,
+            "oddsDecimal": 1.917
+          }
+        ]
+      },
+      {
+        "name": "Money Line – 1st Quarter",
+        "type": "moneyline",
+        "period": 3,
+        "periodName": "1st Quarter",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 3000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Seattle Seahawks",
+            "line": null,
+            "oddsAmerican": -144,
+            "oddsDecimal": 1.694
+          },
+          {
+            "designation": "away",
+            "name": "New England Patriots",
+            "line": null,
+            "oddsAmerican": 125,
+            "oddsDecimal": 2.25
+          }
+        ]
+      },
+      {
+        "name": "Handicap – 1st Quarter",
+        "type": "spread",
+        "period": 3,
+        "periodName": "1st Quarter",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -2.5,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 5000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Seattle Seahawks -2.5",
+            "line": -2.5,
+            "oddsAmerican": 118,
+            "oddsDecimal": 2.18
+          },
+          {
+            "designation": "away",
+            "name": "New England Patriots +2.5",
+            "line": 2.5,
+            "oddsAmerican": -140,
+            "oddsDecimal": 1.714
+          }
+        ]
+      },
+      {
+        "name": "Total – 1st Quarter",
+        "type": "total",
+        "period": 3,
+        "periodName": "1st Quarter",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 7,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 3000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 7",
+            "line": 7,
+            "oddsAmerican": -167,
+            "oddsDecimal": 1.598
+          },
+          {
+            "designation": "under",
+            "name": "Under 7",
+            "line": 7,
+            "oddsAmerican": 137,
+            "oddsDecimal": 2.37
+          }
+        ]
+      },
+      {
+        "name": "Team Total – 1st Quarter",
+        "type": "team_total",
+        "period": 3,
+        "periodName": "1st Quarter",
+        "team": "New England Patriots",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 0.5,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 2000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 0.5",
+            "line": 0.5,
+            "oddsAmerican": -156,
+            "oddsDecimal": 1.641
+          },
+          {
+            "designation": "under",
+            "name": "Under 0.5",
+            "line": 0.5,
+            "oddsAmerican": 132,
+            "oddsDecimal": 2.32
+          }
+        ]
+      },
+      {
+        "name": "Team Total – 1st Quarter",
+        "type": "team_total",
+        "period": 3,
+        "periodName": "1st Quarter",
+        "team": "Seattle Seahawks",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 3.5,
+        "status": "open",
+        "cutoffAt": "2026-09-10T00:20:00+00:00",
+        "limits": [
+          {
+            "amount": 2000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 3.5",
+            "line": 3.5,
+            "oddsAmerican": -109,
+            "oddsDecimal": 1.917
+          },
+          {
+            "designation": "under",
+            "name": "Under 3.5",
+            "line": 3.5,
+            "oddsAmerican": -107,
+            "oddsDecimal": 1.934
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1636106625,
+      "name": "Rory McIlroy vs Jon Rahm",
+      "startTime": "2026-09-10T06:00:00.000Z",
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "sport": {
+        "id": 17,
+        "name": "Golf"
+      },
+      "league": {
+        "id": 8974,
+        "name": "Irish Open - Tournament",
+        "country": "Ireland"
+      },
+      "homeTeam": {
+        "name": "Rory McIlroy"
+      },
+      "awayTeam": {
+        "name": "Jon Rahm"
+      },
+      "units": "Regular"
+    },
+    "observedAt": "2026-09-08T19:24:29.327Z",
+    "markets": [
+      {
+        "name": "Money Line – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-10T06:00:00+00:00",
+        "limits": [
+          {
+            "amount": 1500,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Rory McIlroy",
+            "line": null,
+            "oddsAmerican": -156,
+            "oddsDecimal": 1.641
+          },
+          {
+            "designation": "away",
+            "name": "Jon Rahm",
+            "line": null,
+            "oddsAmerican": 127,
+            "oddsDecimal": 2.27
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1636072196,
+      "name": "Chambray Touraine vs Achenheim Truchtersheim",
+      "startTime": "2026-09-09T18:00:00.000Z",
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "sport": {
+        "id": 18,
+        "name": "Handball"
+      },
+      "league": {
+        "id": 212010,
+        "name": "Division 1 Women",
+        "country": "France"
+      },
+      "homeTeam": {
+        "name": "Chambray Touraine"
+      },
+      "awayTeam": {
+        "name": "Achenheim Truchtersheim"
+      },
+      "units": "Regular"
+    },
+    "observedAt": "2026-09-08T19:24:10.560Z",
+    "markets": [
+      {
+        "name": "Money Line – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T18:00:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Chambray Touraine",
+            "line": null,
+            "oddsAmerican": -581,
+            "oddsDecimal": 1.172
+          },
+          {
+            "designation": "away",
+            "name": "Achenheim Truchtersheim",
+            "line": null,
+            "oddsAmerican": 362,
+            "oddsDecimal": 4.62
+          }
+        ]
+      },
+      {
+        "name": "Handicap – Match",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -4.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T18:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Chambray Touraine -4.5",
+            "line": -4.5,
+            "oddsAmerican": 101,
+            "oddsDecimal": 2.01
+          },
+          {
+            "designation": "away",
+            "name": "Achenheim Truchtersheim +4.5",
+            "line": 4.5,
+            "oddsAmerican": -122,
+            "oddsDecimal": 1.819
+          }
+        ]
+      },
+      {
+        "name": "Total – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 50,
+        "status": "open",
+        "cutoffAt": "2026-09-09T18:00:00+00:00",
+        "limits": [
+          {
+            "amount": 150,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 50",
+            "line": 50,
+            "oddsAmerican": -148,
+            "oddsDecimal": 1.675
+          },
+          {
+            "designation": "under",
+            "name": "Under 50",
+            "line": 50,
+            "oddsAmerican": 121,
+            "oddsDecimal": 2.21
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1636090461,
+      "name": "Sibirskie Snaipery vs Stalnye Lisy",
+      "sport": {
+        "id": 19,
+        "name": "Hockey"
+      },
+      "units": "Regular",
+      "league": {
+        "id": 149037,
+        "name": "Junior Hockey League (MHL)",
+        "country": "Russian Federation"
+      },
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "awayTeam": {
+        "name": "Stalnye Lisy"
+      },
+      "homeTeam": {
+        "name": "Sibirskie Snaipery"
+      },
+      "startTime": "2026-09-09T11:30:00.000Z"
+    },
+    "observedAt": "2026-09-08T19:24:56.453Z",
+    "markets": [
+      {
+        "name": "Money Line – OT Included",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "OT Included",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T11:30:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Sibirskie Snaipery",
+            "line": null,
+            "oddsAmerican": -109,
+            "oddsDecimal": 1.917
+          },
+          {
+            "designation": "away",
+            "name": "Stalnye Lisy",
+            "line": null,
+            "oddsAmerican": -111,
+            "oddsDecimal": 1.9
+          }
+        ]
+      },
+      {
+        "name": "Money Line – 1st Period",
+        "type": "moneyline",
+        "period": 1,
+        "periodName": "1st Period",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T11:30:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Sibirskie Snaipery",
+            "line": null,
+            "oddsAmerican": -107,
+            "oddsDecimal": 1.934
+          },
+          {
+            "designation": "away",
+            "name": "Stalnye Lisy",
+            "line": null,
+            "oddsAmerican": -109,
+            "oddsDecimal": 1.917
+          }
+        ]
+      },
+      {
+        "name": "Handicap – 1st Period",
+        "type": "spread",
+        "period": 1,
+        "periodName": "1st Period",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -1,
+        "status": "open",
+        "cutoffAt": "2026-09-09T11:30:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Sibirskie Snaipery -1",
+            "line": -1,
+            "oddsAmerican": 490,
+            "oddsDecimal": 5.9
+          },
+          {
+            "designation": "away",
+            "name": "Stalnye Lisy +1",
+            "line": 1,
+            "oddsAmerican": -950,
+            "oddsDecimal": 1.105
+          }
+        ]
+      },
+      {
+        "name": "Total – 1st Period",
+        "type": "total",
+        "period": 1,
+        "periodName": "1st Period",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 1.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T11:30:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 1.5",
+            "line": 1.5,
+            "oddsAmerican": -100,
+            "oddsDecimal": 2
+          },
+          {
+            "designation": "under",
+            "name": "Under 1.5",
+            "line": 1.5,
+            "oddsAmerican": -121,
+            "oddsDecimal": 1.826
+          }
+        ]
+      },
+      {
+        "name": "Money Line – Regulation Time",
+        "type": "moneyline",
+        "period": 6,
+        "periodName": "Regulation Time",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T11:30:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Sibirskie Snaipery",
+            "line": null,
+            "oddsAmerican": 144,
+            "oddsDecimal": 2.44
+          },
+          {
+            "designation": "away",
+            "name": "Stalnye Lisy",
+            "line": null,
+            "oddsAmerican": 142,
+            "oddsDecimal": 2.42
+          },
+          {
+            "designation": "draw",
+            "name": "Draw",
+            "line": null,
+            "oddsAmerican": 302,
+            "oddsDecimal": 4.02
+          }
+        ]
+      },
+      {
+        "name": "Handicap – Regulation Time",
+        "type": "spread",
+        "period": 6,
+        "periodName": "Regulation Time",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -1,
+        "status": "open",
+        "cutoffAt": "2026-09-09T11:30:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Sibirskie Snaipery -1",
+            "line": -1,
+            "oddsAmerican": 203,
+            "oddsDecimal": 3.03
+          },
+          {
+            "designation": "away",
+            "name": "Stalnye Lisy +1",
+            "line": 1,
+            "oddsAmerican": -263,
+            "oddsDecimal": 1.38
+          }
+        ]
+      },
+      {
+        "name": "Total – Regulation Time",
+        "type": "total",
+        "period": 6,
+        "periodName": "Regulation Time",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T11:30:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 5",
+            "line": 5,
+            "oddsAmerican": -141,
+            "oddsDecimal": 1.709
+          },
+          {
+            "designation": "under",
+            "name": "Under 5",
+            "line": 5,
+            "oddsAmerican": 112,
+            "oddsDecimal": 2.12
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1635855504,
+      "name": "Christian Natividad vs Colton Loud",
+      "startTime": "2026-09-08T23:15:00.000Z",
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "sport": {
+        "id": 22,
+        "name": "Mixed Martial Arts"
+      },
+      "league": {
+        "id": 1624,
+        "name": "UFC",
+        "country": "World"
+      },
+      "homeTeam": {
+        "name": "Christian Natividad"
+      },
+      "awayTeam": {
+        "name": "Colton Loud"
+      },
+      "units": "Regular"
+    },
+    "observedAt": "2026-09-08T19:19:53.639Z",
+    "markets": [
+      {
+        "name": "Money Line – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:15:00+00:00",
+        "limits": [
+          {
+            "amount": 2000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Christian Natividad",
+            "line": null,
+            "oddsAmerican": -316,
+            "oddsDecimal": 1.316
+          },
+          {
+            "designation": "away",
+            "name": "Colton Loud",
+            "line": null,
+            "oddsAmerican": 259,
+            "oddsDecimal": 3.59
+          }
+        ]
+      },
+      {
+        "name": "Total – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 1.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:15:00+00:00",
+        "limits": [
+          {
+            "amount": 250,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 1.5",
+            "line": 1.5,
+            "oddsAmerican": -163,
+            "oddsDecimal": 1.613
+          },
+          {
+            "designation": "under",
+            "name": "Under 1.5",
+            "line": 1.5,
+            "oddsAmerican": 139,
+            "oddsDecimal": 2.39
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1636048959,
+      "name": "Shaun Murphy vs Artemijs Zizins",
+      "startTime": "2026-09-08T20:00:00.000Z",
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "sport": {
+        "id": 28,
+        "name": "Snooker"
+      },
+      "league": {
+        "id": 197802,
+        "name": "English Open",
+        "country": "England"
+      },
+      "homeTeam": {
+        "name": "Shaun Murphy"
+      },
+      "awayTeam": {
+        "name": "Artemijs Zizins"
+      },
+      "units": "Regular"
+    },
+    "observedAt": "2026-09-08T19:20:47.561Z",
+    "markets": [
+      {
+        "name": "Money Line – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-08T20:00:00+00:00",
+        "limits": [
+          {
+            "amount": 300,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Shaun Murphy",
+            "line": null,
+            "oddsAmerican": -564,
+            "oddsDecimal": 1.177
+          },
+          {
+            "designation": "away",
+            "name": "Artemijs Zizins",
+            "line": null,
+            "oddsAmerican": 331,
+            "oddsDecimal": 4.31
+          }
+        ]
+      },
+      {
+        "name": "Total – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 5.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T20:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 5.5",
+            "line": 5.5,
+            "oddsAmerican": -104,
+            "oddsDecimal": 1.961
+          },
+          {
+            "designation": "under",
+            "name": "Under 5.5",
+            "line": 5.5,
+            "oddsAmerican": -127,
+            "oddsDecimal": 1.787
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1635340399,
+      "name": "Agua Santa vs Palmeiras",
+      "startTime": "2026-09-08T21:00:00.000Z",
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "sport": {
+        "id": 29,
+        "name": "Soccer"
+      },
+      "league": {
+        "id": 210903,
+        "name": "Paulista U20",
+        "country": "Brazil"
+      },
+      "homeTeam": {
+        "name": "Agua Santa"
+      },
+      "awayTeam": {
+        "name": "Palmeiras"
+      },
+      "units": "Regular"
+    },
+    "observedAt": "2026-09-08T19:19:00.360Z",
+    "markets": [
+      {
+        "name": "Money Line – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-08T21:00:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Agua Santa",
+            "line": null,
+            "oddsAmerican": 444,
+            "oddsDecimal": 5.44
+          },
+          {
+            "designation": "away",
+            "name": "Palmeiras",
+            "line": null,
+            "oddsAmerican": -202,
+            "oddsDecimal": 1.495
+          },
+          {
+            "designation": "draw",
+            "name": "Draw",
+            "line": null,
+            "oddsAmerican": 274,
+            "oddsDecimal": 3.74
+          }
+        ]
+      },
+      {
+        "name": "Handicap – Match",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 0.25,
+        "status": "open",
+        "cutoffAt": "2026-09-08T21:00:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Agua Santa +0.25",
+            "line": 0.25,
+            "oddsAmerican": 197,
+            "oddsDecimal": 2.97
+          },
+          {
+            "designation": "away",
+            "name": "Palmeiras -0.25",
+            "line": -0.25,
+            "oddsAmerican": -310,
+            "oddsDecimal": 1.322
+          }
+        ]
+      },
+      {
+        "name": "Total – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 1.75,
+        "status": "open",
+        "cutoffAt": "2026-09-08T21:00:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 1.75",
+            "line": 1.75,
+            "oddsAmerican": -284,
+            "oddsDecimal": 1.352
+          },
+          {
+            "designation": "under",
+            "name": "Under 1.75",
+            "line": 1.75,
+            "oddsAmerican": 184,
+            "oddsDecimal": 2.84
+          }
+        ]
+      },
+      {
+        "name": "Team Total – Match",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Match",
+        "team": "Agua Santa",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 0.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T21:00:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 0.5",
+            "line": 0.5,
+            "oddsAmerican": -139,
+            "oddsDecimal": 1.719
+          },
+          {
+            "designation": "under",
+            "name": "Under 0.5",
+            "line": 0.5,
+            "oddsAmerican": -100,
+            "oddsDecimal": 2
+          }
+        ]
+      },
+      {
+        "name": "Team Total – Match",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Match",
+        "team": "Palmeiras",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 1.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T21:00:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 1.5",
+            "line": 1.5,
+            "oddsAmerican": -146,
+            "oddsDecimal": 1.684
+          },
+          {
+            "designation": "under",
+            "name": "Under 1.5",
+            "line": 1.5,
+            "oddsAmerican": 106,
+            "oddsDecimal": 2.06
+          }
+        ]
+      },
+      {
+        "name": "Handicap – 1st Half",
+        "type": "spread",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 0,
+        "status": "open",
+        "cutoffAt": "2026-09-08T21:00:00+00:00",
+        "limits": [
+          {
+            "amount": 75,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Agua Santa +0",
+            "line": 0,
+            "oddsAmerican": 274,
+            "oddsDecimal": 3.74
+          },
+          {
+            "designation": "away",
+            "name": "Palmeiras +0",
+            "line": 0,
+            "oddsAmerican": -488,
+            "oddsDecimal": 1.204
+          }
+        ]
+      },
+      {
+        "name": "Total – 1st Half",
+        "type": "total",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 0.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T21:00:00+00:00",
+        "limits": [
+          {
+            "amount": 75,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 0.5",
+            "line": 0.5,
+            "oddsAmerican": -273,
+            "oddsDecimal": 1.366
+          },
+          {
+            "designation": "under",
+            "name": "Under 0.5",
+            "line": 0.5,
+            "oddsAmerican": 174,
+            "oddsDecimal": 2.74
+          }
+        ]
+      },
+      {
+        "name": "Team Total – 1st Half",
+        "type": "team_total",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": "Palmeiras",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 0.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T21:00:00+00:00",
+        "limits": [
+          {
+            "amount": 50,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 0.5",
+            "line": 0.5,
+            "oddsAmerican": -156,
+            "oddsDecimal": 1.641
+          },
+          {
+            "designation": "under",
+            "name": "Under 0.5",
+            "line": 0.5,
+            "oddsAmerican": 112,
+            "oddsDecimal": 2.12
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1635340436,
+      "name": "Baltimore Orioles vs Cleveland Guardians",
+      "sport": {
+        "id": 3,
+        "name": "Baseball"
+      },
+      "units": "Regular",
+      "league": {
+        "id": 246,
+        "name": "MLB",
+        "country": "USA"
+      },
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "awayTeam": {
+        "name": "Cleveland Guardians"
+      },
+      "homeTeam": {
+        "name": "Baltimore Orioles"
+      },
+      "startTime": "2026-09-08T22:35:00.000Z"
+    },
+    "observedAt": "2026-09-08T19:24:06.804Z",
+    "markets": [
+      {
+        "name": "Money Line – Game",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Game",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 10000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Baltimore Orioles",
+            "line": null,
+            "oddsAmerican": -114,
+            "oddsDecimal": 1.877
+          },
+          {
+            "designation": "away",
+            "name": "Cleveland Guardians",
+            "line": null,
+            "oddsAmerican": 105,
+            "oddsDecimal": 2.05
+          }
+        ]
+      },
+      {
+        "name": "Handicap – Game",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Game",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -3,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 10000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Baltimore Orioles -3",
+            "line": -3,
+            "oddsAmerican": 363,
+            "oddsDecimal": 4.63
+          },
+          {
+            "designation": "away",
+            "name": "Cleveland Guardians +3",
+            "line": 3,
+            "oddsAmerican": -504,
+            "oddsDecimal": 1.198
+          }
+        ]
+      },
+      {
+        "name": "Total – Game",
+        "type": "total",
+        "period": 0,
+        "periodName": "Game",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 6.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 7500,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 6.5",
+            "line": 6.5,
+            "oddsAmerican": -225,
+            "oddsDecimal": 1.444
+          },
+          {
+            "designation": "under",
+            "name": "Under 6.5",
+            "line": 6.5,
+            "oddsAmerican": 185,
+            "oddsDecimal": 2.85
+          }
+        ]
+      },
+      {
+        "name": "Team Total – Game",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Game",
+        "team": "Baltimore Orioles",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 2.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 2000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 2.5",
+            "line": 2.5,
+            "oddsAmerican": -281,
+            "oddsDecimal": 1.355
+          },
+          {
+            "designation": "under",
+            "name": "Under 2.5",
+            "line": 2.5,
+            "oddsAmerican": 214,
+            "oddsDecimal": 3.14
+          }
+        ]
+      },
+      {
+        "name": "Team Total – Game",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Game",
+        "team": "Cleveland Guardians",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 2.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 2000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 2.5",
+            "line": 2.5,
+            "oddsAmerican": -254,
+            "oddsDecimal": 1.393
+          },
+          {
+            "designation": "under",
+            "name": "Under 2.5",
+            "line": 2.5,
+            "oddsAmerican": 197,
+            "oddsDecimal": 2.97
+          }
+        ]
+      },
+      {
+        "name": "Handicap – First 5 Innings",
+        "type": "spread",
+        "period": 1,
+        "periodName": "First 5 Innings",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -1,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 5000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Baltimore Orioles -1",
+            "line": -1,
+            "oddsAmerican": 159,
+            "oddsDecimal": 2.59
+          },
+          {
+            "designation": "away",
+            "name": "Cleveland Guardians +1",
+            "line": 1,
+            "oddsAmerican": -195,
+            "oddsDecimal": 1.512
+          }
+        ]
+      },
+      {
+        "name": "Total – First 5 Innings",
+        "type": "total",
+        "period": 1,
+        "periodName": "First 5 Innings",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 3.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 3750,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 3.5",
+            "line": 3.5,
+            "oddsAmerican": -181,
+            "oddsDecimal": 1.552
+          },
+          {
+            "designation": "under",
+            "name": "Under 3.5",
+            "line": 3.5,
+            "oddsAmerican": 155,
+            "oddsDecimal": 2.55
+          }
+        ]
+      },
+      {
+        "name": "Team Total – First 5 Innings",
+        "type": "team_total",
+        "period": 1,
+        "periodName": "First 5 Innings",
+        "team": "Baltimore Orioles",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 2.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 1000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 2.5",
+            "line": 2.5,
+            "oddsAmerican": 122,
+            "oddsDecimal": 2.22
+          },
+          {
+            "designation": "under",
+            "name": "Under 2.5",
+            "line": 2.5,
+            "oddsAmerican": -149,
+            "oddsDecimal": 1.671
+          }
+        ]
+      },
+      {
+        "name": "Team Total – First 5 Innings",
+        "type": "team_total",
+        "period": 1,
+        "periodName": "First 5 Innings",
+        "team": "Cleveland Guardians",
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 1.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 1000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 1.5",
+            "line": 1.5,
+            "oddsAmerican": -153,
+            "oddsDecimal": 1.653
+          },
+          {
+            "designation": "under",
+            "name": "Under 1.5",
+            "line": 1.5,
+            "oddsAmerican": 125,
+            "oddsDecimal": 2.25
+          }
+        ]
+      },
+      {
+        "name": "Money Line – Period 3",
+        "type": "moneyline",
+        "period": 3,
+        "periodName": "Period 3",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 1000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Baltimore Orioles",
+            "line": null,
+            "oddsAmerican": 268,
+            "oddsDecimal": 3.68
+          },
+          {
+            "designation": "away",
+            "name": "Cleveland Guardians",
+            "line": null,
+            "oddsAmerican": 321,
+            "oddsDecimal": 4.21
+          },
+          {
+            "designation": "draw",
+            "name": "Draw",
+            "line": null,
+            "oddsAmerican": -130,
+            "oddsDecimal": 1.769
+          }
+        ]
+      },
+      {
+        "name": "Handicap – Period 3",
+        "type": "spread",
+        "period": 3,
+        "periodName": "Period 3",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 0,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 1000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Baltimore Orioles +0",
+            "line": 0,
+            "oddsAmerican": -127,
+            "oddsDecimal": 1.787
+          },
+          {
+            "designation": "away",
+            "name": "Cleveland Guardians +0",
+            "line": 0,
+            "oddsAmerican": 108,
+            "oddsDecimal": 2.08
+          }
+        ]
+      },
+      {
+        "name": "Total – Period 3",
+        "type": "total",
+        "period": 3,
+        "periodName": "Period 3",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 0.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T22:35:00+00:00",
+        "limits": [
+          {
+            "amount": 1000,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 0.5",
+            "line": 0.5,
+            "oddsAmerican": -102,
+            "oddsDecimal": 1.98
+          },
+          {
+            "designation": "under",
+            "name": "Under 0.5",
+            "line": 0.5,
+            "oddsAmerican": -115,
+            "oddsDecimal": 1.869
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1636019383,
+      "name": "Ben Shelton vs Carlos Alcaraz",
+      "sport": {
+        "id": 33,
+        "name": "Tennis"
+      },
+      "units": "Sets",
+      "league": {
+        "id": 3448,
+        "name": "QF",
+        "country": "USA"
+      },
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "awayTeam": {
+        "name": "Carlos Alcaraz"
+      },
+      "homeTeam": {
+        "name": "Ben Shelton"
+      },
+      "startTime": "2026-09-09T00:30:00.000Z"
+    },
+    "observedAt": "2026-09-08T19:24:46.623Z",
+    "markets": [
+      {
+        "name": "Handicap (Games) – Match",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 3.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T00:30:00+00:00",
+        "limits": [
+          {
+            "amount": 20100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Ben Shelton +3.5",
+            "line": 3.5,
+            "oddsAmerican": 146,
+            "oddsDecimal": 2.46
+          },
+          {
+            "designation": "away",
+            "name": "Carlos Alcaraz -3.5",
+            "line": -3.5,
+            "oddsAmerican": -168,
+            "oddsDecimal": 1.595
+          }
+        ]
+      },
+      {
+        "name": "Total (Games) – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 38,
+        "status": "open",
+        "cutoffAt": "2026-09-09T00:30:00+00:00",
+        "limits": [
+          {
+            "amount": 15075,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 38",
+            "line": 38,
+            "oddsAmerican": -128,
+            "oddsDecimal": 1.781
+          },
+          {
+            "designation": "under",
+            "name": "Under 38",
+            "line": 38,
+            "oddsAmerican": 111,
+            "oddsDecimal": 2.11
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Games) – Match",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Match",
+        "team": "Ben Shelton",
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 18,
+        "status": "open",
+        "cutoffAt": "2026-09-09T00:30:00+00:00",
+        "limits": [
+          {
+            "amount": 6700,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 18",
+            "line": 18,
+            "oddsAmerican": -119,
+            "oddsDecimal": 1.84
+          },
+          {
+            "designation": "under",
+            "name": "Under 18",
+            "line": 18,
+            "oddsAmerican": 101,
+            "oddsDecimal": 2.01
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Games) – Match",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Match",
+        "team": "Carlos Alcaraz",
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 20.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T00:30:00+00:00",
+        "limits": [
+          {
+            "amount": 6700,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 20.5",
+            "line": 20.5,
+            "oddsAmerican": -128,
+            "oddsDecimal": 1.781
+          },
+          {
+            "designation": "under",
+            "name": "Under 20.5",
+            "line": 20.5,
+            "oddsAmerican": 107,
+            "oddsDecimal": 2.07
+          }
+        ]
+      },
+      {
+        "name": "Handicap (Games) – 1st Set",
+        "type": "spread",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": -1.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T00:30:00+00:00",
+        "limits": [
+          {
+            "amount": 3350,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Ben Shelton -1.5",
+            "line": -1.5,
+            "oddsAmerican": 282,
+            "oddsDecimal": 3.82
+          },
+          {
+            "designation": "away",
+            "name": "Carlos Alcaraz +1.5",
+            "line": 1.5,
+            "oddsAmerican": -358,
+            "oddsDecimal": 1.279
+          }
+        ]
+      },
+      {
+        "name": "Total (Games) – 1st Set",
+        "type": "total",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 8.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T00:30:00+00:00",
+        "limits": [
+          {
+            "amount": 3350,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 8.5",
+            "line": 8.5,
+            "oddsAmerican": -541,
+            "oddsDecimal": 1.184
+          },
+          {
+            "designation": "under",
+            "name": "Under 8.5",
+            "line": 8.5,
+            "oddsAmerican": 403,
+            "oddsDecimal": 5.03
+          }
+        ]
+      },
+      {
+        "name": "Money Line (Sets) – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T00:30:00+00:00",
+        "limits": [
+          {
+            "amount": 20100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Ben Shelton",
+            "line": null,
+            "oddsAmerican": 313,
+            "oddsDecimal": 4.13
+          },
+          {
+            "designation": "away",
+            "name": "Carlos Alcaraz",
+            "line": null,
+            "oddsAmerican": -359,
+            "oddsDecimal": 1.278
+          }
+        ]
+      },
+      {
+        "name": "Handicap (Sets) – Match",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": -1.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T00:30:00+00:00",
+        "limits": [
+          {
+            "amount": 15075,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Ben Shelton -1.5",
+            "line": -1.5,
+            "oddsAmerican": 531,
+            "oddsDecimal": 6.31
+          },
+          {
+            "designation": "away",
+            "name": "Carlos Alcaraz +1.5",
+            "line": 1.5,
+            "oddsAmerican": -722,
+            "oddsDecimal": 1.138
+          }
+        ]
+      },
+      {
+        "name": "Total (Sets) – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": 3.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T00:30:00+00:00",
+        "limits": [
+          {
+            "amount": 15075,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 3.5",
+            "line": 3.5,
+            "oddsAmerican": -179,
+            "oddsDecimal": 1.558
+          },
+          {
+            "designation": "under",
+            "name": "Under 3.5",
+            "line": 3.5,
+            "oddsAmerican": 158,
+            "oddsDecimal": 2.58
+          }
+        ]
+      },
+      {
+        "name": "Money Line (Sets) – 1st Set",
+        "type": "moneyline",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T00:30:00+00:00",
+        "limits": [
+          {
+            "amount": 15075,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Ben Shelton",
+            "line": null,
+            "oddsAmerican": 189,
+            "oddsDecimal": 2.89
+          },
+          {
+            "designation": "away",
+            "name": "Carlos Alcaraz",
+            "line": null,
+            "oddsAmerican": -216,
+            "oddsDecimal": 1.462
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1636035159,
+      "name": "Rafalentino Ali Da Costa vs Shanker Heisnam",
+      "sport": {
+        "id": 33,
+        "name": "Tennis"
+      },
+      "units": "Sets",
+      "league": {
+        "id": 237513,
+        "name": "R1",
+        "country": "Indonesia"
+      },
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "awayTeam": {
+        "name": "Shanker Heisnam"
+      },
+      "homeTeam": {
+        "name": "Rafalentino Ali Da Costa"
+      },
+      "startTime": "2026-09-09T01:00:00.000Z"
+    },
+    "observedAt": "2026-09-08T19:24:49.077Z",
+    "markets": [
+      {
+        "name": "Handicap (Games) – Match",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": -5.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 225,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Rafalentino Ali Da Costa -5.5",
+            "line": -5.5,
+            "oddsAmerican": 147,
+            "oddsDecimal": 2.47
+          },
+          {
+            "designation": "away",
+            "name": "Shanker Heisnam +5.5",
+            "line": 5.5,
+            "oddsAmerican": -191,
+            "oddsDecimal": 1.523
+          }
+        ]
+      },
+      {
+        "name": "Total (Games) – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 19,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 225,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 19",
+            "line": 19,
+            "oddsAmerican": -166,
+            "oddsDecimal": 1.602
+          },
+          {
+            "designation": "under",
+            "name": "Under 19",
+            "line": 19,
+            "oddsAmerican": 129,
+            "oddsDecimal": 2.29
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Games) – Match",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Match",
+        "team": "Rafalentino Ali Da Costa",
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 11.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 11.5",
+            "line": 11.5,
+            "oddsAmerican": -499,
+            "oddsDecimal": 1.2
+          },
+          {
+            "designation": "under",
+            "name": "Under 11.5",
+            "line": 11.5,
+            "oddsAmerican": 329,
+            "oddsDecimal": 4.29
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Games) – Match",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Match",
+        "team": "Shanker Heisnam",
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 9,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 9",
+            "line": 9,
+            "oddsAmerican": -122,
+            "oddsDecimal": 1.819
+          },
+          {
+            "designation": "under",
+            "name": "Under 9",
+            "line": 9,
+            "oddsAmerican": -106,
+            "oddsDecimal": 1.943
+          }
+        ]
+      },
+      {
+        "name": "Handicap (Games) – 1st Set",
+        "type": "spread",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": -3.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 125,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Rafalentino Ali Da Costa -3.5",
+            "line": -3.5,
+            "oddsAmerican": 275,
+            "oddsDecimal": 3.75
+          },
+          {
+            "designation": "away",
+            "name": "Shanker Heisnam +3.5",
+            "line": 3.5,
+            "oddsAmerican": -389,
+            "oddsDecimal": 1.257
+          }
+        ]
+      },
+      {
+        "name": "Total (Games) – 1st Set",
+        "type": "total",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 8.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 125,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 8.5",
+            "line": 8.5,
+            "oddsAmerican": -242,
+            "oddsDecimal": 1.413
+          },
+          {
+            "designation": "under",
+            "name": "Under 8.5",
+            "line": 8.5,
+            "oddsAmerican": 186,
+            "oddsDecimal": 2.86
+          }
+        ]
+      },
+      {
+        "name": "Money Line (Sets) – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 350,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Rafalentino Ali Da Costa",
+            "line": null,
+            "oddsAmerican": -295,
+            "oddsDecimal": 1.338
+          },
+          {
+            "designation": "away",
+            "name": "Shanker Heisnam",
+            "line": null,
+            "oddsAmerican": 222,
+            "oddsDecimal": 3.22
+          }
+        ]
+      },
+      {
+        "name": "Handicap (Sets) – Match",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": -1.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 225,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Rafalentino Ali Da Costa -1.5",
+            "line": -1.5,
+            "oddsAmerican": -121,
+            "oddsDecimal": 1.826
+          },
+          {
+            "designation": "away",
+            "name": "Shanker Heisnam +1.5",
+            "line": 1.5,
+            "oddsAmerican": -104,
+            "oddsDecimal": 1.961
+          }
+        ]
+      },
+      {
+        "name": "Total (Sets) – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": 2.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 225,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 2.5",
+            "line": 2.5,
+            "oddsAmerican": 205,
+            "oddsDecimal": 3.05
+          },
+          {
+            "designation": "under",
+            "name": "Under 2.5",
+            "line": 2.5,
+            "oddsAmerican": -269,
+            "oddsDecimal": 1.371
+          }
+        ]
+      },
+      {
+        "name": "Money Line (Sets) – 1st Set",
+        "type": "moneyline",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 225,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Rafalentino Ali Da Costa",
+            "line": null,
+            "oddsAmerican": -225,
+            "oddsDecimal": 1.444
+          },
+          {
+            "designation": "away",
+            "name": "Shanker Heisnam",
+            "line": null,
+            "oddsAmerican": 175,
+            "oddsDecimal": 2.75
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1636040096,
+      "name": "Ryotaro Taguchi vs Azuma Visaya",
+      "sport": {
+        "id": 33,
+        "name": "Tennis"
+      },
+      "units": "Sets",
+      "league": {
+        "id": 237513,
+        "name": "R1",
+        "country": "Indonesia"
+      },
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "awayTeam": {
+        "name": "Azuma Visaya"
+      },
+      "homeTeam": {
+        "name": "Ryotaro Taguchi"
+      },
+      "startTime": "2026-09-09T01:00:00.000Z"
+    },
+    "observedAt": "2026-09-08T19:24:52.942Z",
+    "markets": [
+      {
+        "name": "Handicap (Games) – Match",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": -5.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 225,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Ryotaro Taguchi -5.5",
+            "line": -5.5,
+            "oddsAmerican": 128,
+            "oddsDecimal": 2.28
+          },
+          {
+            "designation": "away",
+            "name": "Azuma Visaya +5.5",
+            "line": 5.5,
+            "oddsAmerican": -165,
+            "oddsDecimal": 1.606
+          }
+        ]
+      },
+      {
+        "name": "Total (Games) – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 19,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 225,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 19",
+            "line": 19,
+            "oddsAmerican": -160,
+            "oddsDecimal": 1.625
+          },
+          {
+            "designation": "under",
+            "name": "Under 19",
+            "line": 19,
+            "oddsAmerican": 125,
+            "oddsDecimal": 2.25
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Games) – Match",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Match",
+        "team": "Azuma Visaya",
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 8,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 8",
+            "line": 8,
+            "oddsAmerican": -135,
+            "oddsDecimal": 1.74
+          },
+          {
+            "designation": "under",
+            "name": "Under 8",
+            "line": 8,
+            "oddsAmerican": 101,
+            "oddsDecimal": 2.01
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Games) – Match",
+        "type": "team_total",
+        "period": 0,
+        "periodName": "Match",
+        "team": "Ryotaro Taguchi",
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 11.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 11.5",
+            "line": 11.5,
+            "oddsAmerican": -641,
+            "oddsDecimal": 1.156
+          },
+          {
+            "designation": "under",
+            "name": "Under 11.5",
+            "line": 11.5,
+            "oddsAmerican": 400,
+            "oddsDecimal": 5
+          }
+        ]
+      },
+      {
+        "name": "Handicap (Games) – 1st Set",
+        "type": "spread",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": -3.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 125,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Ryotaro Taguchi -3.5",
+            "line": -3.5,
+            "oddsAmerican": 257,
+            "oddsDecimal": 3.57
+          },
+          {
+            "designation": "away",
+            "name": "Azuma Visaya +3.5",
+            "line": 3.5,
+            "oddsAmerican": -359,
+            "oddsDecimal": 1.278
+          }
+        ]
+      },
+      {
+        "name": "Total (Games) – 1st Set",
+        "type": "total",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Games",
+        "special": null,
+        "isLive": false,
+        "line": 8.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 125,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 8.5",
+            "line": 8.5,
+            "oddsAmerican": -248,
+            "oddsDecimal": 1.403
+          },
+          {
+            "designation": "under",
+            "name": "Under 8.5",
+            "line": 8.5,
+            "oddsAmerican": 190,
+            "oddsDecimal": 2.9
+          }
+        ]
+      },
+      {
+        "name": "Money Line (Sets) – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 350,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Ryotaro Taguchi",
+            "line": null,
+            "oddsAmerican": -360,
+            "oddsDecimal": 1.277
+          },
+          {
+            "designation": "away",
+            "name": "Azuma Visaya",
+            "line": null,
+            "oddsAmerican": 264,
+            "oddsDecimal": 3.64
+          }
+        ]
+      },
+      {
+        "name": "Handicap (Sets) – Match",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": -1.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 225,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Ryotaro Taguchi -1.5",
+            "line": -1.5,
+            "oddsAmerican": -149,
+            "oddsDecimal": 1.671
+          },
+          {
+            "designation": "away",
+            "name": "Azuma Visaya +1.5",
+            "line": 1.5,
+            "oddsAmerican": 118,
+            "oddsDecimal": 2.18
+          }
+        ]
+      },
+      {
+        "name": "Total (Sets) – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": 2.5,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 225,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 2.5",
+            "line": 2.5,
+            "oddsAmerican": 226,
+            "oddsDecimal": 3.26
+          },
+          {
+            "designation": "under",
+            "name": "Under 2.5",
+            "line": 2.5,
+            "oddsAmerican": -301,
+            "oddsDecimal": 1.332
+          }
+        ]
+      },
+      {
+        "name": "Money Line (Sets) – 1st Set",
+        "type": "moneyline",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Sets",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-09T01:00:00+00:00",
+        "limits": [
+          {
+            "amount": 225,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Ryotaro Taguchi",
+            "line": null,
+            "oddsAmerican": -273,
+            "oddsDecimal": 1.366
+          },
+          {
+            "designation": "away",
+            "name": "Azuma Visaya",
+            "line": null,
+            "oddsAmerican": 207,
+            "oddsDecimal": 3.07
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1636073816,
+      "name": "Enfoque vs Nautico Hacoaj",
+      "startTime": "2026-09-08T23:45:00.000Z",
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "sport": {
+        "id": 34,
+        "name": "Volleyball"
+      },
+      "league": {
+        "id": 215411,
+        "name": "Uruguay Division A Women",
+        "country": "Uruguay"
+      },
+      "homeTeam": {
+        "name": "Enfoque"
+      },
+      "awayTeam": {
+        "name": "Nautico Hacoaj"
+      },
+      "units": "Regular"
+    },
+    "observedAt": "2026-09-08T19:20:07.884Z",
+    "markets": [
+      {
+        "name": "Money Line – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:45:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Enfoque",
+            "line": null,
+            "oddsAmerican": -104,
+            "oddsDecimal": 1.961
+          },
+          {
+            "designation": "away",
+            "name": "Nautico Hacoaj",
+            "line": null,
+            "oddsAmerican": -127,
+            "oddsDecimal": 1.787
+          }
+        ]
+      },
+      {
+        "name": "Handicap – Match",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -1.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:45:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Enfoque -1.5",
+            "line": -1.5,
+            "oddsAmerican": 172,
+            "oddsDecimal": 2.72
+          },
+          {
+            "designation": "away",
+            "name": "Nautico Hacoaj +1.5",
+            "line": 1.5,
+            "oddsAmerican": -279,
+            "oddsDecimal": 1.358
+          }
+        ]
+      },
+      {
+        "name": "Total – Match",
+        "type": "total",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 3.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:45:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 3.5",
+            "line": 3.5,
+            "oddsAmerican": -251,
+            "oddsDecimal": 1.398
+          },
+          {
+            "designation": "under",
+            "name": "Under 3.5",
+            "line": 3.5,
+            "oddsAmerican": 159,
+            "oddsDecimal": 2.59
+          }
+        ]
+      },
+      {
+        "name": "Money Line (Points) – 1st Set",
+        "type": "moneyline",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Points",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:45:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Enfoque",
+            "line": null,
+            "oddsAmerican": -108,
+            "oddsDecimal": 1.925
+          },
+          {
+            "designation": "away",
+            "name": "Nautico Hacoaj",
+            "line": null,
+            "oddsAmerican": -122,
+            "oddsDecimal": 1.819
+          }
+        ]
+      },
+      {
+        "name": "Handicap (Points) – 1st Set",
+        "type": "spread",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Points",
+        "special": null,
+        "isLive": false,
+        "line": -3,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:45:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Enfoque -3",
+            "line": -3,
+            "oddsAmerican": 166,
+            "oddsDecimal": 2.66
+          },
+          {
+            "designation": "away",
+            "name": "Nautico Hacoaj +3",
+            "line": 3,
+            "oddsAmerican": -266,
+            "oddsDecimal": 1.375
+          }
+        ]
+      },
+      {
+        "name": "Total (Points) – 1st Set",
+        "type": "total",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": null,
+        "units": "Points",
+        "special": null,
+        "isLive": false,
+        "line": 44,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:45:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 44",
+            "line": 44,
+            "oddsAmerican": -192,
+            "oddsDecimal": 1.52
+          },
+          {
+            "designation": "under",
+            "name": "Under 44",
+            "line": 44,
+            "oddsAmerican": 128,
+            "oddsDecimal": 2.28
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Points) – 1st Set",
+        "type": "team_total",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": "Enfoque",
+        "units": "Points",
+        "special": null,
+        "isLive": false,
+        "line": 24,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:45:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 24",
+            "line": 24,
+            "oddsAmerican": -138,
+            "oddsDecimal": 1.724
+          },
+          {
+            "designation": "under",
+            "name": "Under 24",
+            "line": 24,
+            "oddsAmerican": -105,
+            "oddsDecimal": 1.952
+          }
+        ]
+      },
+      {
+        "name": "Team Total (Points) – 1st Set",
+        "type": "team_total",
+        "period": 1,
+        "periodName": "1st Set",
+        "team": "Nautico Hacoaj",
+        "units": "Points",
+        "special": null,
+        "isLive": false,
+        "line": 24,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:45:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 24",
+            "line": 24,
+            "oddsAmerican": -157,
+            "oddsDecimal": 1.636
+          },
+          {
+            "designation": "under",
+            "name": "Under 24",
+            "line": 24,
+            "oddsAmerican": 108,
+            "oddsDecimal": 2.08
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1635340442,
+      "name": "Corinthians Paulista vs EC Pinheiros SP",
+      "startTime": "2026-09-08T23:00:00.000Z",
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "sport": {
+        "id": 4,
+        "name": "Basketball"
+      },
+      "league": {
+        "id": 206146,
+        "name": "Campeonato Paulista",
+        "country": "Brazil"
+      },
+      "homeTeam": {
+        "name": "Corinthians Paulista"
+      },
+      "awayTeam": {
+        "name": "EC Pinheiros SP"
+      },
+      "units": "Regular"
+    },
+    "observedAt": "2026-09-08T19:19:32.581Z",
+    "markets": [
+      {
+        "name": "Money Line – Game",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Game",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:00:00+00:00",
+        "limits": [
+          {
+            "amount": 500,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Corinthians Paulista",
+            "line": null,
+            "oddsAmerican": -335,
+            "oddsDecimal": 1.298
+          },
+          {
+            "designation": "away",
+            "name": "EC Pinheiros SP",
+            "line": null,
+            "oddsAmerican": 218,
+            "oddsDecimal": 3.18
+          }
+        ]
+      },
+      {
+        "name": "Handicap – Game",
+        "type": "spread",
+        "period": 0,
+        "periodName": "Game",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -9.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:00:00+00:00",
+        "limits": [
+          {
+            "amount": 500,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Corinthians Paulista -9.5",
+            "line": -9.5,
+            "oddsAmerican": 138,
+            "oddsDecimal": 2.38
+          },
+          {
+            "designation": "away",
+            "name": "EC Pinheiros SP +9.5",
+            "line": 9.5,
+            "oddsAmerican": -194,
+            "oddsDecimal": 1.515
+          }
+        ]
+      },
+      {
+        "name": "Total – Game",
+        "type": "total",
+        "period": 0,
+        "periodName": "Game",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 154.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:00:00+00:00",
+        "limits": [
+          {
+            "amount": 500,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 154.5",
+            "line": 154.5,
+            "oddsAmerican": -145,
+            "oddsDecimal": 1.689
+          },
+          {
+            "designation": "under",
+            "name": "Under 154.5",
+            "line": 154.5,
+            "oddsAmerican": 109,
+            "oddsDecimal": 2.09
+          }
+        ]
+      },
+      {
+        "name": "Money Line – 1st Half",
+        "type": "moneyline",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:00:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Corinthians Paulista",
+            "line": null,
+            "oddsAmerican": -219,
+            "oddsDecimal": 1.456
+          },
+          {
+            "designation": "away",
+            "name": "EC Pinheiros SP",
+            "line": null,
+            "oddsAmerican": 156,
+            "oddsDecimal": 2.56
+          }
+        ]
+      },
+      {
+        "name": "Handicap – 1st Half",
+        "type": "spread",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": -4.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:00:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Corinthians Paulista -4.5",
+            "line": -4.5,
+            "oddsAmerican": 111,
+            "oddsDecimal": 2.11
+          },
+          {
+            "designation": "away",
+            "name": "EC Pinheiros SP +4.5",
+            "line": 4.5,
+            "oddsAmerican": -151,
+            "oddsDecimal": 1.662
+          }
+        ]
+      },
+      {
+        "name": "Total – 1st Half",
+        "type": "total",
+        "period": 1,
+        "periodName": "1st Half",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": 76.5,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:00:00+00:00",
+        "limits": [
+          {
+            "amount": 200,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "over",
+            "name": "Over 76.5",
+            "line": 76.5,
+            "oddsAmerican": -137,
+            "oddsDecimal": 1.729
+          },
+          {
+            "designation": "under",
+            "name": "Under 76.5",
+            "line": 76.5,
+            "oddsAmerican": 102,
+            "oddsDecimal": 2.02
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "event": {
+      "id": 1635359973,
+      "name": "Guyana Amazon Warriors vs Antigua and Barbuda Falcons",
+      "startTime": "2026-09-08T23:00:00.000Z",
+      "status": {
+        "isStarted": false,
+        "isInProgress": false,
+        "isInterrupted": false
+      },
+      "sport": {
+        "id": 8,
+        "name": "Cricket"
+      },
+      "league": {
+        "id": 197099,
+        "name": "Caribbean Premier League",
+        "country": "Americas"
+      },
+      "homeTeam": {
+        "name": "Guyana Amazon Warriors"
+      },
+      "awayTeam": {
+        "name": "Antigua and Barbuda Falcons"
+      },
+      "units": "Regular"
+    },
+    "observedAt": "2026-09-08T19:20:35.788Z",
+    "markets": [
+      {
+        "name": "Money Line – Match",
+        "type": "moneyline",
+        "period": 0,
+        "periodName": "Match",
+        "team": null,
+        "units": "Regular",
+        "special": null,
+        "isLive": false,
+        "line": null,
+        "status": "open",
+        "cutoffAt": "2026-09-08T23:00:00+00:00",
+        "limits": [
+          {
+            "amount": 100,
+            "type": "maxRiskStake"
+          }
+        ],
+        "outcomes": [
+          {
+            "designation": "home",
+            "name": "Guyana Amazon Warriors",
+            "line": null,
+            "oddsAmerican": -203,
+            "oddsDecimal": 1.492
+          },
+          {
+            "designation": "away",
+            "name": "Antigua and Barbuda Falcons",
+            "line": null,
+            "oddsAmerican": 146,
+            "oddsDecimal": 2.46
+          }
+        ]
+      }
+    ]
+  }
+]

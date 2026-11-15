@@ -1,0 +1,126 @@
+# Topologia de produção. Fonte da verdade: este arquivo.
+#
+# O arquivo vivo em /srv/apps/automabaca-novo/deploy/compose.yaml é este,
+# renderizado com a release publicada no lugar de __RELEASE_ID__, __RELEASE_SHA__,
+# __WEB_IMAGE__ e __WORKER_IMAGE__. As duas imagens da aplicação são sempre
+# referências imutáveis do registry (`repo@sha256:...`); tags locais servem só
+# para preparar a release antes da publicação. `npm run check:deploy-drift`
+# compara os dois e falha quando
+# alguém edita o vivo sem passar por aqui.
+#
+# Segredos NÃO moram aqui: entram pelos env_file de /etc/automabaca-novo,
+# gerados por deploy/split-env.cjs a partir de deploy/env-allowlist.cjs.
+name: automabaca-novo
+services:
+  db:
+    image: postgres@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    container_name: automabaca-novo-db
+    restart: unless-stopped
+    env_file:
+    - path: /etc/automabaca-novo/database.env
+      format: raw
+    volumes:
+    - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pg_isready -U automabaca_novo -d automabaca_novo
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    mem_limit: 768m
+    cpus: 1
+    logging:
+      driver: journald
+    # Consulta de 500 ms ou mais vai ao log, sem os parâmetros (podem ter dado
+    # pessoal); o coletor guarda só duração, comando, tabela e impressão digital.
+    # Mudar aqui não recria o banco na publicação: passo da VPS em
+    # docs/OBSERVABILIDADE.md, "Consultas lentas".
+    command:
+    - postgres
+    - -c
+    - 'log_line_prefix=%m [%p] %e '
+    - -c
+    - log_min_duration_statement=500ms
+    - -c
+    - log_parameter_max_length=0
+  web:
+    image: __WEB_IMAGE__
+    container_name: automabaca-novo-web
+    restart: unless-stopped
+    environment:
+      AUTOMABACA_RELEASE_ID: __RELEASE_ID__
+      AUTOMABACA_RELEASE_SHA: __RELEASE_SHA__
+      OBSERVABILITY_STATUS_DIR: /data/observability-status
+    env_file:
+    - path: /etc/automabaca-novo/web.env
+      format: raw
+    ports:
+    - 127.0.0.1:3101:3000
+    volumes:
+    - /var/lib/automabaca-novo/logos:/data/logos
+    - /var/lib/automabaca-novo/observability:/data/observability-status:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    init: true
+    cap_drop:
+    - ALL
+    security_opt:
+    - no-new-privileges:true
+    healthcheck:
+      test:
+      - CMD
+      - node
+      - -e
+      - fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+      interval: 20s
+      timeout: 5s
+      retries: 6
+      start_period: 90s
+    mem_limit: 1g
+    cpus: 1.5
+    logging:
+      driver: journald
+  worker:
+    image: __WORKER_IMAGE__
+    container_name: automabaca-novo-worker
+    restart: unless-stopped
+    environment:
+      AUTOMABACA_RELEASE_ID: __RELEASE_ID__
+      AUTOMABACA_RELEASE_SHA: __RELEASE_SHA__
+      OBSERVABILITY_STATUS_DIR: /data/observability-status
+      # O worker grava a logo da banca criada pelo canal e limpa a da banca excluída.
+      LOGOS_DIR: /data/logos
+    env_file:
+    - path: /etc/automabaca-novo/worker.env
+      format: raw
+    volumes:
+    - /var/lib/automabaca-novo/logos:/data/logos
+    - /var/lib/automabaca-novo/observability:/data/observability-status:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    init: true
+    cap_drop:
+    - ALL
+    security_opt:
+    - no-new-privileges:true
+    # Maior que o orçamento de shutdown do worker (tests/plataforma/orcamento-de-shutdown.test.ts).
+    stop_grace_period: 110s
+    healthcheck:
+      test:
+      - CMD
+      - node
+      - dist/worker-healthcheck.mjs
+      interval: 30s
+      timeout: 5s
+      retries: 4
+      start_period: 120s
+    mem_limit: 1g
+    cpus: 1.5
+    logging:
+      driver: journald
+volumes:
+  db-data:
+    name: automabaca-novo-db-data

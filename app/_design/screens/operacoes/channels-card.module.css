@@ -1,0 +1,53 @@
+.card { overflow: hidden; }
+.header { padding: 20px 24px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.title { margin: 0; font: 600 17px var(--font-display); color: var(--ink); letter-spacing: -.01em; }
+.subtitle, .small, .window { font: 12px var(--font-sans); color: var(--ink-3); }
+.subtitle, .small { margin-top: 3px; }
+.window { margin-left: auto; font-size: 11.5px; }
+.orphanWrap { padding: 0 24px 12px; }
+.orphanBox { padding: 12px 14px; background: var(--loss-dim); border: 1px solid var(--line); border-radius: 12px; }
+.orphanTitle { margin-bottom: 8px; font: 600 13px var(--font-sans); color: var(--loss); }
+.orphanRow, .channelHead, .footer { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.orphanRow { padding: 8px 0; border-top: 1px solid var(--line-soft); }
+.flex { flex: 1; min-width: 180px; }
+.mono, .metricValue { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.mono { font-size: 13px; color: var(--ink); }
+.link { min-height: 44px; display: inline-flex; align-items: center; padding: 0 2px; font: 600 12.5px var(--font-sans); color: var(--accent); text-decoration: none; }
+.channel { padding: 17px 24px 18px; border-top: 1px solid var(--line-soft); }
+.channelHead { gap: 12px; }
+.icon { width: 36px; height: 36px; border-radius: 9px; background: var(--accent-dim); color: var(--accent); display: grid; place-items: center; flex-shrink: 0; }
+.channelName { font: 650 14px var(--font-sans); color: var(--ink); }
+.preKickoff { font: 650 11.5px var(--font-sans); color: var(--loss); background: var(--loss-dim); border-radius: 999px; padding: 6px 9px; }
+.silent { font: 650 11.5px var(--font-sans); color: var(--loss); background: var(--loss-dim); border-radius: 999px; padding: 6px 9px; }
+.learning { font: 650 11.5px var(--font-sans); color: var(--ink-3); background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 999px; padding: 5px 9px; }
+.silentDetail { margin-top: 8px; font: 12px var(--font-sans); color: var(--loss); }
+.postLink { color: var(--accent); text-decoration: none; font-weight: 600; }
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 8px; margin-top: 13px; }
+.metric { min-width: 0; padding: 11px 12px; background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 12px; }
+.metricLabel { font: 650 9.5px var(--font-sans); letter-spacing: .1em; color: var(--ink-3); text-transform: uppercase; }
+.metricValue { margin-top: 6px; font-size: 17px; line-height: 1; font-weight: 650; }
+.metricDetail { margin-top: 5px; font: 10.5px var(--font-sans); color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.good { color: var(--gain); }
+.bad { color: var(--loss); }
+.warn { color: var(--accent); }
+.neutral { color: var(--ink-3); }
+.footer { gap: 12px; margin-top: 11px; }
+.causes { flex: 1 1 420px; min-width: 0; font: 11.5px/1.45 var(--font-sans); color: var(--ink-3); }
+.causes b { color: var(--ink-2); }
+.retryGroup { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.retry { border: 1px solid var(--line); background: var(--surface); color: var(--accent); border-radius: 9px; padding: 8px 11px; cursor: pointer; font: 650 12px var(--font-sans); }
+.retry:disabled { cursor: wait; opacity: .55; }
+.retryNote { max-width: 220px; color: var(--ink-3); font: 10.5px/1.3 var(--font-sans); text-align: right; }
+.discarded { margin-top: 12px; padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 12px; }
+.discardedSummary { min-height: 28px; display: flex; align-items: center; cursor: pointer; font: 600 12.5px var(--font-sans); color: var(--ink-2); }
+.discardedRow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 0; border-top: 1px solid var(--line-soft); }
+.staleWarning { margin-top: 4px; font: 600 11.5px var(--font-sans); color: var(--loss); }
+.discardedText { margin: 4px 0 0; font: 12px/1.45 var(--font-mono); color: var(--ink); white-space: pre-line; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+
+@media (max-width: 640px) {
+  .header, .channel { padding-left: 18px; padding-right: 18px; }
+  .orphanWrap { padding-left: 18px; padding-right: 18px; }
+  .window { margin-left: 0; width: 100%; }
+  .retryGroup { align-items: flex-start; }
+  .retryNote { text-align: left; }
+}

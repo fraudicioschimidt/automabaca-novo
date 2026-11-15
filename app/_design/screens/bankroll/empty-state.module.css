@@ -1,0 +1,107 @@
+.wrapper { margin-top: 8px; }
+
+.card {
+  padding: 56px 40px;
+  border: 1px solid var(--empty-border);
+  border-radius: var(--empty-radius);
+  background: var(--empty-surface);
+  box-shadow: var(--empty-shadow);
+  text-align: center;
+}
+
+
+.icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  margin: 0 auto 22px;
+  border-radius: 18px;
+  background: var(--empty-accent-soft);
+  color: var(--empty-accent);
+}
+
+.title {
+  margin: 0;
+  color: var(--empty-text);
+  font-family: var(--empty-display);
+  font-size: var(--empty-title-size);
+  font-weight: var(--empty-title-weight);
+  letter-spacing: -.02em;
+}
+
+.description {
+  max-width: 440px;
+  margin: 10px auto 0;
+  color: var(--empty-muted);
+  font-family: var(--empty-body);
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+
+.wrapper .button {
+  padding: 11px 18px;
+  border-radius: var(--empty-radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  font-family: var(--empty-body);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: var(--empty-accent);
+  box-shadow: var(--empty-button-shadow);
+  color: var(--empty-accent-text);
+}
+
+.secondary {
+  border: 1px solid var(--empty-border);
+  background: transparent;
+  color: var(--empty-text);
+}
+
+.steps {
+  display: flex;
+  max-width: 600px;
+  justify-content: center;
+  gap: 0;
+  margin: 36px auto 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--empty-border-soft);
+}
+
+.step {
+  flex: 1;
+  padding: 0 14px;
+}
+
+.step + .step { border-left: 1px solid var(--empty-border-soft); }
+.stepNumber { color: var(--empty-accent); font-size: 12px; font-weight: 700; }
+.stepTitle {
+  margin-top: 6px;
+  color: var(--empty-text);
+  font-family: var(--empty-body);
+  font-size: 14px;
+  font-weight: 600;
+}
+.stepDescription { margin-top: 3px; color: var(--empty-faint); font-size: 12px; }
+
+@media (max-width: 1023px) {
+  .card { padding: 38px 20px; }
+  .actions { flex-direction: column; }
+  .steps { flex-direction: column; gap: 18px; }
+  .step + .step { border-left: 0; }
+}

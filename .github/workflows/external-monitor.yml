@@ -1,0 +1,123 @@
+name: external-monitor
+
+# Verificação do endpoint público a partir de FORA da VPS.
+#
+# Os indicadores internos explicam a causa de uma queda, mas não avisam
+# quando é a própria máquina que está fora.
+#
+# Roda num runner hospedado do GitHub, fora da VPS. SEM agendamento: cada
+# execução gasta minutos da cota do plano, e vigiar de 5 em 5 minutos é serviço
+# de um monitor de uptime dedicado, apontado para a mesma URL de health.
+#
+# Este workflow vale como verificação sob demanda, e porque ele sabe abrir e
+# fechar issue no repositório, coisa que o serviço externo não faz.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: external-production-monitor
+  cancel-in-progress: true
+
+env:
+  HEALTH_URL: ${{ vars.PUBLIC_HEALTH_URL || 'https://v2.fraudicio.com.br/api/health' }}
+
+jobs:
+  health:
+    name: health fora da VPS
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Consultar endpoint público
+        id: health
+        shell: bash
+        run: |
+          set +e
+          body_file="$(mktemp)"
+          http_code="$(curl --silent --show-error --location --max-time 20 \
+            --output "$body_file" --write-out '%{http_code}' "$HEALTH_URL")"
+          curl_exit=$?
+          set -e
+
+          healthy=false
+          if [[ "$curl_exit" -eq 0 && "$http_code" == "200" ]] \
+            && jq -e '.ok == true and .db == true and .worker == true' "$body_file" >/dev/null 2>&1; then
+            healthy=true
+          fi
+
+          {
+            echo "healthy=$healthy"
+            echo "http_code=${http_code:-000}"
+            echo "curl_exit=$curl_exit"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Abrir incidente externo
+        if: steps.health.outputs.healthy != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HTTP_CODE: ${{ steps.health.outputs.http_code }}
+          CURL_EXIT: ${{ steps.health.outputs.curl_exit }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.EXTERNAL_MONITOR_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.EXTERNAL_MONITOR_TELEGRAM_CHAT_ID }}
+        shell: bash
+        run: |
+          title='[Monitor externo] AutomaBACA indisponível'
+          number="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --limit 100 \
+            --json number,title --jq 'map(select(.title == "[Monitor externo] AutomaBACA indisponível")) | .[0].number // empty')"
+          if [[ -n "$number" ]]; then
+            exit 0
+          fi
+
+          gh label create outage --repo "$GITHUB_REPOSITORY" --color B42318 \
+            --description 'Indisponibilidade detectada por monitor externo' --force >/dev/null
+          body_file="$(mktemp)"
+          cat > "$body_file" <<EOF
+          O monitor executado fora da VPS não recebeu um health saudável.
+
+          - URL: \`$HEALTH_URL\`
+          - HTTP: \`${HTTP_CODE:-000}\`
+          - curl exit: \`${CURL_EXIT:-1}\`
+          - detectado em: \`$(date -u +'%Y-%m-%dT%H:%M:%SZ')\`
+          - execução: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+
+          O issue será fechado automaticamente quando web, banco e worker voltarem a responder.
+          EOF
+          issue_url="$(gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body-file "$body_file" --label outage)"
+
+          if [[ -n "$TELEGRAM_BOT_TOKEN" && -n "$TELEGRAM_CHAT_ID" ]]; then
+            text="🚨 AutomaBACA indisponível no monitor externo. HTTP ${HTTP_CODE:-000}. ${issue_url}"
+            payload="$(jq -nc --arg chat_id "$TELEGRAM_CHAT_ID" --arg text "$text" '{chat_id:$chat_id,text:$text}')"
+            curl --silent --show-error --max-time 15 --request POST \
+              --header 'content-type: application/json' --data "$payload" \
+              "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" >/dev/null || true
+          fi
+
+      - name: Fechar incidente após recuperação
+        if: steps.health.outputs.healthy == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.EXTERNAL_MONITOR_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.EXTERNAL_MONITOR_TELEGRAM_CHAT_ID }}
+        shell: bash
+        run: |
+          number="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --limit 100 \
+            --json number,title --jq 'map(select(.title == "[Monitor externo] AutomaBACA indisponível")) | .[0].number // empty')"
+          if [[ -z "$number" ]]; then
+            exit 0
+          fi
+
+          recovered_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          gh issue comment "$number" --repo "$GITHUB_REPOSITORY" \
+            --body "Recuperação confirmada externamente em \`$recovered_at\`: web, banco e worker saudáveis."
+          gh issue close "$number" --repo "$GITHUB_REPOSITORY" --reason completed
+
+          if [[ -n "$TELEGRAM_BOT_TOKEN" && -n "$TELEGRAM_CHAT_ID" ]]; then
+            text="✅ AutomaBACA recuperado e confirmado pelo monitor externo."
+            payload="$(jq -nc --arg chat_id "$TELEGRAM_CHAT_ID" --arg text "$text" '{chat_id:$chat_id,text:$text}')"
+            curl --silent --show-error --max-time 15 --request POST \
+              --header 'content-type: application/json' --data "$payload" \
+              "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" >/dev/null || true
+          fi

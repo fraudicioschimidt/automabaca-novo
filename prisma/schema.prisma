@@ -1,0 +1,1412 @@
+// AutomaBACA — schema enxuto (ver arquitetura e stack atual no BLUEPRINT.md).
+//
+// Convenção de nomes: campos de negócio em PT (vocabulário do operador: evento,
+// mercado, lucro, stake), métricas sharp em EN consagrado (openingOdd, clv),
+// metadados técnicos em EN (createdAt, updatedAt, deletedAt). Proibido criar
+// híbridos novos fora desses grupos.
+//
+// Estado de execução (retry, claim, agendamento) NÃO vive aqui — vive nas filas
+// do pg-boss (schema "pgboss"). As tabelas guardam apenas resultados.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────────── Enums ─────────────────────────────
+
+enum BetStatus {
+  PENDING
+  WON
+  LOST
+  VOID
+  HALF_WON
+  HALF_LOST
+  CASHOUT
+  CANCELED
+}
+
+/// Modo sharp do bankroll. Identidade Pinnacle é SEMPRE normalizada;
+/// o modo controla o que mais é buscado (ver contrato de providers no Blueprint).
+enum SharpMode {
+  OFF // sem chamadas de provider — nem identidade (nomes ficam crus do post)
+  CLV_ONLY // tipster pré-Pinnacle: identidade em retry + CLV no fechamento
+  IDENTITY_ONLY // só identidade (normaliza nomes/alias/cache via providers); sem CLV/fechamento — p/ canais de player props (mercado impreçável)
+}
+
+/// De onde vem a odd autoritativa na captura daquele canal. É dado da banca, e
+/// não heurística de slug no código, para canal novo com formato próprio não
+/// exigir editar o guard.
+enum CapturePolicy {
+  /// Decide pelo conteúdo da legenda: legenda no formato `stake @odd` manda,
+  /// senão vale o que o parser/print extraiu. Default seguro para canal novo.
+  AUTO
+  /// A odd do `@` na legenda é a verdade e é OBRIGATÓRIA quando o `@` aparece
+  /// (canal que posta a odd cravada — ex.: Will).
+  CAPTION_ODD
+  /// A odd vem do print; número na legenda é referência mínima, não a odd
+  /// cravada (ex.: Luis/Uyoz, onde `min` pode coincidir com a odd atual).
+  IMAGE_ODD
+}
+
+/// Estado da resolução de identidade Pinnacle da aposta.
+enum IdentityStatus {
+  PENDING // ainda não tentou ou aguardando retry (pré-Pinnacle)
+  MATCHED // evento/liga/país canonizados por um provider
+  UNMATCHED // tentou e não casou — vira TrainingCase
+  UNSUPPORTED // esporte/mercado fora do contrato dos providers
+  MANUAL // resolvido por alias manual do operador
+}
+
+enum SportResolutionStatus {
+  CONFIRMED
+  PENDING
+  CONFLICT
+}
+
+enum SportResolutionSource {
+  LEGACY
+  TEXT
+  EMOJI
+  COMPETITION
+  LLM
+  TEAM_ID
+  PROVIDER
+  WEB
+  MANUAL
+  /// Banca de canal com um esporte só marcado pelo dono em Config.
+  CHANNEL
+  UNRESOLVED
+}
+
+enum ClosingSource {
+  CRON
+  MANUAL
+  REPROCESS
+}
+
+enum ContaStatus {
+  ATIVA
+  LIMITADA
+  ENCERRADA
+}
+
+enum MovimentacaoTipo {
+  DEPOSITO
+  SAQUE
+  GANHO_APOSTA
+  PERDA_APOSTA
+  BONUS
+  AJUSTE_MANUAL
+  ESTORNO
+}
+
+/// Proveniência de um alias/resolução (invariante de proveniência do Blueprint).
+enum AliasSource {
+  AUTO // score alto, aplicado sozinho
+  LLM // decidido pelo Gemini-judge
+  MANUAL // operador
+  PROMOTED // AUTO/LLM promovido por uso repetido sem conflito (USOS_PARA_PROMOCAO em teams/usage)
+}
+
+enum TrainingStatus {
+  OPEN // aguardando alguma camada resolver
+  AUTO_APPLIED // resolvido pela camada 1 (score)
+  LLM_APPLIED // resolvido pela camada 2 (Gemini-judge)
+  RESOLVED_MANUAL // resolvido pela fila humana
+  REJECTED // operador marcou como não-resolvível (ex.: evento inexistente)
+  EXPIRED // evento passou sem resolução
+}
+
+enum OperationalActionStatus {
+  OPEN
+  ACKED
+  RUNNING
+  RESOLVED
+  DISMISSED
+  EXPIRED
+}
+
+enum OperationalRisk {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// ─────────────────────────── Núcleo: apostas ───────────────────────────
+
+enum CaptureStakePolicy {
+  MESSAGE
+  WHEN_MISSING
+  ALWAYS
+}
+
+model Bankroll {
+  id                String        @id @default(uuid())
+  nome              String
+  slug              String        @unique
+  capitalInicial    Decimal       @default(100) @db.Decimal(12, 2)
+  valorUnidade      Decimal       @default(20) @db.Decimal(10, 2)
+  sharpMode         SharpMode     @default(CLV_ONLY)
+  vincularContas    Boolean       @default(true)
+  /// Canal Telegram cujos posts são planilhados neste bankroll (1:1).
+  telegramChannelId BigInt?       @unique
+  /// Casa usada quando o post não menciona casa nem tem URL conhecida.
+  defaultBookmaker  String?
+  /// De onde vem a odd autoritativa na captura deste canal (ver CapturePolicy).
+  capturePolicy     CapturePolicy @default(AUTO)
+  stakePolicy       CaptureStakePolicy @default(MESSAGE)
+  defaultStakeUnits Decimal? @db.Decimal(14, 6)
+  imageStakeAsUnits Boolean @default(false)
+  playerPropsAutoSettlement Boolean @default(false)
+  /// Esportes que o canal posta, marcados pelo dono. Vazio = "vários/não sei":
+  /// a captura resolve o esporte pelo conteúdo. Com um só, a aposta nasce
+  /// confirmada nele; com vários, os candidatos ficam restritos a eles.
+  channelSports     String[]      @default([])
+  /// Captura do canal pausada pelo dono: posts novos vão para os descartados
+  /// sem leitura; reações e apostas antigas seguem normais.
+  capturePausedAt   DateTime?     @db.Timestamptz(3)
+  /// Última troca do `sharpMode`. Resposta de preço guardada antes dela não vale
+  /// para o fechamento; nulo = o modo não mudou desde a criação da coluna.
+  sharpModeChangedAt DateTime?    @db.Timestamptz(3)
+  createdAt         DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime      @updatedAt @db.Timestamptz(3)
+
+  bets       Bet[]
+  captureFinancialContexts CaptureFinancialContext[]
+  telegramReactionStates TelegramReactionState[]
+  contaLinks ContaBankroll[]
+
+  @@map("bankrolls")
+}
+
+model Bet {
+  id                    String                @id @default(uuid())
+  bankrollId            String
+  bankroll              Bankroll              @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  /// Data/hora do evento (kickoff), não do registro.
+  data                  DateTime              @db.Timestamptz(3)
+  /// true = horário provisório (post sem hora / só dia). O enrich corrige via
+  /// calendário BridgeOdds ou match_date Pinnacle e zera a flag.
+  kickoffInferido       Boolean               @default(false)
+  evento                String
+  esporte               String
+  /// Proveniência da modalidade. Captura sem evidência forte usa `Unknown`
+  /// e permanece PENDING até o resolvedor confirmar sem conflito.
+  sportResolutionStatus SportResolutionStatus @default(CONFIRMED)
+  sportConfidence       Int                   @default(100)
+  sportSource           SportResolutionSource @default(LEGACY)
+  sportEvidence         Json?
+  /// Obrigatório somente em CONFIRMED. Sem default: cada writer precisa
+  /// declarar quando resolveu, e o CHECK SQL rejeita os dois estados inversos.
+  sportResolvedAt       DateTime?             @db.Timestamptz(3)
+  sportResolverVersion  Int                   @default(1)
+  competicao            String                @default("")
+  pais                  String                @default("")
+  casaDeAposta          String                @default("")
+  tipster               String                @default("")
+  mercado               String
+  /// A seleção apostada, em estilo Pinnacle/EN (ex.: "Over 2.5", "Draw", nome do time).
+  selecao               String
+  /// Placar no instante da tip ao vivo, na ordem do evento. O par é imutável
+  /// depois da captura e permite liquidar AH pelo restante do jogo.
+  liveScoreHome         Int?
+  liveScoreAway         Int?
+  /// A legenda capturada dizia que a entrada foi ao vivo (`mentionsLiveEntry`),
+  /// mesmo sem placar. Gravado no registro porque a legenda expira em 30 dias
+  /// e a liquidação de mercado de tempo precisa do sinal depois disso.
+  liveTextAtCapture     Boolean               @default(false)
+  /// Quem leu a aposta capturada (`CaptureReader`: regra, ou provedor, modelo,
+  /// endpoint e versão do contrato). Gravado no registro porque a evidência da
+  /// captura expira e a correção do dono mede o acerto de cada leitor.
+  captureReader         Json?
+  odds                  Decimal               @db.Decimal(10, 4)
+  /// Stake em unidades aplicada no registro, conforme a política da banca.
+  stake                 Decimal               @db.Decimal(14, 6)
+  /// Snapshot de Bankroll.valorUnidade no registro — ledger/settle usam isto,
+  /// não o valor vivo da banca (mudar unidade não reescreve histórico em R$).
+  /// DEFAULT 1 só para inserts de teste; registerBet sempre grava o real.
+  valorUnidade          Decimal               @default(1) @db.Decimal(10, 2)
+  status                BetStatus             @default(PENDING)
+  lucro                 Decimal               @default(0) @db.Decimal(14, 6)
+  /// Pernas de múltipla/parlay quando aplicável.
+  legsJson              Json?
+  /// Origem: "web" | "telegram-dm:<chatId>:<bankrollId>" | "telegram-channel:<chatId>".
+  source                String                @default("web")
+  /// Id externo na origem (ex.: message_id do Telegram) — par único com source.
+  sourceExternalId      String?
+  contaId               String?
+  conta                 Conta?                @relation(fields: [contaId], references: [id], onDelete: SetNull)
+  registradoEm          DateTime              @default(now()) @db.Timestamptz(3)
+  /// Timestamp original e confiável da mensagem, preservado em retries/edições.
+  /// Pré-jogo/ao vivo e o arquivo de preço usam este instante; registradoEm mede a captura.
+  /// null = aposta digitada no painel, que não tem horário da origem.
+  sourcePostedAt        DateTime?             @db.Timestamptz(3)
+  updatedAt             DateTime              @updatedAt @db.Timestamptz(3)
+  /// Quando a aposta deixou de ser PENDING (foi resolvida) — null enquanto pendente.
+  /// Distingue "resolvida hoje" de "modificada hoje" no KPI do dashboard (getResumoHoje).
+  settledAt             DateTime?             @db.Timestamptz(3)
+  /// Soft-delete (👎 no canal, remoção pelo painel). A linha permanece, então o
+  /// @@unique(source, sourceExternalId) continua bloqueando recaptura do mesmo
+  /// post em edits — com histórico preservado e sem FK quebrada no ledger.
+  deletedAt             DateTime?             @db.Timestamptz(3)
+  /// Remoção restaurável: o AuditEvent `bet.soft_delete` guarda o estado
+  /// anterior e a origem (👎 ou painel) e fica retido enquanto a marca existir.
+  /// Removida sem a marca (exclusão antiga pelo painel) não volta.
+  notTakenAt            DateTime?             @db.Timestamptz(3)
+  /// Quando o dono marcou a entrada como pega (👍 no post do canal); tirar o
+  /// 👍 limpa. A ficha e a trilha mostram a hora; não mexe em stake, odd,
+  /// lucro, conta nem liquidação.
+  takenAt               DateTime?             @db.Timestamptz(3)
+  /// Primeira vez que o FlashScore olhou a aposta, gravada uma vez só: o
+  /// casamento do dia conta a aposta por ela. Fica aqui, e não em `bet_result`,
+  /// porque a correção pela ficha, o Vincular e a reabertura apagam aquela
+  /// evidência, e a aposta contaria de novo no dia da olhada seguinte.
+  flashscoreFirstCheckedAt DateTime? @db.Timestamptz(3)
+
+  sharp            BetSharp?
+  closing          BetClosing?
+  opening          BetOpening?
+  result           BetResult?
+  movimentacoes    Movimentacao[]
+  trainingCases    TrainingCase[]
+  settlementEvents SettlementEvent[]
+  judgeSuggestions IaJudgeSuggestion[]
+  captureEvidence  BetCaptureEvidence?
+  closingPriceWatches ClosingPriceWatch[]
+  /// Configuração durável da origem; independente da retenção de OCR.
+  captureFinancialContextId String?
+  captureFinancialContext CaptureFinancialContext? @relation(fields: [captureFinancialContextId], references: [id], onDelete: SetNull)
+  /// Snapshot v1 validado da política de stake da origem (basis CAPTURE). null = captura sem política (ex.: aposta manual).
+  captureStakeSnapshot Json?
+  /// Correções explícitas do operador prevalecem sobre edições da origem.
+  manualStakeOverride Boolean @default(false)
+  manualOddsOverride Boolean @default(false)
+  /// Revisão de decisão manual, incrementada por triggers somente para mudanças relevantes.
+  manualSettlementVersion Int @default(1)
+  manualSettlementReceipts ManualSettlementReceipt[]
+  absorbedSources AbsorbedBetSource[]
+  playerProp       BetPlayerProp?
+
+  @@unique([source, sourceExternalId])
+  @@index([bankrollId, data])
+  @@index([bankrollId, status, data])
+  @@index([bankrollId, registradoEm])
+  @@index([status, data])
+  @@index([status, settledAt])
+  @@index([bankrollId, tipster])
+  @@index([contaId])
+  @@index([captureFinancialContextId])
+  @@index([deletedAt])
+  @@index([bankrollId, notTakenAt])
+  @@index([sportResolutionStatus, registradoEm])
+  /// `bets_pending_active_data_idx` é parcial (status=PENDING, deletedAt=null)
+  /// e vive na migration SQL porque Prisma não representa índices parciais.
+  @@map("bets")
+}
+
+/// Recibo técnico mínimo de uma origem externa cuja aposta foi excluída com a
+/// banca. Preserva apenas a idempotência da captura: não replica evento,
+/// mercado, odd, stake, banca nem qualquer outro dado operacional da aposta.
+model RetiredBetSource {
+  source           String
+  sourceExternalId String
+  retiredBetId     String
+  retiredAt        DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([source, sourceExternalId])
+  @@index([retiredAt])
+  @@map("retired_bet_sources")
+}
+
+/// Origem já consumida por deduplicação de conteúdo. Trava a recaptura, sem
+/// transferir as reações do post duplicado para a aposta que o absorveu.
+model AbsorbedBetSource {
+  source String
+  sourceExternalId String
+  betId String
+  bet Bet @relation(fields: [betId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([source, sourceExternalId])
+  @@index([betId])
+  @@map("absorbed_bet_sources")
+}
+
+/// Recibo mínimo de uma criação solicitada pelo painel. Sem FK de propósito:
+/// apagar o recurso não pode permitir que um reenvio antigo o recrie.
+model CreationReceipt {
+  action String
+  actor String
+  requestId String
+  requestHash String
+  resourceId String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([action, actor, requestId])
+  @@map("creation_receipts")
+}
+
+/// Confirmação manual concluída; repetir o mesmo pedido não reaplica a liquidação.
+model ManualSettlementReceipt {
+  betId String
+  bet Bet @relation(fields: [betId], references: [id], onDelete: Cascade)
+  requestId String
+  requestHash String
+  resultVersion Int
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  @@id([betId, requestId])
+  @@map("manual_settlement_receipts")
+}
+
+/// Evidência temporária da captura Telegram. Mantém texto/referência do arquivo
+/// e o parse original por 30 dias; a decisão final permanece na própria Bet.
+model BetCaptureEvidence {
+  betId          String   @id
+  bet            Bet      @relation(fields: [betId], references: [id], onDelete: Cascade)
+  parser         String
+  caption        String?  @db.Text
+  mediaFileId    String?
+  parsedJson     Json
+  candidatesJson Json?
+  expiresAt      DateTime @db.Timestamptz(3)
+  createdAt      DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@index([expiresAt])
+  @@map("bet_capture_evidence")
+}
+
+/// Uma associação financeira por mensagem/álbum e origem, antes da extração.
+/// Não contém texto, imagem ou resposta de IA e não participa da purga de OCR.
+model CaptureFinancialContext {
+  id String @id @default(uuid())
+  source String
+  sourceExternalId String
+  bankrollId String
+  bankroll Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  valorUnidade Decimal @db.Decimal(10, 2)
+  stakePolicy CaptureStakePolicy
+  defaultStakeUnits Decimal? @db.Decimal(14, 6)
+  imageStakeAsUnits Boolean @default(false)
+  assignedAt DateTime @default(now()) @db.Timestamptz(3)
+  bets Bet[]
+
+  @@unique([source, sourceExternalId])
+  @@index([bankrollId])
+  @@map("capture_financial_contexts")
+}
+
+/// Métricas sharp da ENTRADA (1:1 com Bet). Criada quando o enrichment roda.
+model BetSharp {
+  betId              String         @id
+  bet                Bet            @relation(fields: [betId], references: [id], onDelete: Cascade)
+  identityStatus     IdentityStatus @default(PENDING)
+  /// Confiança 0-100 da resolução de identidade.
+  confidence         Int            @default(0)
+  /// Provider que resolveu (bridgeodds | pinnacle17). Valores de adapters
+  /// removidos podem existir em linhas históricas e são só telemetria.
+  provider           String?
+  /// Identidade do evento principal no namespace do provider.
+  providerMatchId    String?
+  /// Referência tipada do evento/mercado que realmente fornece preço.
+  /// Pode ser ausente mesmo com identidade MATCHED (ex.: Bookings sem irmão).
+  priceReference     String?
+  /// Por que as métricas de odds estão ausentes apesar do MATCHED
+  /// (line_mismatch, no_prices, unsupported_market, ambiguous_selection,
+  /// missing_line, sem_linha_atual, sharp_off, clv_only, identity_only).
+  /// null = odds presentes ou enrichment ainda não concluiu.
+  noOddsReason       String?
+  /// Primeira vez em que a identidade saiu de PENDING. Não muda em refresh de
+  /// odds; permite medir tempo real de resolução por canal.
+  identityResolvedAt DateTime?      @db.Timestamptz(3)
+  updatedAt          DateTime       @updatedAt @db.Timestamptz(3)
+
+  @@index([identityStatus])
+  @@index([identityResolvedAt])
+  @@map("bet_sharp")
+}
+
+/// Fechamento (1:1 com Bet): preço e CLV. Criada quando o closing roda. As
+/// colunas de resultado (placar e observação do FlashScore) não são mais
+/// escritas nem lidas: o resultado mora em `BetResult`.
+model BetClosing {
+  betId                 String         @id
+  bet                   Bet            @relation(fields: [betId], references: [id], onDelete: Cascade)
+  /// Fair odd Pinnacle no fechamento da linha (devig).
+  closingOdd            Decimal?       @db.Decimal(12, 6)
+  closingRawOdd         Decimal?       @db.Decimal(10, 4)
+  /// CLV% = odd cravada vs closing fair (devig). Não é beat-the-close vs raw.
+  clv                   Decimal?       @db.Decimal(12, 4)
+  /// true só com mercado suportado + linha exata + pré-live.
+  clvReliable           Boolean?
+  /// Por que clvReliable=false (line_mismatch, sem_linha_atual,
+  /// kickoff_sem_captura, sharp_off, clv_only…). null = closing confiável ou pendente.
+  noOddsReason          String?
+  closingMaxBet         Int?
+  /// Mesma regra dos snapshots de entrada: null impede comparação monetária.
+  closingMaxBetCurrency String?
+  /// Mesmo contrato recalculável dos snapshots de abertura/entrada.
+  closingPriceSnapshot Json?
+  /// Parado desde o passo 7 do fechamento: o resultado mora em `BetResult`.
+  scoreHome             Int?           @ignore
+  scoreAway             Int?           @ignore
+  /// Mecanismo da escrita do fechamento (CRON/MANUAL/REPROCESS).
+  source                ClosingSource?
+  /// Provider que FORNECEU a odd de fechamento (bridgeodds/pinnacle17)
+  /// — distinto de `source` (mecanismo). null quando não houve odd resolvida.
+  provider              String?
+  /// Referência tipada do evento/mercado que forneceu o preço de fechamento.
+  closingPriceReference String?
+  /// Instante em que o adapter observou o snapshot (inclusive quando veio de cache).
+  closingPriceObservedAt DateTime?     @db.Timestamptz(3)
+  fetchedAt             DateTime?      @db.Timestamptz(3)
+  /// 2ª captura single-shot (≤5min do kickoff) já feita — evita re-fetch em loop.
+  lateRefreshedAt       DateTime?      @db.Timestamptz(3)
+  /// Parados desde o passo 7 do fechamento: o resultado mora em `BetResult`.
+  /// Saem no passo destrutivo, com a migration que apaga as colunas.
+  resultProvider        String?        @ignore
+  resultMatchId         String?        @ignore
+  resultMatchConfidence Decimal?       @db.Decimal(5, 4) @ignore
+  resultSnapshot        Json?          @ignore
+  resultCheckedAt       DateTime?      @db.Timestamptz(3) @ignore
+  resultFinal           Boolean        @default(false) @ignore
+  updatedAt             DateTime       @updatedAt @db.Timestamptz(3)
+
+  @@index([fetchedAt])
+  @@index([resultCheckedAt])
+  @@map("bet_closing")
+}
+
+// ─────────────────────────── Financeiro ───────────────────────────
+
+/// Conta em casa de aposta. `titular` é primeira classe: o operador COMPRA
+/// contas em nome de terceiros para uso próprio — o titular identifica a
+/// conta, não há prestação de contas.
+model Conta {
+  id           String      @id @default(uuid())
+  casaDeAposta String
+  titular      String
+  apelido      String?
+  saldoInicial Decimal     @default(0) @db.Decimal(12, 2)
+  saldoAtual   Decimal     @default(0) @db.Decimal(12, 2)
+  status       ContaStatus @default(ATIVA)
+  createdAt    DateTime    @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime    @updatedAt @db.Timestamptz(3)
+  deletedAt    DateTime?   @db.Timestamptz(3)
+
+  bets          Bet[]
+  movimentacoes Movimentacao[]
+  bankrollLinks ContaBankroll[]
+
+  @@index([status])
+  @@index([titular])
+  @@index([deletedAt])
+  @@map("contas")
+}
+
+model ContaBankroll {
+  contaId    String
+  bankrollId String
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  conta    Conta    @relation(fields: [contaId], references: [id], onDelete: Cascade)
+  bankroll Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+
+  @@id([contaId, bankrollId])
+  @@index([bankrollId])
+  @@map("contas_bankrolls")
+}
+
+/// Ledger da conta. `saldoApos` é snapshot pós-movimento (auditoria linha a linha).
+/// onDelete: Restrict em bet força o fluxo de reversão antes de apagar aposta.
+model Movimentacao {
+  id        String           @id @default(uuid())
+  contaId   String
+  /// Restrict, não Cascade: `saldoAtual = Σ movimentações` é o invariante que o
+  /// drift-check usa como verdade, e cascade apagaria em silêncio a própria
+  /// prova. O irmão `bet` é Restrict pelo mesmo motivo. Só existe soft-delete
+  /// de conta, então isto é rede, não mudança de fluxo.
+  conta     Conta            @relation(fields: [contaId], references: [id], onDelete: Restrict)
+  tipo      MovimentacaoTipo
+  valor     Decimal          @db.Decimal(12, 2)
+  saldoApos Decimal          @db.Decimal(12, 2)
+  descricao String?
+  /// Operador que originou a movimentação. Settlement/jobs usam "system";
+  /// operações manuais recebem o usuário autenticado da Server Action.
+  actor     String           @default("system")
+  betId     String?
+  bet       Bet?             @relation(fields: [betId], references: [id], onDelete: Restrict)
+  /// Idempotência da movimentação MANUAL: a tela cunha um id ao abrir o
+  /// formulário e o reenvia em cada tentativa, então duplo clique/retry grava
+  /// UMA linha. Null nas movimentações de settlement, que já são idempotentes
+  /// pelo estorno-antes-de-lançar. Único conceito de dedupe do ledger manual —
+  /// não somar a isto janela de tempo nem comparação de valor.
+  clientMutationId String?     @unique
+  data      DateTime         @default(now()) @db.Timestamptz(3)
+  createdAt DateTime         @default(now()) @db.Timestamptz(3)
+
+  @@index([contaId, data(sort: Desc)])
+  @@index([contaId, tipo])
+  @@index([actor, createdAt])
+  @@index([betId])
+  @@map("movimentacoes")
+}
+
+// ──────────────────── Normalização de mercados e times ────────────────────
+
+/// Mercado canônico em estilo Pinnacle/EN ("Moneyline", "Total", "Asian Handicap"...).
+model MercadoPadrao {
+  id      String         @id @default(uuid())
+  nome    String         @unique
+  ativo   Boolean        @default(true)
+  aliases MercadoAlias[]
+
+  @@map("mercados_padrao")
+}
+
+/// MANUAL por construção: só a curadoria em Config grava aliases de mercado
+/// (não há heurística AUTO/LLM que escreva aqui), por isso não carrega
+/// `source`/`confidence`. Se algum dia um writer automático
+/// passar a gravar mercado-alias, ADICIONE proveniência e confiança antes.
+model MercadoAlias {
+  id               String @id @default(uuid())
+  alias            String
+  aliasNormalizado String
+  /// Vazio = qualquer origem (texto de tipster).
+  casaDeAposta     String @default("")
+
+  mercadoPadraoId String
+  mercadoPadrao   MercadoPadrao @relation(fields: [mercadoPadraoId], references: [id], onDelete: Cascade)
+
+  @@unique([aliasNormalizado, casaDeAposta, mercadoPadraoId])
+  @@index([aliasNormalizado])
+  @@map("mercados_alias")
+}
+
+// ─────────────────── Pareamento dos catálogos ───────────────────
+
+/// Jogo da Pinnacle17 ligado ao do FlashScore pelo pareamento diário dos
+/// catálogos (`teams.catalog_pairing`). A liquidação usa a ligação usável
+/// (`ok` e 1:1) como dica do jogo, com as travas do vínculo por id, e o
+/// aprendizado do nome do tipster acha a ficha do lado por ela.
+/// O jogo do FlashScore nunca é trocado sozinho: outro par numa rodada seguinte
+/// vira `status = 'conflict'` com o candidato em `conflictFlashscoreMatchId`.
+/// Um jogo do FlashScore com dois eventos da Pinnacle17 (listagem em dobro,
+/// rodada dupla) não é marcado aqui: quem lê calcula e descarta os dois.
+/// Retenção de 90 dias pelo início do jogo (`purgeExpiredRecords`).
+model CatalogGameLink {
+  id                        String   @id @default(uuid())
+  /// Nome canônico do registro (`Soccer`, `Basketball`...).
+  sport                     String
+  pinnacleEventId           String   @unique
+  flashscoreMatchId         String
+  kickoffPinnacle           DateTime @db.Timestamptz(3)
+  kickoffFlashscore         DateTime @db.Timestamptz(3)
+  pinnacleHome              String
+  pinnacleAway              String
+  pinnacleLeague            String
+  pinnacleCountry           String   @default("")
+  flashscoreHome            String
+  flashscoreAway            String
+  flashscoreTournament      String   @default("")
+  flashscoreCountry         String   @default("")
+  flashscoreHomeTeamId      String
+  flashscoreAwayTeamId      String
+  /// O mandante da Pinnacle17 é o visitante do FlashScore.
+  swapped                   Boolean
+  /// Soma da semelhança dos dois lados (0 a 2).
+  score                     Decimal  @db.Decimal(5, 4)
+  decidedBy                 String   @default("catalog")
+  /// `ok` ou `conflict`.
+  status                    String   @default("ok")
+  conflictFlashscoreMatchId String?
+  /// O horário de uma das fontes mudou mais de 15 min entre rodadas.
+  moved                     Boolean  @default(false)
+  firstSeenAt               DateTime @default(now()) @db.Timestamptz(3)
+  /// Última rodada em que o evento estava na lista da Pinnacle17.
+  lastSeenAt                DateTime @db.Timestamptz(3)
+  /// Última rodada em que o evento pareou com o jogo gravado.
+  lastPairedAt              DateTime @db.Timestamptz(3)
+
+  @@index([flashscoreMatchId])
+  @@index([kickoffPinnacle])
+  @@map("catalog_game_links")
+}
+
+/// Ficha do time: o id do FlashScore (um por categoria: principal, reserva e
+/// feminino têm ids diferentes) com os nomes que a Pinnacle17 usa para ele,
+/// aprendidos no pareamento dos catálogos, e os nomes que os tipsters usam
+/// (`TeamTipsterName`). É o que traduz o nome da aposta. Fica para sempre,
+/// como as evidências.
+model TeamCard {
+  id               String             @id @default(uuid())
+  sport            String
+  flashscoreTeamId String
+  /// Nome do FlashScore na última rodada que viu o time.
+  flashscoreName   String
+  /// `canonicalizeFlashscoreTeamName(flashscoreName)`: a tradução acha a ficha
+  /// pelo nome do FlashScore. Vazio nas fichas gravadas antes da coluna, até a
+  /// rodada seguinte do pareamento preencher.
+  flashscoreNameNorm String         @default("")
+  /// País da competição, o primeiro que a ficha viu; vazio quando só havia região.
+  country          String             @default("")
+  /// `principal`, `reserva` ou `feminino`, lida no nome e na competição do FlashScore.
+  category         String
+  firstSeenAt      DateTime           @default(now()) @db.Timestamptz(3)
+  lastSeenAt       DateTime           @db.Timestamptz(3)
+  evidence         TeamCardEvidence[]
+  tipsterNames     TeamTipsterName[]
+
+  @@unique([sport, flashscoreTeamId])
+  /// Sozinho: a pista de esporte da captura procura em todos os esportes.
+  @@index([flashscoreNameNorm])
+  @@map("team_cards")
+}
+
+/// Um jogo em que o nome da Pinnacle17 casou com o time da ficha. Uma linha por
+/// evento: o número de jogos de um nome é a contagem de linhas, não de rodadas.
+model TeamCardEvidence {
+  id              String   @id @default(uuid())
+  cardId          String
+  card            TeamCard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  pinnacleEventId String
+  pinnacleName    String
+  nameNorm        String
+  /// Categoria do time na Pinnacle17 (nome e liga), no vocabulário da ficha.
+  category        String
+  /// País e liga da Pinnacle17 normalizados (`pais|liga`).
+  leagueKey       String
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+
+  @@unique([cardId, pinnacleEventId])
+  @@index([nameNorm])
+  @@map("team_card_evidence")
+}
+
+/// Nome que um tipster usou para o time da ficha, aprendido quando a identidade
+/// automática casou a aposta com um jogo ligado pelo pareamento e o nome não
+/// batia com o da Pinnacle por regra. Nasce `pending`; vira `confirmed` quando
+/// volta, na mesma ficha, noutro evento da Pinnacle17, noutra aposta e noutro
+/// dia de São Paulo, e só se nenhuma outra ficha do mesmo esporte, país e
+/// categoria tem o mesmo nome. Só o confirmado traduz. O Vincular (o dono ou o
+/// agente dele) grava já confirmado, com quem decidiu em `decidedBy`; o juiz de
+/// IA não grava aqui.
+/// Único parcial (SQL): uma ficha por nome confirmado no mesmo esporte, país e
+/// categoria (`team_tipster_names_confirmed_scope_name_uidx`).
+model TeamTipsterName {
+  id                   String    @id @default(uuid())
+  cardId               String
+  card                 TeamCard  @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  sport                String
+  /// País e categoria da ficha, copiados para o índice único dos confirmados.
+  country              String    @default("")
+  category             String
+  name                 String
+  /// `canonicalizeTeamName(name)`.
+  nameNorm             String
+  /// `pending` ou `confirmed`.
+  status               String    @default("pending")
+  firstBetId           String
+  /// Evento da Pinnacle17 da primeira aposta: a confirmação exige outro.
+  firstPinnacleEventId String
+  /// Dia de São Paulo (`YYYY-MM-DD`) do jogo da primeira aposta.
+  firstDay             String
+  confirmedAt          DateTime? @db.Timestamptz(3)
+  confirmedByBetId     String?
+  decidedBy            String    @default("auto")
+  createdAt            DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@unique([cardId, nameNorm])
+  @@index([sport, nameNorm])
+  @@map("team_tipster_names")
+}
+
+/// Aposta de identidade automática cujo jogo ainda não estava ligado pelo
+/// pareamento: o nome do tipster espera a rodada que ligar o jogo. Sai quando
+/// o aprendizado roda ou dois dias depois do jogo (`purgeExpiredRecords`).
+model TeamTipsterNameWait {
+  id              String   @id @default(uuid())
+  betId           String   @unique
+  pinnacleEventId String
+  /// Os nomes do tipster e da Pinnacle17, na orientação do evento.
+  tipsterHome     String
+  tipsterAway     String
+  pinnacleHome    String
+  pinnacleAway    String
+  kickoff         DateTime @db.Timestamptz(3)
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([pinnacleEventId])
+  @@index([kickoff])
+  @@map("team_tipster_name_waits")
+}
+
+// ─────────────────────────── Treino v2 ───────────────────────────
+
+/// Caso de identidade não resolvida. Passa pelas 3 camadas do treino
+/// (AUTO → LLM-judge → fila humana). Contrato "Identidade e treino" do Blueprint.
+model TrainingCase {
+  id                 String         @id @default(uuid())
+  betId              String?
+  bet                Bet?           @relation(fields: [betId], references: [id], onDelete: Cascade)
+  status             TrainingStatus @default(OPEN)
+  evento             String
+  esporte            String
+  pais               String         @default("")
+  competicao         String         @default("")
+  /// Candidatos retornados pelo provider, com scores. [{id, home, away, league, date, score}]
+  candidatesJson     Json?
+  /// Maior score da camada AUTO (0-100).
+  autoScore          Int            @default(0)
+  /// Diagnóstico do matching. LLM: {candidateId|null, confidence, reason};
+  /// busca sem candidato: {source:"matching", reason}.
+  llmVerdictJson     Json?
+  /// Reserva persistente antes da rede; crash também consome tentativa automática.
+  identityAttempts Int @default(0)
+  identityLastAttemptAt DateTime? @db.Timestamptz(3)
+  identityNextAttemptAt DateTime? @db.Timestamptz(3)
+  /// Evidência imutável da decisão humana: versão, índice, matchId e score escolhido.
+  /// Alimenta calibração shadow; nunca altera limiar automaticamente.
+  resolutionEvidence Json?
+  /// Como foi resolvido, quando resolvido.
+  resolution         AliasSource?
+  createdAt          DateTime       @default(now()) @db.Timestamptz(3)
+  resolvedAt         DateTime?      @db.Timestamptz(3)
+
+  @@index([status, createdAt])
+  @@index([status, identityNextAttemptAt])
+  @@index([betId])
+  @@map("training_cases")
+}
+
+// ───────────────────── Auditoria e idempotência ─────────────────────
+
+/// Ledger idempotente de settlement: (betId, type, payloadHash) único,
+/// insert com ON CONFLICT DO NOTHING.
+model SettlementEvent {
+  id          String   @id @default(uuid())
+  betId       String
+  bet         Bet      @relation(fields: [betId], references: [id], onDelete: Cascade)
+  type        String
+  payload     Json
+  payloadHash String
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@unique([betId, type, payloadHash])
+  @@index([betId, createdAt])
+  @@map("settlement_events")
+}
+
+model AuditEvent {
+  id         String   @id @default(uuid())
+  actor      String   @default("system")
+  action     String
+  resource   String?
+  resourceId String?
+  outcome    String   @default("success")
+  details    Json?
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([action, createdAt])
+  // Contagem por executor nas janelas do teto de escrita.
+  @@index([actor, action, createdAt])
+  @@index([createdAt])
+  // Lookups de idempotência "existe?" filtram por resource+resourceId+action
+  // (confirm/drift/consistency/budget-alert/operacoes); sem este índice viram
+  // scan numa tabela append-only que só cresce.
+  @@index([resource, resourceId, action])
+  // Último snapshot por aposta, sem ler o histórico inteiro de remoções.
+  @@index([resource, resourceId, action, createdAt(sort: Desc)])
+  /// Os probes de dedupe (drift, consistency, budget-alerts, alerts, dlq) filtram
+  /// `action` PRIMEIRO, às vezes sem resourceId — coluna líder errada no índice
+  /// acima. Tabela append-only com retenção de 30/90/365 dias: cresce sempre.
+  @@index([action, resource, resourceId])
+  /// `audit_events_absorbed_source_idx` (SQL) indexa as chaves JSON das origens
+  /// absorvidas antes dos recibos, para a trava de reprocessamento.
+  // Único parcial (SQL): no máximo um bet.confirm_taken por resourceId —
+  // ver migration 20260709190000_audit_confirm_taken_unique.
+  @@map("audit_events")
+}
+
+/// Inbox operacional persistente. Alertas externos notificam; esta tabela é a
+/// fonte de verdade para ownership, evidência e ciclo de resolução.
+/// Caixa prescritiva compartilhada pelo painel e por futuras bordas agenticas.
+/// A ação aponta evidência e, quando mutável, um comando permitido; nunca
+/// executa regra de domínio por conta própria.
+model OperationalAction {
+  id              String                  @id @default(uuid())
+  fingerprint     String                  @unique
+  area            String
+  actionType      String
+  title           String
+  description     String
+  priority        Int                     @default(50)
+  risk            OperationalRisk         @default(LOW)
+  status          OperationalActionStatus @default(OPEN)
+  resource        String?
+  resourceId      String?
+  owner           String?
+  correlationId   String?
+  evidence        Json?
+  command         Json?
+  occurrenceCount Int                     @default(1)
+  /// PRIMEIRA vez que a condição virou ação — imutável. Reescrevê-lo a cada
+  /// reabertura faria a tela dizer "40 ocorrências · desde há 17 h" para um
+  /// incidente de semanas.
+  openedAt        DateTime                @default(now()) @db.Timestamptz(3)
+  /// Início do ciclo ATUAL: quando a ação, já encerrada, voltou. Null enquanto
+  /// nunca voltou.
+  reopenedAt      DateTime?               @db.Timestamptz(3)
+  /// Quantas vezes a ação foi dada por encerrada e a condição retornou.
+  /// Crônico e novo não podem se parecer — ver `operational_action.reopened`.
+  reopenCount     Int                     @default(0)
+  lastSeenAt      DateTime                @default(now()) @db.Timestamptz(3)
+  acknowledgedAt  DateTime?               @db.Timestamptz(3)
+  resolvedAt      DateTime?               @db.Timestamptz(3)
+  resolutionNote  String?
+  createdAt       DateTime                @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime                @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@index([status, priority, lastSeenAt(sort: Desc)])
+  @@index([area, status])
+  @@index([resource, resourceId])
+  @@index([owner, status])
+  @@map("operational_actions")
+}
+
+/// Sessões emitidas por dispositivo. O cookie carrega id+token assinado; o
+/// banco guarda apenas o hash do token para revogação individual.
+model AuthDeviceSession {
+  id         String    @id @default(uuid())
+  username   String
+  tokenHash  String    @unique
+  deviceName String
+  userAgent  String
+  ipHash     String
+  createdAt  DateTime  @default(now()) @db.Timestamptz(3)
+  lastSeenAt DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt  DateTime  @db.Timestamptz(3)
+  revokedAt  DateTime? @db.Timestamptz(3)
+
+  @@index([username, revokedAt, expiresAt])
+  @@index([expiresAt])
+  @@map("auth_device_sessions")
+}
+
+/// Época global de sessão por usuário. Lookup por chave primária no proxy;
+/// AuditEvent continua recebendo o histórico, mas não participa da autorização.
+model AuthSessionState {
+  username  String   @id
+  epoch     BigInt
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@map("auth_session_state")
+}
+
+// ─────────────────────────── Providers ───────────────────────────
+
+/// Consumo de budget por provider e período ("2026-06-10" diário, "2026-06" mensal).
+/// Única fonte de verdade — consumo via SQL atômico, sem contador em memória.
+model ProviderBudget {
+  provider  String
+  periodKey String
+  spent     Int      @default(0)
+  /// Cota comprometida para trabalho futuro (ex.: confirmar trueStartTime do
+  /// closing pré-jogo). Entra no guarda-corpo junto com spent, mas não finge
+  /// ser chamada já faturada pelo fornecedor.
+  reserved  Int      @default(0)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  /// Quando a janela de cota do FORNECEDOR vira, quando ele publica isso
+  /// (`x-ratelimit-requests-reset`). A nossa `periodKey` é o guarda-corpo do
+  /// operador e não coincide com a janela dele — sem esta coluna o contador
+  /// reconciliado ficaria preso acima do teto até a NOSSA virada, e como nenhuma
+  /// chamada passaria nunca aprenderíamos que o fornecedor já liberou.
+  /// Null = fornecedor não publica janela; vale só o guarda-corpo.
+  windowResetAt DateTime? @db.Timestamptz(3)
+
+  @@id([provider, periodKey])
+  @@map("provider_budgets")
+}
+
+/// Reserva durável de cota futura. A chave de recurso deduplica várias apostas
+/// da mesma fixture; periodKey permite reconstituir a reserva na virada mensal.
+model ProviderBudgetReservation {
+  provider    String
+  periodKey   String
+  purpose     String
+  resourceKey String
+  units       Int      @default(1)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@id([provider, periodKey, purpose, resourceKey])
+  @@index([provider, periodKey, purpose])
+  @@map("provider_budget_reservations")
+}
+
+/// Cache descartável, compartilhado entre web/worker e entre releases.
+/// Respostas `/match/odds` completas da Pinnacle17, comprimidas e com retenção;
+/// o fechamento lê daqui o preço que a captura ao vivo não gravou.
+model PriceArchiveObservation {
+  id String @id @default(uuid()) @db.Uuid
+  provider String
+  endpoint String
+  eventIds String[]
+  requestedAt DateTime @db.Timestamptz(3)
+  observedAt DateTime @db.Timestamptz(3)
+  expiresAt DateTime @db.Timestamptz(3)
+  payload Bytes
+  payloadBytes Int
+  unpackedBytes Int
+  sha256 String
+  @@index([provider, observedAt])
+  @@index([eventIds], type: Gin)
+  @@index([expiresAt])
+  @@map("price_archive_observations")
+}
+
+/// Contadores mantidos por triggers, inclusive em exclusão em lote/cascata.
+model PriceArchiveUsage {
+  id Int @id
+  bytes BigInt @default(0)
+  observations Int @default(0)
+  @@map("price_archive_usage")
+}
+
+/// Resultado externo da aposta (FlashScore): placar, o jogo vinculado e a
+/// última leitura. O preço de fechamento fica em `bet_closing`.
+model BetResult {
+  betId                 String    @id
+  bet                   Bet       @relation(fields: [betId], references: [id], onDelete: Cascade)
+  scoreHome             Int?
+  scoreAway             Int?
+  /// Autoria da observação externa de resultado (hoje só `flashscore`).
+  resultProvider        String?
+  resultMatchId         String?
+  resultMatchConfidence Decimal?  @db.Decimal(5, 4)
+  resultSnapshot        Json?
+  resultCheckedAt       DateTime? @db.Timestamptz(3)
+  resultFinal           Boolean   @default(false)
+  createdAt             DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt             DateTime  @updatedAt @db.Timestamptz(3)
+
+  @@index([resultCheckedAt])
+  @@map("bet_result")
+}
+
+/// Abertura da Pinnacle, com procedência própria. A identidade e o CLV vêm da
+/// Pinnacle17, que não tem abertura; a abertura vem da BridgeOdds, buscada sem
+/// pressa depois do jogo. Fica fora de `bet_sharp` porque lá a abertura
+/// precisaria ser do mesmo provider da aposta.
+/// `attempts`/`lastAttemptAt` dosam as novas tentativas quando a Bridge não
+/// acha o jogo ou a linha.
+model BetOpening {
+  betId                  String    @id
+  bet                    Bet       @relation(fields: [betId], references: [id], onDelete: Cascade)
+  provider               String?
+  priceReference         String?
+  openingOdd             Decimal?  @db.Decimal(12, 6)
+  openingRawOdd          Decimal?  @db.Decimal(10, 4)
+  openingPriceSnapshot   Json?
+  openingPriceObservedAt DateTime? @db.Timestamptz(3)
+  openingMaxBet          Int?
+  openingMaxBetCurrency  String?
+  attempts               Int       @default(0)
+  lastAttemptAt          DateTime? @db.Timestamptz(3)
+  noOpeningReason        String?
+  createdAt              DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt              DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@index([lastAttemptAt])
+  @@map("bet_opening")
+}
+
+/// Acompanhamento de fechamento por versão exata da aposta e da configuração.
+model ClosingPriceWatch {
+  id String @id @default(uuid()) @db.Uuid
+  betId String
+  bet Bet @relation(fields: [betId], references: [id], onDelete: Cascade)
+  contextHash String
+  eventId String
+  kickoff DateTime @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  nextAttemptAt DateTime @db.Timestamptz(3)
+  leaseUntil DateTime? @db.Timestamptz(3)
+  leaseToken String? @db.Uuid
+  lastPhysicalAt DateTime? @db.Timestamptz(3)
+  attempts Int @default(0)
+  completedAt DateTime? @db.Timestamptz(3)
+  observations ClosingPriceObservation[]
+  @@unique([betId, contextHash])
+  @@index([completedAt, nextAttemptAt])
+  @@index([eventId, lastPhysicalAt])
+  @@index([kickoff])
+  @@map("closing_price_watches")
+}
+
+/// Diagnóstico compacto; a prova matemática fica no BetClosing/arquivo de preço.
+model ClosingPriceObservation {
+  id String @id @default(uuid()) @db.Uuid
+  watchId String @db.Uuid
+  watch ClosingPriceWatch @relation(fields: [watchId], references: [id], onDelete: Cascade)
+  attemptedAt DateTime @db.Timestamptz(3)
+  observedAt DateTime? @db.Timestamptz(3)
+  source String
+  outcome String
+  rawOdd Decimal? @db.Decimal(10, 4)
+  fairOdd Decimal? @db.Decimal(12, 6)
+  archiveId String?
+  @@index([watchId, attemptedAt])
+  @@map("closing_price_observations")
+}
+
+model ClosingPriceBudget {
+  day String @id
+  spent Int @default(0)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+  @@map("closing_price_budgets")
+}
+
+model ProviderCache {
+  provider  String
+  key       String
+  payload   Json
+  fetchedAt DateTime @db.Timestamptz(3)
+  expiresAt DateTime @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@id([provider, key])
+  @@index([expiresAt])
+  @@map("provider_caches")
+}
+
+/// Próximo slot permitido por endpoint. Evita que web e worker violem juntos
+/// o cooldown publicado pelo provider.
+model ProviderRequestGate {
+  provider      String
+  route         String
+  nextAllowedAt DateTime @db.Timestamptz(3)
+  updatedAt     DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@id([provider, route])
+  @@map("provider_request_gates")
+}
+
+/// Circuit breaker por provider — estado no Postgres, nunca em memória: web e
+/// worker compartilham o MESMO breaker, sem cópia desincronizada por
+/// processo. Transições atômicas via SQL condicional em core/circuit-breaker.
+model ProviderCircuit {
+  provider  String    @id
+  // String (não enum) DE PROPÓSITO: state é gravado no caminho QUENTE do breaker
+  // (recordSuccess/claimGate a cada chamada de provider, via client). Migrar p/ enum
+  // abriria janela de incompat no deploy graceful — o worker antigo gravaria `text`
+  // numa coluna enum até o reload. PolicySource é enum por ser gravado raro (cron
+  // 6/6h), onde a janela é desprezível. Valores: CLOSED|OPEN|HALF_OPEN.
+  state     String    @default("CLOSED")
+  failures  Int       @default(0)
+  openedAt  DateTime? @db.Timestamptz(3)
+  updatedAt DateTime  @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@map("provider_circuits")
+}
+
+/// Telemetria operacional persistente. Append-only, sem payloads sensíveis:
+/// mede duração, atraso e resultado de filas/providers para SLO e histórico.
+model OperationalMetric {
+  id         BigInt   @id @default(autoincrement())
+  kind       String
+  name       String
+  outcome    String
+  durationMs Int?
+  queueLagMs Int?
+  statusCode Int?
+  labels     Json?
+  occurredAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([kind, name, occurredAt(sort: Desc)])
+  @@index([outcome, occurredAt(sort: Desc)])
+  @@index([occurredAt])
+  @@map("operational_metrics")
+}
+
+/// Última combinação Gemini (modelo+chave) que extraiu com sucesso.
+/// Próxima tip começa por ela (sticky) — web e worker compartilham via Postgres.
+/// keyHint = HMAC truncado da chave para remarcar sem persistir qualquer trecho.
+model LlmStickyPreference {
+  provider  String   @id // "gemini"
+  model     String
+  keyHint   String
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@map("llm_sticky_preferences")
+}
+
+/// Tipo de evidência persistida pelo IA-Judge.
+enum IaJudgeEvidenceKind {
+  FLASHSCORE_STRUCTURED
+  GROUNDED_WEB
+}
+
+/// PENDING exige homologação humana. APPROVED pode vir do operador ou da
+/// automação grounded de SET-004; resolvedBy distingue os dois caminhos.
+enum IaJudgeSuggestionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+/// Avaliação auditável de aposta que permaneceu PENDING após o fluxo FlashScore.
+model IaJudgeSuggestion {
+  id              String                  @id @default(uuid())
+  betId           String
+  bet             Bet                     @relation(fields: [betId], references: [id], onDelete: Cascade)
+  suggestedStatus BetStatus
+  valueFound      String
+  /// 0..1. É o ÚNICO confidence do sistema que não é Int 0-100, e vem de LLM:
+  /// o Zod da borda já valida, e a CHECK no banco é a segunda barreira que a
+  /// entrada hostil pede. Sem ela, um `NaN`/`-3` que furasse o parse envenenaria o
+  /// gate de homologação. Confiança nunca substitui grounding comprovado.
+  confidence      Float
+  reason          String
+  sourceUrl       String?
+  /// Para auto-liquidação, deve ser GROUNDED_WEB.
+  evidenceKind    IaJudgeEvidenceKind
+  /// Consulta enviada à ferramenta de busca grounded.
+  groundingQuery  String?                 @db.Text
+  /// Citações retornadas pelo provider, preservando URL e título.
+  /// Array vazio, null ou URL escolhida ausente daqui nunca autorizam dinheiro.
+  groundingSources Json?
+  /// Instante da pesquisa à qual as citações pertencem.
+  groundedAt       DateTime?               @db.Timestamptz(3)
+  provider        String                  @default("gemini")
+  status          IaJudgeSuggestionStatus @default(PENDING)
+  /// Versão da aposta usada no prompt. Se a identidade, horário ou mercado
+  /// mudar depois da pesquisa, a sugestão expira em vez de homologar snapshot
+  /// antigo contra uma aposta com outro significado.
+  betUpdatedAt    DateTime?               @db.Timestamptz(3)
+  resolvedAt      DateTime?               @db.Timestamptz(3)
+  resolvedBy      String?
+  createdAt       DateTime                @default(now()) @db.Timestamptz(3)
+
+  @@index([status, createdAt])
+  @@index([betId])
+  @@map("ia_judge_suggestions")
+}
+
+/// Cooldown do ciclo IA-Judge (falha por tip / pause global de quota).
+/// Evita hijack de AuditEvent ou throttle de alerta operacional.
+model IaJudgeCooldown {
+  key       String   @id
+  reason    String   @default("")
+  expiresAt DateTime @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@index([expiresAt])
+  @@map("ia_judge_cooldowns")
+}
+
+/// Álbum Telegram (`media_group_id`): N fotos chegam como updates separados;
+/// só UMA vira aposta. Estado no Postgres (nunca em memória) com debounce via pg-boss.
+/// `winner*` = candidata atual (foto com legenda, senão a primeira).
+model TelegramMediaAlbum {
+  photos Json @default("[]")
+  mediaGroupId    String   @id
+  chatId          String
+  /// open = ainda juntando / aguardando flush; done = já processado.
+  status          String   @default("open")
+  winnerMessageId Int
+  winnerFileId    String
+  winnerCaption   String   @default("")
+  /// Instante da edição que forneceu a legenda; o flush preserva a entrada e o guard de kickoff.
+  captionEditedAt DateTime? @db.Timestamptz(3)
+  /// Todos os message_id do álbum (reações em foto irmã resolvem p/ o winner).
+  messageIds      Int[]
+  postDate        DateTime @db.Timestamptz(3)
+  /// CAS otimista nas promoções de legenda (evita lost update entre workers).
+  version         Int      @default(0)
+  expiresAt       DateTime @db.Timestamptz(3)
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@index([chatId, status, expiresAt])
+  @@index([expiresAt])
+  @@map("telegram_media_albums")
+}
+
+/// Updates de canal por hora, contados na entrada do webhook, antes de qualquer
+/// leitura: é o sinal de que o Telegram entrega. Canal calado além do seu ritmo
+/// vira alerta (`telegram.silence_watch`). Retenção de 90 dias.
+model TelegramChannelActivity {
+  chatId       BigInt
+  hour         DateTime  @db.Timestamptz(3)
+  posts        Int       @default(0)
+  edits        Int       @default(0)
+  reactions    Int       @default(0)
+  lastUpdateAt DateTime  @db.Timestamptz(3)
+  lastPostAt   DateTime? @db.Timestamptz(3)
+
+  @@id([chatId, hour])
+  @@index([hour])
+  @@map("telegram_channel_activity")
+}
+
+/// Vínculo durável das mensagens/irmãs do álbum e última intenção identificada.
+/// Linhas sem decisão conservam somente o vínculo; não representam reação humana.
+model TelegramReactionState {
+  chatId BigInt
+  messageId Int
+  bankrollId String
+  bankroll Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  targetMessageId Int
+  actorUserId String?
+  decision String?
+  occurredAt DateTime? @db.Timestamptz(3)
+  /// Início do estado atual, preservado quando muda apenas outro emoji.
+  decisionAt DateTime? @db.Timestamptz(3)
+  updateId BigInt?
+  handledAt DateTime? @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([chatId, messageId])
+  @@index([chatId, bankrollId, targetMessageId])
+  @@map("telegram_reaction_states")
+}
+
+/// Preview durável da DM: o clique na banca reutiliza a extração mostrada como
+/// entrada do guard específico da banca, sem chamar o parser/LLM novamente.
+model TelegramDmDraft {
+  id          String   @id @default(uuid())
+  chatId      String
+  messageId   Int
+  parsedBet   Json
+  caption     String   @default("")
+  imageFileId String?
+  postDate    DateTime @db.Timestamptz(3)
+  /// Conserto de captura recusada: o post do canal, a aposta lida e o dado
+  /// que o dono precisa informar. Nulo nas prévias de aposta mandada na DM.
+  captureFix  Json?
+  expiresAt   DateTime @db.Timestamptz(3)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@unique([chatId, messageId])
+  @@index([expiresAt])
+  @@map("telegram_dm_drafts")
+}
+
+// ─────────────── Política sharp por segmento (probation) ───────────────
+
+enum SegmentPhase {
+  PROBATION
+  SHARP_ACTIVE
+  SHARP_OFF
+}
+
+/// Origem da decisão de política de segmento. MANUAL nunca é sobrescrito pelo
+/// avaliador automático (probation). Domínio fechado → enum (trava no banco).
+enum PolicySource {
+  AUTO
+  MANUAL
+}
+
+/// Probation por segmento esporte×mercado FINAL (pedido do dono): família que
+/// não entrega CLV confiável em volume (≥100 apostas avaliadas, <50%
+/// confiável) vira SHARP_OFF sozinha — providers passam a ser usados só para
+/// IDENTIDADE (times/liga/país/data). MANUAL nunca é sobrescrito pelo avaliador.
+model MarketSegmentPolicy {
+  id             String       @id @default(uuid())
+  esporte        String
+  mercado        String
+  phase          SegmentPhase @default(PROBATION)
+  source         PolicySource @default(AUTO)
+  betsAvaliadas  Int          @default(0)
+  clvReliablePct Decimal?     @db.Decimal(5, 1)
+  evaluatedAt    DateTime?    @db.Timestamptz(3)
+  decidedAt      DateTime?    @db.Timestamptz(3)
+  /// Religado para novo teste: a amostra conta só o que fechou desde então.
+  sampleStartedAt DateTime?   @db.Timestamptz(3)
+  createdAt      DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@unique([esporte, mercado])
+  @@map("market_segment_policies")
+}
+
+
+/// Identity is provider-ID based: names are intentionally not unique.
+model PlayerIdentity {
+  id String @id @default(uuid())
+  canonicalName String
+  sport String
+  provider String @default("flashscore")
+  providerPlayerId String
+  aliases PlayerProviderAlias[]
+  appearances PlayerMatchAppearance[]
+  bets BetPlayerProp[]
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  @@unique([provider, providerPlayerId, sport])
+  @@map("player_identities")
+}
+
+model PlayerProviderAlias {
+  id String @id @default(uuid())
+  playerIdentityId String
+  playerIdentity PlayerIdentity @relation(fields: [playerIdentityId], references: [id], onDelete: Cascade)
+  provider String
+  name String
+  normalizedName String
+  source AliasSource @default(AUTO)
+  confidence Int @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  @@unique([playerIdentityId, provider, normalizedName])
+  @@index([provider, normalizedName])
+  @@map("player_provider_aliases")
+}
+
+/// Membership is fixture-specific, never the athlete's permanent club.
+model PlayerMatchAppearance {
+  playerIdentityId String
+  playerIdentity PlayerIdentity @relation(fields: [playerIdentityId], references: [id], onDelete: Cascade)
+  providerMatchId String
+  providerTeamId String
+  side String
+  confirmed Boolean @default(false)
+  evidence Json
+  observedAt DateTime @db.Timestamptz(3)
+  @@id([playerIdentityId, providerMatchId])
+  @@index([providerMatchId, providerTeamId])
+  @@map("player_match_appearances")
+}
+
+model BetPlayerProp {
+  betId String @id
+  bet Bet @relation(fields: [betId], references: [id], onDelete: Cascade)
+  terms Json
+  rule Json
+  revision Int @default(1)
+  playerIdentityId String?
+  playerIdentity PlayerIdentity? @relation(fields: [playerIdentityId], references: [id], onDelete: SetNull)
+  providerMatchId String?
+  resolutionStatus String @default("PENDING")
+  evidence Json?
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  @@index([playerIdentityId, resolutionStatus])
+  @@index([providerMatchId])
+  @@map("bet_player_props")
+}
+
+/// Última vez que cada operador abriu o dashboard: o resumo "desde a última
+/// visita" conta a partir dela, e a tela a avança depois de mostrar o resumo.
+model DashboardVisit {
+  username   String   @id
+  lastSeenAt DateTime @db.Timestamptz(3)
+
+  @@map("dashboard_visits")
+}

@@ -1,0 +1,39 @@
+/* Cartão claro solto da borda: a página aparece em volta da navegação. */
+.sidebar { width: 226px; box-sizing: border-box; flex-shrink: 0; flex-direction: column; margin: 12px 0 12px 12px; padding: 22px 12px 14px; border: 1px solid var(--side-border); border-radius: 18px; background: var(--side-surface); color: var(--side-color); box-shadow: var(--side-shadow); }
+.sticky { position: sticky; top: 12px; height: calc(100vh - 24px); align-self: flex-start; }
+.brandPad { padding: 0 6px 22px; }
+.nav { display: flex; flex-direction: column; gap: 2px; }
+.navLink { text-decoration: none; }
+.navItem { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: transparent; color: var(--side-muted); cursor: pointer; font: 500 14.5px var(--side-body); letter-spacing: -.01em; transition: background var(--mo-fast) ease, color var(--mo-fast) ease; }
+.navMobile { min-height: 44px; }
+.navLink:hover .navItem { background: var(--side-surface-2); color: var(--side-text); }
+.navActive { background: color-mix(in srgb, var(--side-accent) 10%, transparent); color: var(--side-accent); cursor: default; font-weight: 600; }
+.activeDot { width: 6px; height: 6px; margin-left: auto; border-radius: 999px; background: var(--side-accent); }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brandMark { width: 30px; height: 30px; display: grid; flex-shrink: 0; place-items: center; border-radius: 9px; background: var(--side-brand); color: var(--side-on-accent); }
+.wordmark { color: var(--side-text); white-space: nowrap; font-family: var(--side-body); font-size: 17px; font-weight: 600; letter-spacing: -.02em; }
+.wordmarkAccent { color: var(--side-brand); }
+.compactLabel { margin-left: 2px; color: var(--side-faint); font-size: 12px; }
+.iconButton { display: grid; place-items: center; width: 30px; height: 30px; border: 0; border-radius: var(--side-radius); background: transparent; color: var(--side-muted); cursor: pointer; }
+.iconButtonMobile { width: 44px; height: 44px; margin-left: 0; }
+.themeButton { margin-left: auto; }
+.logoutButton { color: var(--side-faint); }
+.userFooter { position: relative; display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 18px; border-top: 1px solid var(--side-border-soft); }
+.avatar { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--side-border); border-radius: 9px; background: var(--side-surface-2); color: var(--side-text); font-size: 13px; font-weight: 600; }
+.userContent { flex: 1; min-width: 0; }
+.userName { color: var(--side-text); font: 600 13.5px var(--side-body); }
+.userMeta { margin-top: 2px; color: var(--side-faint); font: 400 11px var(--side-body); }
+.userMenuWrap { position: relative; }
+.userTrigger { display: flex; align-items: center; gap: 5px; margin: -4px -6px; padding: 4px 6px; border: 0; border-radius: 8px; background: transparent; cursor: pointer; font-family: var(--side-body); }
+.chevron { color: var(--side-faint); }
+.chevronOpen { transform: rotate(180deg); }
+.userMenu { position: absolute; z-index: 150; bottom: 38px; left: 0; width: 190px; padding: 8px; border: 1px solid var(--side-border); border-radius: var(--side-radius-md); background: var(--side-surface); box-shadow: var(--side-shadow); }
+.userMenuHead { padding: 8px 10px 10px; }
+.menuAction { width: 100%; min-height: 44px; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 0; border-radius: var(--side-radius); background: transparent; color: var(--side-text); cursor: pointer; font-family: var(--side-body); }
+.menuDanger { color: var(--side-neg); }
+.mobileHeader { position: fixed; z-index: 120; inset: 0 0 auto; height: 68px; box-sizing: border-box; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-bottom: 1px solid var(--side-border); background: var(--side-bg); color: var(--side-color); }
+.mobileMenuButton { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--side-border); border-radius: var(--side-radius); background: var(--side-surface-2); color: var(--side-text); cursor: pointer; }
+.mobileLayer { position: fixed; z-index: 220; inset: 0; background: rgb(18 16 12 / .52); }
+.drawer { width: min(84vw, 320px); height: 100dvh; box-sizing: border-box; display: flex; flex-direction: column; padding: 18px 16px; border-right: 1px solid var(--side-border); background: var(--side-bg); color: var(--side-color); box-shadow: var(--side-shadow); }
+.drawerHead { display: flex; align-items: center; gap: 12px; padding: 0 2px 24px 6px; }
+.drawerClose { margin-left: auto; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--side-border); border-radius: var(--side-radius); background: transparent; color: var(--side-text); cursor: pointer; }

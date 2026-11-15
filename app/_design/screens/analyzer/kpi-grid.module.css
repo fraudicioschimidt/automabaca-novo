@@ -1,0 +1,54 @@
+/* Faixa de KPIs no topo das abas do Analyzer. O cartão é UM só; a aba escolhe
+   o tamanho do número e da legenda pelas variáveis abaixo, nunca recopiando o
+   estilo. Cor vem de `T` (vars setadas pelo componente) — nunca literal aqui. */
+
+/* Uma coluna por cartão: a aba de 3 KPIs (Visão geral) ou 2 (CLV) não deixa
+   buraco à direita de uma grade de 4. */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(var(--kpi-colunas), 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+/* Compacto: duas colunas que PODEM encolher (`minmax(0, …)`) — com `1fr`
+   puro o número longo define a largura mínima e a grade vaza da tela. */
+@media (max-width: 1023px) {
+  .grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* Número ímpar de cartões: o último ocupa a linha, sem meia linha vazia. */
+  .grade > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* A cor apagada mora na linha inteira porque o ícone desenha em currentColor:
+   deixá-la só no Cap faria o ícone herdar o texto do cartão. */
+.rotulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: var(--kpi-apagado);
+}
+
+/* Mono avança 0,6em por caractere: o tamanho é o que cabe na largura do
+   cartão, nunca acima do da aba; abaixo do piso, quebra a linha. */
+.numero {
+  font-family: var(--kpi-fonte-numero);
+  font-size: clamp(18px, calc(100cqi / (var(--kpi-caracteres, 1) * 0.6)), var(--kpi-tamanho-numero));
+  overflow-wrap: anywhere;
+  font-weight: 600;
+  color: var(--kpi-cor-numero);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.legenda {
+  margin-top: 9px;
+  font-size: var(--kpi-tamanho-legenda);
+  color: var(--kpi-apagado);
+}

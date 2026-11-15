@@ -1,0 +1,49 @@
+{
+  "isBet": true,
+  "items": [
+    {
+      "evento": "Napoli vs Arsenal",
+      "selecao": "Rasmus Hojlund 3+",
+      "mercado": "Total de chutes",
+      "odds": 2.95,
+      "stake": 1.75,
+      "stakeSource": "caption",
+      "casaDeAposta": "Betano",
+      "playerProp": {
+        "jogador": "Rasmus Hojlund",
+        "mercadoOriginal": "Total de chutes",
+        "selecaoOriginal": "Rasmus Hojlund 3+",
+        "substituicao": "UNKNOWN",
+        "evidencia": "Rasmus Hojlund Total de chutes",
+        "time": ""
+      },
+      "competicao": "",
+      "dataTexto": "Amanhã 16:00",
+      "esporte": "Futebol",
+      "sportConfidence": 1,
+      "sportEvidenceText": "soccer ball icon, team names, market 'chutes'"
+    },
+    {
+      "evento": "Napoli vs Arsenal",
+      "selecao": "Rasmus Hojlund 4+",
+      "mercado": "Total de chutes",
+      "odds": 6,
+      "stake": 0.75,
+      "stakeSource": "caption",
+      "casaDeAposta": "Betano",
+      "playerProp": {
+        "jogador": "Rasmus Hojlund",
+        "mercadoOriginal": "Total de chutes",
+        "selecaoOriginal": "Rasmus Hojlund 4+",
+        "substituicao": "UNKNOWN",
+        "evidencia": "Rasmus Hojlund Total de chutes",
+        "time": ""
+      },
+      "competicao": "",
+      "dataTexto": "Amanhã 16:00",
+      "esporte": "Futebol",
+      "sportConfidence": 1,
+      "sportEvidenceText": "soccer ball icon, team names, market 'chutes'"
+    }
+  ]
+}

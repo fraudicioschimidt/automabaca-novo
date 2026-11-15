@@ -1,0 +1,32 @@
+.header { padding: 20px 24px; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.title { margin: 0; font-family: var(--font-display); font-size: 19px; font-weight: 600; color: var(--ink); }
+.subtitle, .help, .meta { margin-top: 3px; font-family: var(--font-sans); font-size: 12.5px; color: var(--ink-3); }
+.status { margin-left: auto; font: 650 11.5px var(--font-sans); color: var(--accent); background: var(--accent-dim); border-radius: 999px; padding: 6px 9px; }
+.body { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.section { min-width: 0; padding: 24px; }
+.sectionTitle { margin: 0; font: 650 14px var(--font-sans); color: var(--ink); }
+.button { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 9px; padding: 8px 11px; cursor: pointer; font: 650 12.5px var(--font-sans); }
+.button:disabled { cursor: wait; opacity: .45; }
+.danger { color: var(--loss); }
+.help { line-height: 1.45; }
+.sessionsHeader, .sessionRow, .sessionTitle { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sessionsHeader { margin-bottom: 12px; }
+.sessionsHeader .button { margin-left: auto; }
+.empty { padding: 16px 0; font: 12.5px var(--font-sans); color: var(--ink-3); }
+.sessionRow { gap: 11px; padding: 11px 0; }
+.withBorder { border-top: 1px solid var(--line-soft); }
+/* Revelar o resto da lista: some com a moldura para nao competir com "Revogar",
+   que e a acao de verdade da secao. */
+.showAll { width: 100%; margin-top: 10px; padding: 9px; border: 1px dashed var(--line); background: transparent; color: var(--ink-2); border-radius: 9px; cursor: pointer; font: 650 12.5px var(--font-sans); }
+.showAll:hover { color: var(--ink); border-color: var(--ink-3); }
+.avatar { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--surface-2); color: var(--ink-2); font: 700 14px var(--font-sans); }
+.currentAvatar { color: var(--gain); background: var(--gain-dim); }
+.sessionContent { flex: 1; min-width: 170px; }
+.sessionTitle { gap: 7px; font: 650 13px var(--font-sans); color: var(--ink); }
+.currentBadge { font-size: 9.5px; color: var(--gain); background: var(--gain-dim); border-radius: 999px; padding: 3px 6px; }
+.meta { font-size: 10.5px; }
+
+@media (max-width: 1023px) {
+  .header, .section { padding: 18px; }
+  .body { grid-template-columns: 1fr; }
+}

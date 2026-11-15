@@ -1,0 +1,84 @@
+/*
+ * Propriedades que mudam com a faixa de largura (`app/_design/layout.ts`).
+ * Cada classe lê o valor da faixa em variáveis que `porFaixa` (faixas.ts)
+ * sempre define juntas no próprio elemento, então a herança de um ancestral
+ * nunca vaza para cá.
+ */
+.gridTemplateColumns { grid-template-columns: var(--fx-l-grid-template-columns); }
+.gridColumn { grid-column: var(--fx-l-grid-column); }
+.gap { gap: var(--fx-l-gap); }
+.padding { padding: var(--fx-l-padding); }
+.fontSize { font-size: var(--fx-l-font-size); }
+.width { width: var(--fx-l-width); }
+.height { height: var(--fx-l-height); }
+.minHeight { min-height: var(--fx-l-min-height); }
+.marginLeft { margin-left: var(--fx-l-margin-left); }
+.left { left: var(--fx-l-left); }
+.right { right: var(--fx-l-right); }
+.flex { flex: var(--fx-l-flex); }
+.flexWrap { flex-wrap: var(--fx-l-flex-wrap); }
+.flexDirection { flex-direction: var(--fx-l-flex-direction); }
+.flexShrink { flex-shrink: var(--fx-l-flex-shrink); }
+.alignItems { align-items: var(--fx-l-align-items); }
+.justifyContent { justify-content: var(--fx-l-justify-content); }
+.whiteSpace { white-space: var(--fx-l-white-space); }
+.overflowX { overflow-x: var(--fx-l-overflow-x); }
+.borderLeft { border-left: var(--fx-l-border-left); }
+.borderTop { border-top: var(--fx-l-border-top); }
+
+@media (max-width: 1079px) {
+  .gridTemplateColumns { grid-template-columns: var(--fx-m-grid-template-columns); }
+  .gridColumn { grid-column: var(--fx-m-grid-column); }
+  .gap { gap: var(--fx-m-gap); }
+  .padding { padding: var(--fx-m-padding); }
+  .fontSize { font-size: var(--fx-m-font-size); }
+  .width { width: var(--fx-m-width); }
+  .height { height: var(--fx-m-height); }
+  .minHeight { min-height: var(--fx-m-min-height); }
+  .marginLeft { margin-left: var(--fx-m-margin-left); }
+  .left { left: var(--fx-m-left); }
+  .right { right: var(--fx-m-right); }
+  .flex { flex: var(--fx-m-flex); }
+  .flexWrap { flex-wrap: var(--fx-m-flex-wrap); }
+  .flexDirection { flex-direction: var(--fx-m-flex-direction); }
+  .flexShrink { flex-shrink: var(--fx-m-flex-shrink); }
+  .alignItems { align-items: var(--fx-m-align-items); }
+  .justifyContent { justify-content: var(--fx-m-justify-content); }
+  .whiteSpace { white-space: var(--fx-m-white-space); }
+  .overflowX { overflow-x: var(--fx-m-overflow-x); }
+  .borderLeft { border-left: var(--fx-m-border-left); }
+  .borderTop { border-top: var(--fx-m-border-top); }
+}
+
+@media (max-width: 1023px) {
+  .gridTemplateColumns { grid-template-columns: var(--fx-c-grid-template-columns); }
+  .gridColumn { grid-column: var(--fx-c-grid-column); }
+  .gap { gap: var(--fx-c-gap); }
+  .padding { padding: var(--fx-c-padding); }
+  .fontSize { font-size: var(--fx-c-font-size); }
+  .width { width: var(--fx-c-width); }
+  .height { height: var(--fx-c-height); }
+  .minHeight { min-height: var(--fx-c-min-height); }
+  .marginLeft { margin-left: var(--fx-c-margin-left); }
+  .left { left: var(--fx-c-left); }
+  .right { right: var(--fx-c-right); }
+  .flex { flex: var(--fx-c-flex); }
+  .flexWrap { flex-wrap: var(--fx-c-flex-wrap); }
+  .flexDirection { flex-direction: var(--fx-c-flex-direction); }
+  .flexShrink { flex-shrink: var(--fx-c-flex-shrink); }
+  .alignItems { align-items: var(--fx-c-align-items); }
+  .justifyContent { justify-content: var(--fx-c-justify-content); }
+  .whiteSpace { white-space: var(--fx-c-white-space); }
+  .overflowX { overflow-x: var(--fx-c-overflow-x); }
+  .borderLeft { border-left: var(--fx-c-border-left); }
+  .borderTop { border-top: var(--fx-c-border-top); }
+}
+
+/* Variantes de estrutura (lista × tabela): as duas vão no HTML e o CSS mostra
+   uma. `!important` vence o `display` inline do próprio elemento. */
+@media (max-width: 1023px) {
+  .semCompacto { display: none !important; }
+}
+@media (min-width: 1024px) {
+  .soCompacto { display: none !important; }
+}

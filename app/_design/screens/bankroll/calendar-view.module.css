@@ -1,0 +1,56 @@
+.root { display: flex; flex-direction: row; flex: 1; min-height: 0; overflow-y: hidden; }
+.calendarPane { flex: 1; min-width: 0; padding: var(--bk-pad); display: flex; flex-direction: column; }
+.toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: nowrap; }
+.navButton { width: 32px; height: 32px; border-radius: var(--nav-radius); border: 1px solid var(--nav-border); background: transparent; color: var(--nav-color); cursor: pointer; display: grid; place-items: center; }
+.monthTitle { font-family: var(--display-font); font-size: 18px; font-weight: 600; letter-spacing: -.01em; min-width: 150px; text-align: center; }
+.legends { margin-left: auto; width: auto; display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--muted-color); justify-content: flex-start; }
+.legend { display: inline-flex; align-items: center; gap: 6px; }
+.legendDot { width: 9px; height: 9px; border-radius: 3px; background: var(--legend-color); }
+.weekdays, .grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.weekdays { margin-bottom: 6px; }
+.grid { flex: 1; }
+.weekday { text-align: center; font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--faint-color); }
+.root .cell { position: relative; text-align: left; font: inherit; cursor: var(--cell-cursor); border: var(--cell-border); background: var(--cell-bg); border-radius: var(--cell-radius); min-height: 82px; padding: 7px 9px; display: flex; flex-direction: column; transition: border-color var(--mo-fast), background var(--mo-fast); box-shadow: var(--cell-shadow); }
+.cellHead { display: flex; align-items: center; justify-content: space-between; }
+.dayNumber { font-size: 13px; font-weight: var(--day-weight); color: var(--day-color); }
+.today { font-size: 8.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--today-color); }
+.cellAggregate { margin-top: auto; }
+.cellProfit { font-size: 15px; font-weight: 600; color: var(--profit-color); }
+.cellDescription { font-size: 10px; color: var(--muted-color); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.summary { display: flex; align-items: center; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--soft-border); font-size: 12.5px; color: var(--muted-color); flex-wrap: wrap; }
+.summaryProfit { font-weight: 600; }
+.dot { color: var(--dot-color); }
+.rail { width: 316px; flex-shrink: 0; border-left: 1px solid var(--soft-border); background: var(--rail-bg); padding: var(--bk-pad); display: flex; flex-direction: column; min-height: 0; }
+.railHeading { display: flex; align-items: baseline; gap: 10px; margin-top: 8px; margin-bottom: 3px; }
+.railValue { font-family: var(--display-font); font-size: 30px; font-weight: 600; letter-spacing: -.02em; }
+.railHeadingLabel { font-size: 13px; color: var(--muted-color); }
+.railAllocation { font-size: 12px; color: var(--faint-color); margin-bottom: 6px; }
+.railScroll { overflow-y: auto; overscroll-behavior: contain; flex: 1; min-height: 0; margin-top: 6px; }
+.emptyDay { font-size: 13px; color: var(--faint-color); padding: 24px 0; }
+.railRow { padding: 12px 0; border-bottom: 1px solid var(--soft-border); display: flex; gap: 12px; align-items: center; }
+.railMain { flex: 1; min-width: 0; }
+.railEvent { font-size: 13.5px; font-weight: 600; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.versus { color: var(--faint-color); font-weight: 400; }
+.railMeta { font-size: 11.5px; color: var(--muted-color); margin-top: 3px; }
+.faint { color: var(--faint-color); }
+.market { color: var(--accent-color); font-weight: 600; }
+.railResult { text-align: right; flex-shrink: 0; }
+.railProfit { font-size: 13.5px; font-weight: 600; color: var(--result-color); }
+.railStake { font-size: 12.5px; color: var(--result-color); }
+.railStatus { font-size: 10.5px; color: var(--status-color); margin-top: 2px; }
+
+/* Compacto (layout.ts): calendário em cima, dia selecionado embaixo. */
+@media (max-width: 1023px) {
+  .root { flex-direction: column; overflow-y: auto; }
+  .root .calendarPane { flex: 0 0 auto; }
+  .root .toolbar { gap: 8px; flex-wrap: wrap; }
+  .root .monthTitle { font-size: 16px; min-width: 112px; }
+  .root .legends { margin-left: 0; width: 100%; justify-content: center; }
+  .root .weekdays, .root .grid { gap: 3px; }
+  .root .grid { flex: 0 0 auto; }
+  .root .rail { width: auto; border-left: none; border-top: 1px solid var(--soft-border); }
+  .root .railScroll { flex: 0 0 auto; max-height: 260px; }
+  .root .navButton { width: 44px; height: 44px; }
+  .root .cell { min-height: 54px; padding: 5px 6px; }
+  .root .cellProfit { font-size: 12px; }
+}

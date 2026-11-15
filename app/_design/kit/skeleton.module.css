@@ -1,0 +1,44 @@
+/* Esqueleto de carregamento. Cores por `--sk-*` (do tema); movimento por
+   `--mo-*` (SSOT em globals.css). */
+
+.bloco {
+  border-radius: var(--sk-radius);
+  background: var(--sk-base);
+  position: relative;
+  overflow: hidden;
+}
+
+/* O brilho é um pseudo-elemento, não um segundo nó: o esqueleto aparece dezenas
+   de vezes numa tela e cada nó extra é custo por nada. */
+.bloco::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--sk-brilho) 50%,
+    transparent 100%
+  );
+  animation: sk-varre var(--mo-brilho) ease-in-out infinite;
+}
+
+@keyframes sk-varre {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/**
+ * Movimento reduzido: o brilho PARA, mas o bloco fica.
+ *
+ * Some com a animação, não com o esqueleto — quem pediu menos movimento ainda
+ * precisa saber que há conteúdo chegando. Trocar por nada devolveria a tela em
+ * branco que o esqueleto existe para evitar.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .bloco::after {
+    animation: none;
+  }
+}

@@ -1,0 +1,584 @@
+[
+  {
+    "reference": 1,
+    "data": {
+      "isBet": true,
+      "evento": "Watford vs Preston North End",
+      "selecao": "Mamadou Doumbia - Mais 0.5",
+      "mercado": "Chutes NO ALVO",
+      "casaDeAposta": "kto.bet.br",
+      "competicao": "",
+      "dataTexto": "",
+      "esporte": "futebol",
+      "items": [
+        {
+          "evento": "Watford vs Preston North End",
+          "selecao": "Mamadou Doumbia - Mais 0.5",
+          "mercado": "Chutes NO ALVO",
+          "casaDeAposta": "kto.bet.br",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "futebol",
+          "odds": 1.97,
+          "playerProp": {
+            "jogador": "Mamadou Doumbia",
+            "mercadoOriginal": "Chutes a gol pelo jogador",
+            "selecaoOriginal": "Mamadou Doumbia - Mais 0.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Chutes a gol pelo jogador (Fechado usando dados Opta)",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "URL: https://www.kto.bet.br/esportes/futebol/inglaterra/championship/watford---preston-north-end/1028142923",
+          "stake": 1.25,
+          "stakeSource": "image_units"
+        }
+      ],
+      "liveScoreAway": 0,
+      "liveScoreHome": 0,
+      "odds": 1.97,
+      "playerProp": {
+        "jogador": "Mamadou Doumbia",
+        "mercadoOriginal": "Chutes a gol pelo jogador",
+        "selecaoOriginal": "Mamadou Doumbia - Mais 0.5",
+        "substituicao": "UNKNOWN",
+        "evidencia": "Chutes a gol pelo jogador (Fechado usando dados Opta)",
+        "time": ""
+      },
+      "sportConfidence": 1,
+      "sportEvidenceText": "URL: https://www.kto.bet.br/esportes/futebol/inglaterra/championship/watford---preston-north-end/1028142923",
+      "stake": 1.25,
+      "stakeSource": "image_units"
+    }
+  },
+  {
+    "reference": 2,
+    "data": {
+      "isBet": true,
+      "evento": "Southampton vs Swansea City",
+      "selecao": "Tom Fellows 2+",
+      "mercado": "Total de chutes",
+      "casaDeAposta": "Betano",
+      "competicao": "",
+      "dataTexto": "",
+      "esporte": "Futebol",
+      "items": [
+        {
+          "evento": "Southampton vs Swansea City",
+          "selecao": "Tom Fellows 2+",
+          "mercado": "Total de chutes",
+          "casaDeAposta": "Betano",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Futebol",
+          "odds": 2.32,
+          "playerProp": {
+            "jogador": "Tom Fellows",
+            "mercadoOriginal": "Total de chutes",
+            "selecaoOriginal": "Tom Fellows 2+",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Tom Fellows Total de chutes",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "Football icon",
+          "stake": 1.25,
+          "stakeSource": "caption"
+        },
+        {
+          "evento": "Southampton vs Swansea City",
+          "selecao": "Tom Fellows 3+",
+          "mercado": "Total de chutes",
+          "casaDeAposta": "Betano",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Futebol",
+          "odds": 5.2,
+          "playerProp": {
+            "jogador": "Tom Fellows",
+            "mercadoOriginal": "Total de chutes",
+            "selecaoOriginal": "Tom Fellows 3+",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Tom Fellows Total de chutes",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "Football icon",
+          "stake": 0.5,
+          "stakeSource": "caption"
+        }
+      ],
+      "odds": 2.32,
+      "playerProp": {
+        "jogador": "Tom Fellows",
+        "mercadoOriginal": "Total de chutes",
+        "selecaoOriginal": "Tom Fellows 2+",
+        "substituicao": "UNKNOWN",
+        "evidencia": "Tom Fellows Total de chutes",
+        "time": ""
+      },
+      "sportConfidence": 1,
+      "sportEvidenceText": "Football icon",
+      "stake": 1.25,
+      "stakeSource": "caption"
+    }
+  },
+  {
+    "reference": 3,
+    "data": {
+      "isBet": true,
+      "evento": "Lille x Real Betis",
+      "selecao": "Isco Alarcón - Mais de 0.5",
+      "mercado": "Jogador - Chutes ao Gol",
+      "casaDeAposta": "bet365",
+      "competicao": "",
+      "dataTexto": "",
+      "esporte": "Futebol",
+      "items": [
+        {
+          "evento": "Lille x Real Betis",
+          "selecao": "Isco Alarcón - Mais de 0.5",
+          "mercado": "Jogador - Chutes ao Gol",
+          "casaDeAposta": "bet365",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Futebol",
+          "odds": 2.62,
+          "playerProp": {
+            "jogador": "Isco Alarcón",
+            "mercadoOriginal": "Jogador - Chutes ao Gol",
+            "selecaoOriginal": "Isco Alarcón - Mais de 0.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Jogador - Chutes ao Gol, Isco Alarcón - Mais de 0.5, 2.62, 1.25",
+            "time": ""
+          },
+          "sportConfidence": 0.8,
+          "sportEvidenceText": "Jogador - Chutes ao Gol",
+          "stake": 1.25,
+          "stakeSource": "image_units"
+        },
+        {
+          "evento": "Lille x Real Betis",
+          "selecao": "Isco Alarcón - Mais de 1.5",
+          "mercado": "Jogador - Chutes ao Gol",
+          "casaDeAposta": "bet365",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Futebol",
+          "odds": 11,
+          "playerProp": {
+            "jogador": "Isco Alarcón",
+            "mercadoOriginal": "Jogador - Chutes ao Gol",
+            "selecaoOriginal": "Isco Alarcón - Mais de 1.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Jogador - Chutes ao Gol, Isco Alarcón - Mais de 1.5, 11.00, 0.5",
+            "time": ""
+          },
+          "sportConfidence": 0.8,
+          "sportEvidenceText": "Jogador - Chutes ao Gol",
+          "stake": 0.5,
+          "stakeSource": "image_units"
+        }
+      ],
+      "liveScoreAway": 0,
+      "liveScoreHome": 0,
+      "odds": 2.62,
+      "playerProp": {
+        "jogador": "Isco Alarcón",
+        "mercadoOriginal": "Jogador - Chutes ao Gol",
+        "selecaoOriginal": "Isco Alarcón - Mais de 0.5",
+        "substituicao": "UNKNOWN",
+        "evidencia": "Jogador - Chutes ao Gol, Isco Alarcón - Mais de 0.5, 2.62, 1.25",
+        "time": ""
+      },
+      "sportConfidence": 0.8,
+      "sportEvidenceText": "Jogador - Chutes ao Gol",
+      "stake": 1.25,
+      "stakeSource": "image_units"
+    }
+  },
+  {
+    "reference": 4,
+    "data": {
+      "isBet": true,
+      "evento": "Wrexham - Burnley",
+      "selecao": "Zeki Amdouni - Mais 0.5",
+      "mercado": "Chutes NO ALVO",
+      "casaDeAposta": "kto.bet.br",
+      "competicao": "",
+      "dataTexto": "",
+      "esporte": "futebol",
+      "items": [
+        {
+          "evento": "Wrexham - Burnley",
+          "selecao": "Zeki Amdouni - Mais 0.5",
+          "mercado": "Chutes NO ALVO",
+          "casaDeAposta": "kto.bet.br",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "futebol",
+          "odds": 2.08,
+          "playerProp": {
+            "jogador": "Zeki Amdouni",
+            "mercadoOriginal": "Chutes a gol pelo jogador",
+            "selecaoOriginal": "Zeki Amdouni - Mais 0.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "mercado: Chutes a gol pelo jogador, odd: 2.08, stake: 1",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "mercado: Chutes a gol pelo jogador",
+          "stake": 1,
+          "stakeSource": "image_units"
+        }
+      ],
+      "odds": 2.08,
+      "playerProp": {
+        "jogador": "Zeki Amdouni",
+        "mercadoOriginal": "Chutes a gol pelo jogador",
+        "selecaoOriginal": "Zeki Amdouni - Mais 0.5",
+        "substituicao": "UNKNOWN",
+        "evidencia": "mercado: Chutes a gol pelo jogador, odd: 2.08, stake: 1",
+        "time": ""
+      },
+      "sportConfidence": 1,
+      "sportEvidenceText": "mercado: Chutes a gol pelo jogador",
+      "stake": 1,
+      "stakeSource": "image_units"
+    }
+  },
+  {
+    "reference": 5,
+    "data": {
+      "isBet": true,
+      "evento": "Wrexham x Burnley",
+      "selecao": "Aaron Ramsey - Mais de 0.5",
+      "mercado": "Chutes ao Gol",
+      "casaDeAposta": "bet365",
+      "competicao": "",
+      "dataTexto": "",
+      "esporte": "Football",
+      "items": [
+        {
+          "evento": "Wrexham x Burnley",
+          "selecao": "Aaron Ramsey - Mais de 0.5",
+          "mercado": "Chutes ao Gol",
+          "casaDeAposta": "bet365",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Football",
+          "odds": 3,
+          "playerProp": {
+            "jogador": "Aaron Ramsey",
+            "mercadoOriginal": "Chutes ao Gol",
+            "selecaoOriginal": "Aaron Ramsey - Mais de 0.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Jogador - Chutes ao Gol",
+            "time": ""
+          },
+          "sportConfidence": 0.8,
+          "sportEvidenceText": "Chutes ao Gol",
+          "stake": 0.25,
+          "stakeSource": "image_units"
+        },
+        {
+          "evento": "Wrexham x Burnley",
+          "selecao": "Aaron Ramsey - Mais de 1.5",
+          "mercado": "Chutes ao Gol",
+          "casaDeAposta": "bet365",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Football",
+          "odds": 13,
+          "playerProp": {
+            "jogador": "Aaron Ramsey",
+            "mercadoOriginal": "Chutes ao Gol",
+            "selecaoOriginal": "Aaron Ramsey - Mais de 1.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Jogador - Chutes ao Gol",
+            "time": ""
+          },
+          "sportConfidence": 0.8,
+          "sportEvidenceText": "Chutes ao Gol",
+          "stake": 0.25,
+          "stakeSource": "image_units"
+        }
+      ],
+      "liveScoreAway": 0,
+      "liveScoreHome": 0,
+      "odds": 3,
+      "playerProp": {
+        "jogador": "Aaron Ramsey",
+        "mercadoOriginal": "Chutes ao Gol",
+        "selecaoOriginal": "Aaron Ramsey - Mais de 0.5",
+        "substituicao": "UNKNOWN",
+        "evidencia": "Jogador - Chutes ao Gol",
+        "time": ""
+      },
+      "sportConfidence": 0.8,
+      "sportEvidenceText": "Chutes ao Gol",
+      "stake": 0.25,
+      "stakeSource": "image_units"
+    }
+  },
+  {
+    "reference": 6,
+    "data": {
+      "isBet": true,
+      "evento": "Borussia Dortmund x Villarreal",
+      "selecao": "Tani Oluwaseyi - Mais de 0.5",
+      "mercado": "Jogador - Chutes NO ALVO",
+      "casaDeAposta": "",
+      "competicao": "",
+      "dataTexto": "",
+      "esporte": "Futebol",
+      "items": [
+        {
+          "evento": "Borussia Dortmund x Villarreal",
+          "selecao": "Tani Oluwaseyi - Mais de 0.5",
+          "mercado": "Jogador - Chutes NO ALVO",
+          "casaDeAposta": "",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Futebol",
+          "odds": 2.1,
+          "playerProp": {
+            "jogador": "Tani Oluwaseyi",
+            "mercadoOriginal": "Chutes ao Gol",
+            "selecaoOriginal": "Tani Oluwaseyi - Mais de 0.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Jogador - Chutes ao Gol",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "Mercado 'Chutes ao Gol' e nomes de times de futebol (Borussia Dortmund, Villarreal)",
+          "stake": 1.5,
+          "stakeSource": "image_units"
+        },
+        {
+          "evento": "Borussia Dortmund x Villarreal",
+          "selecao": "Tani Oluwaseyi - Mais de 1.5",
+          "mercado": "Jogador - Chutes NO ALVO",
+          "casaDeAposta": "",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Futebol",
+          "odds": 7,
+          "playerProp": {
+            "jogador": "Tani Oluwaseyi",
+            "mercadoOriginal": "Chutes ao Gol",
+            "selecaoOriginal": "Tani Oluwaseyi - Mais de 1.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Jogador - Chutes ao Gol",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "Mercado 'Chutes ao Gol' e nomes de times de futebol (Borussia Dortmund, Villarreal)",
+          "stake": 0.5,
+          "stakeSource": "image_units"
+        }
+      ],
+      "odds": 2.1,
+      "playerProp": {
+        "jogador": "Tani Oluwaseyi",
+        "mercadoOriginal": "Chutes ao Gol",
+        "selecaoOriginal": "Tani Oluwaseyi - Mais de 0.5",
+        "substituicao": "UNKNOWN",
+        "evidencia": "Jogador - Chutes ao Gol",
+        "time": ""
+      },
+      "sportConfidence": 1,
+      "sportEvidenceText": "Mercado 'Chutes ao Gol' e nomes de times de futebol (Borussia Dortmund, Villarreal)",
+      "stake": 1.5,
+      "stakeSource": "image_units"
+    }
+  },
+  {
+    "reference": 7,
+    "data": {
+      "isBet": true,
+      "evento": "FC Porto vs Manchester City",
+      "selecao": "Ayyoub Bouaddi 3+",
+      "mercado": "Total de Desarmes",
+      "casaDeAposta": "Betano",
+      "competicao": "",
+      "dataTexto": "Hoje 16:00",
+      "esporte": "Futebol",
+      "items": [
+        {
+          "evento": "FC Porto vs Manchester City",
+          "selecao": "Ayyoub Bouaddi 3+",
+          "mercado": "Total de Desarmes",
+          "casaDeAposta": "Betano",
+          "competicao": "",
+          "dataTexto": "Hoje 16:00",
+          "esporte": "Futebol",
+          "odds": 2.85,
+          "playerProp": {
+            "jogador": "Ayyoub Bouaddi",
+            "mercadoOriginal": "Total de Desarmes",
+            "selecaoOriginal": "Ayyoub Bouaddi 3+",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Ayyoub Bouaddi Total de Desarmes 3+",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "football icon and market 'Total de Desarmes'",
+          "stake": 1.25,
+          "stakeSource": "caption"
+        },
+        {
+          "evento": "FC Porto vs Manchester City",
+          "selecao": "Ayyoub Bouaddi 4+",
+          "mercado": "Total de Desarmes",
+          "casaDeAposta": "Betano",
+          "competicao": "",
+          "dataTexto": "Hoje 16:00",
+          "esporte": "Futebol",
+          "odds": 5.7,
+          "playerProp": {
+            "jogador": "Ayyoub Bouaddi",
+            "mercadoOriginal": "Total de Desarmes",
+            "selecaoOriginal": "Ayyoub Bouaddi 4+",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Ayyoub Bouaddi Total de Desarmes 4+",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "football icon and market 'Total de Desarmes'",
+          "stake": 0.5,
+          "stakeSource": "caption"
+        },
+        {
+          "evento": "FC Porto vs Manchester City",
+          "selecao": "Ayyoub Bouaddi 5+",
+          "mercado": "Total de Desarmes",
+          "casaDeAposta": "Betano",
+          "competicao": "",
+          "dataTexto": "Hoje 16:00",
+          "esporte": "Futebol",
+          "odds": 11.25,
+          "playerProp": {
+            "jogador": "Ayyoub Bouaddi",
+            "mercadoOriginal": "Total de Desarmes",
+            "selecaoOriginal": "Ayyoub Bouaddi 5+",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Ayyoub Bouaddi Total de Desarmes 5+",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "football icon and market 'Total de Desarmes'",
+          "stake": 0.25,
+          "stakeSource": "caption"
+        }
+      ],
+      "odds": 2.85,
+      "playerProp": {
+        "jogador": "Ayyoub Bouaddi",
+        "mercadoOriginal": "Total de Desarmes",
+        "selecaoOriginal": "Ayyoub Bouaddi 3+",
+        "substituicao": "UNKNOWN",
+        "evidencia": "Ayyoub Bouaddi Total de Desarmes 3+",
+        "time": ""
+      },
+      "sportConfidence": 1,
+      "sportEvidenceText": "football icon and market 'Total de Desarmes'",
+      "stake": 1.25,
+      "stakeSource": "caption"
+    }
+  },
+  {
+    "reference": 8,
+    "data": {
+      "isBet": true,
+      "evento": "Fluminense vs Platense",
+      "selecao": "Ganso - Mais 0.5",
+      "mercado": "Chutes a gol pelo jogador",
+      "casaDeAposta": "",
+      "competicao": "",
+      "dataTexto": "",
+      "esporte": "Futebol",
+      "items": [
+        {
+          "evento": "Fluminense vs Platense",
+          "selecao": "Ganso - Mais 0.5",
+          "mercado": "Chutes a gol pelo jogador",
+          "casaDeAposta": "",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Futebol",
+          "odds": 3.8,
+          "playerProp": {
+            "jogador": "Ganso",
+            "mercadoOriginal": "Chutes a gol pelo jogador",
+            "selecaoOriginal": "Ganso - Mais 0.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Chutes a gol pelo jogador (Fechado usando dados Opta)",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "Chutes a gol pelo jogador",
+          "stake": 1,
+          "stakeSource": "image_units"
+        },
+        {
+          "evento": "Fluminense vs Platense",
+          "selecao": "Ganso - Mais 0.5",
+          "mercado": "Chutes pelo jogador",
+          "casaDeAposta": "",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Futebol",
+          "odds": 1.89,
+          "playerProp": {
+            "jogador": "Ganso",
+            "mercadoOriginal": "Chutes pelo jogador",
+            "selecaoOriginal": "Ganso - Mais 0.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Chutes pelo jogador (Fechado usando dados Opta)",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "Chutes pelo jogador",
+          "stake": 2,
+          "stakeSource": "image_units"
+        },
+        {
+          "evento": "Fluminense vs Platense",
+          "selecao": "Ganso - Mais 1.5",
+          "mercado": "Chutes pelo jogador",
+          "casaDeAposta": "",
+          "competicao": "",
+          "dataTexto": "",
+          "esporte": "Futebol",
+          "odds": 5.1,
+          "playerProp": {
+            "jogador": "Ganso",
+            "mercadoOriginal": "Chutes pelo jogador",
+            "selecaoOriginal": "Ganso - Mais 1.5",
+            "substituicao": "UNKNOWN",
+            "evidencia": "Chutes pelo jogador (Fechado usando dados Opta)",
+            "time": ""
+          },
+          "sportConfidence": 1,
+          "sportEvidenceText": "Chutes pelo jogador",
+          "stake": 0.5,
+          "stakeSource": "image_units"
+        }
+      ],
+      "odds": 3.8,
+      "playerProp": {
+        "jogador": "Ganso",
+        "mercadoOriginal": "Chutes a gol pelo jogador",
+        "selecaoOriginal": "Ganso - Mais 0.5",
+        "substituicao": "UNKNOWN",
+        "evidencia": "Chutes a gol pelo jogador (Fechado usando dados Opta)",
+        "time": ""
+      },
+      "sportConfidence": 1,
+      "sportEvidenceText": "Chutes a gol pelo jogador",
+      "stake": 1,
+      "stakeSource": "image_units"
+    }
+  }
+]
