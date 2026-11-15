@@ -127,7 +127,7 @@ jobs:
             ~/.cargo/bin/wasm-bindgen
             rust/target
           key: cargo-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml') }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ci-rust
           overwrite: true
@@ -280,7 +280,7 @@ jobs:
       # Lidos pela `release verificada` desta execução e, na main, pelo
       # `reaproveitar` (scripts/ci-reaproveitar.mjs), que olha a execução do PR.
       # Depois de 7 dias sem merge, a main simplesmente roda tudo.
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ci-verificacoes
           # Re-run de todos os jobs grava de novo na mesma execução.
@@ -350,7 +350,7 @@ jobs:
       - run: node scripts/record-check.mjs package -- npm run package:release
       # Só a `release verificada` desta execução lê: um dia basta (o runtime tem
       # ~80 MB e divide a cota de armazenamento com o registry).
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ci-build
           overwrite: true
@@ -379,7 +379,7 @@ jobs:
           LOG_HASH_SECRET: ci-log-secret-with-at-least-32-characters
         run: bash scripts/vez.sh -- node scripts/record-check.mjs browser -- bash scripts/run-browser-suite.sh bash scripts/run-playwright-canonical.sh npm run test:browser:critical
       # Como o `ci-verificacoes`: a main reaproveita por até 7 dias.
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: env.NAVEGADOR == 'true'
         with:
           name: ci-navegador
@@ -387,7 +387,7 @@ jobs:
           path: reports/ci/browser.json
           retention-days: 7
           if-no-files-found: error
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: failure() && steps.navegador.outcome == 'failure'
         with:
           name: browser-traces
@@ -476,7 +476,7 @@ jobs:
       # Consumido pelo `publicar.sh` na VPS, que só publica a main, e pelo job
       # `imagens` logo abaixo. Cada release publicada guarda a própria cópia em
       # evidence/releases/, então 14 dias bastam.
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: github.ref == 'refs/heads/main'
         with:
           name: release-${{ github.sha }}
@@ -516,7 +516,7 @@ jobs:
       - run: node scripts/verify-release.mjs reports/ci
       - name: Montar as camadas
         run: node scripts/montar-camadas-de-imagem.mjs --artifact reports/ci --out reports/camadas
-      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -541,7 +541,7 @@ jobs:
             ' "web":"${{ env.REGISTRY }}/automabaca-novo-web@${{ steps.publicar.outputs.web }}",' \
             ' "worker":"${{ env.REGISTRY }}/automabaca-novo-worker@${{ steps.publicar.outputs.worker }}"}' > reports/imagens-publicadas.json
           cat reports/imagens-publicadas.json
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: imagens-${{ github.sha }}
           path: reports/imagens-publicadas.json
