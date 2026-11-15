@@ -96,7 +96,7 @@ describe("worktree.sh nova", () => {
     );
     expect(statSync(path.join(wt(), ".env")).mode & 0o777).toBe(0o600);
     expect(readFileSync(path.join(dir, "npx.log"), "utf8")).toBe(`${wt()} prisma generate\n`);
-    expect(readFileSync(path.join(dir, "npm.log"), "utf8")).toBe(`${wt()} run --silent build:dominio-node\n`);
+    expect(readFileSync(path.join(dir, "npm.log"), "utf8")).toBe(`${wt()} run --silent build:ponte\n`);
     expect(saida).toContain("automabaca_test_clv");
   });
 

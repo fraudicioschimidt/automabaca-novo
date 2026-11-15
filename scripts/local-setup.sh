@@ -24,7 +24,12 @@ node scripts/init-local-env.mjs
 docker compose -f docker-compose.dev.yml up -d --wait
 npm ci --no-audit --fund=false
 (cd rust && rustup toolchain install)
-npm run build:dominio-node
+# A cola JS do WebAssembly tem de ser da versão do crate no Cargo.lock.
+versao_wasm_bindgen=$(awk '$0 == "name = \"wasm-bindgen\"" { getline; gsub(/version = |"/, ""); print; exit }' rust/Cargo.lock)
+if [[ "$(wasm-bindgen --version 2>/dev/null | cut -d' ' -f2)" != "$versao_wasm_bindgen" ]]; then
+  (cd rust && cargo install wasm-bindgen-cli --version "$versao_wasm_bindgen" --locked --force)
+fi
+npm run build:ponte
 npm run prisma:deploy
 npm run prisma:seed
 

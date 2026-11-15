@@ -155,9 +155,10 @@ refeita no fim de cada fase.
 | Dois workers pegando o mesmo job | uma fila só tem um dono por vez, pela lista no ambiente; o `SKIP LOCKED` evita dupla execução |
 | pg-boss mudar o esquema | versão fixada enquanto Rust e Node convivem |
 | Ponte N-API quebrar o build ou o deploy | o binário entra no manifesto e no `verify-release`; a CI gera e testa o mesmo `.node` que vai para a imagem |
-| Binário pedir glibc mais nova que a das imagens | o `build:dominio-node` recusa acima da 2.36 (bookworm), e a CI carrega a ponte dentro da imagem do worker e da base do web |
-| Import nomeado da ponte chegar `undefined` no worker | o ESM do Node só vê o default de um CommonJS com `require` dinâmico; a fronteira exige `import dominio from "@automabaca/dominio-node"` |
-| Componente de cliente alcançar a ponte | fronteira de dependências do cliente em `tests/plataforma/architecture-boundaries.test.ts` |
+| Binário pedir glibc mais nova que a das imagens | o `build:ponte` recusa acima da 2.36 (bookworm), e a CI carrega a ponte dentro da imagem do worker e da base do web |
+| Import nomeado da ponte chegar `undefined` no worker | o ESM do Node só vê o default de um CommonJS com `require` dinâmico; a fronteira exige `import dominio from "@automabaca/dominio"` |
+| O `.node` chegar ao navegador | a ponte só entra pelo nome do pacote, cuja condição `browser` entrega o WebAssembly (fronteira em `tests/plataforma/architecture-boundaries.test.ts`) |
+| Os dois lados da ponte divergirem | mesmos nomes que o `index.d.ts` e mesmos valores (`tests/plataforma/ponte.test.ts`); os testes de quem importa a ponte rodam também contra o WebAssembly (`npm run test:ponte-wasm`, na CI) |
 | Projeto parado no meio | cada fase termina com tudo funcionando; parar depois de qualquer uma não deixa nada quebrado |
 
 ## Onde o trabalho acontece

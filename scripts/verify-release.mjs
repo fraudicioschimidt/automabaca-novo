@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { DOMINIO_NODE_NO_RUNTIME } from "./lib/dominio-node.mjs";
+import { PONTE_NO_RUNTIME } from "./lib/ponte.mjs";
 import { sha256, sourceSnapshot, verifyChecks } from "./lib/release-provenance.mjs";
 
 const folder = resolve(process.argv[2] ?? "reports/ci");
@@ -16,14 +16,14 @@ if (manifest.runtime.source.sourceSha256 !== source.sourceSha256 || manifest.run
 }
 // As duas cópias da ponte Rust dentro do pacote são o binário que o manifesto
 // registrou (o do job rust, conferido no write-release-manifest).
-const nativos = manifest.runtime.dominioNode ?? {};
-if (Object.keys(nativos).sort().join() !== [...DOMINIO_NODE_NO_RUNTIME].sort().join()) {
+const nativos = manifest.runtime.ponteNode ?? {};
+if (Object.keys(nativos).sort().join() !== [...PONTE_NO_RUNTIME].sort().join()) {
   throw new Error("Manifesto sem as cópias esperadas da ponte Rust.");
 }
-for (const caminho of DOMINIO_NODE_NO_RUNTIME) {
+for (const caminho of PONTE_NO_RUNTIME) {
   const conteudo = execFileSync("tar", ["-xzOf", `${folder}/runtime.tar.gz`, caminho], { maxBuffer: 64 * 1024 * 1024 });
-  if (sha256(conteudo) !== nativos[caminho] || nativos[caminho] !== nativos[DOMINIO_NODE_NO_RUNTIME[0]]) {
+  if (sha256(conteudo) !== nativos[caminho] || nativos[caminho] !== nativos[PONTE_NO_RUNTIME[0]]) {
     throw new Error(`Ponte Rust alterada no pacote: ${caminho}`);
   }
 }
-process.stdout.write(`Release conferida: commit ${manifest.source.commit}, SHA-256 ${manifest.runtime.sha256}, ponte Rust ${nativos[DOMINIO_NODE_NO_RUNTIME[0]]}\n`);
+process.stdout.write(`Release conferida: commit ${manifest.source.commit}, SHA-256 ${manifest.runtime.sha256}, ponte Rust ${nativos[PONTE_NO_RUNTIME[0]]}\n`);

@@ -1,0 +1,23 @@
+{
+  "name": "@automabaca/dominio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ponte do crate dominio: N-API no servidor, WebAssembly no navegador. Os binários saem de `npm run build:ponte`.",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "browser": "./browser.mjs",
+      "default": "./index.cjs"
+    }
+  },
+  "main": "index.cjs",
+  "types": "index.d.ts",
+  "files": [
+    "index.cjs",
+    "index.d.ts",
+    "browser.mjs",
+    "dominio.linux-x64-gnu.node",
+    "wasm/dominio_ponte.mjs",
+    "wasm/bytes.mjs"
+  ]
+}

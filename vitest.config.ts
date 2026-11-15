@@ -9,8 +9,13 @@ const alias = {
   // Permite testar services do painel (import "server-only") no Node.
   "server-only": fileURLToPath(new URL("./tests/helpers/server-only-stub.ts", import.meta.url)),
   // A ponte Rust DESTE checkout: numa worktree o node_modules é o da árvore
-  // principal, e o link do npm levaria ao binário compilado lá.
-  "@automabaca/dominio-node": fileURLToPath(new URL("./rust/crates/dominio-node/index.cjs", import.meta.url)),
+  // principal, e o link do npm levaria ao binário compilado lá. Com
+  // DOMINIO_PONTE=wasm, os testes rodam contra o lado do navegador
+  // (`npm run test:ponte-wasm`).
+  "@automabaca/dominio": fileURLToPath(new URL(
+    process.env.DOMINIO_PONTE === "wasm" ? "./rust/crates/ponte/browser.mjs" : "./rust/crates/ponte/index.cjs",
+    import.meta.url,
+  )),
 };
 
 const sharedEnv = {

@@ -1,6 +1,6 @@
 [package]
-name = "dominio-node"
-description = "Ponte N-API: expõe o crate dominio aos processos Node (web e worker)."
+name = "dominio-ponte"
+description = "Ponte do crate dominio para o JavaScript: N-API no servidor, WebAssembly no navegador."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -11,8 +11,13 @@ crate-type = ["cdylib"]
 
 [dependencies]
 dominio.workspace = true
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 napi.workspace = true
 napi-derive.workspace = true
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen.workspace = true
 
 [build-dependencies]
 napi-build.workspace = true

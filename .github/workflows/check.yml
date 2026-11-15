@@ -61,7 +61,7 @@ jobs:
 
   # Workspace Cargo em `rust/` (docs/MIGRACAO-RUST.md): formatação, clippy sem
   # aviso e testes, com a toolchain de `rust/rust-toolchain.toml`, e o binário
-  # da ponte N-API (`npm run build:dominio-node`). Os outros jobs usam ESTE
+  # da ponte N-API (`npm run build:ponte`). Os outros jobs usam ESTE
   # binário (artefato `ci-rust`): o que os testes exercitam é o que vai para as
   # imagens, e o manifesto da release confere. Roda também na main com as
   # verificações do PR reaproveitadas: é curto, e o build precisa do binário.
@@ -88,7 +88,7 @@ jobs:
         run: |
           versao=$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)
           test -n "$versao"
-          rustup toolchain install "$versao" --profile minimal --component rustfmt,clippy --no-self-update
+          rustup toolchain install "$versao" --profile minimal --component rustfmt,clippy --target wasm32-unknown-unknown --no-self-update
           rustc --version
       # As dependências compiladas mudam só com o Cargo.lock ou a toolchain: uma
       # entrada por combinação, gravada na primeira execução que não a achou.
@@ -100,10 +100,22 @@ jobs:
             ~/.cargo/registry/index
             ~/.cargo/registry/cache
             ~/.cargo/git/db
+            ~/.cargo/bin/wasm-bindgen
             rust/target
           key: cargo-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml') }}
           restore-keys: cargo-${{ runner.os }}-
-      - run: node scripts/record-check.mjs rust -- bash -c 'npm run check:rust && npm run build:dominio-node'
+      # A cola JS do WebAssembly tem de ser da versão do crate `wasm-bindgen` no
+      # Cargo.lock; o binário fica no cache do Cargo, e o build-ponte recusa outra.
+      - name: wasm-bindgen do Cargo.lock
+        working-directory: rust
+        run: |
+          versao=$(awk '$0 == "name = \"wasm-bindgen\"" { getline; gsub(/version = |"/, ""); print; exit }' Cargo.lock)
+          test -n "$versao"
+          if [ "$(wasm-bindgen --version 2>/dev/null | cut -d' ' -f2)" != "$versao" ]; then
+            cargo install wasm-bindgen-cli --version "$versao" --locked --force
+          fi
+          wasm-bindgen --version
+      - run: node scripts/record-check.mjs rust -- bash -c 'npm run check:rust && npm run build:ponte'
       - name: Salvar cache do Cargo
         if: steps.cargo-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -112,6 +124,7 @@ jobs:
             ~/.cargo/registry/index
             ~/.cargo/registry/cache
             ~/.cargo/git/db
+            ~/.cargo/bin/wasm-bindgen
             rust/target
           key: cargo-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml') }}
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -121,7 +134,8 @@ jobs:
           # Raiz comum dos dois: o download em `.` devolve cada um ao seu lugar.
           path: |
             reports/ci/rust.json
-            rust/crates/dominio-node/dominio-node.linux-x64-gnu.node
+            rust/crates/ponte/dominio.linux-x64-gnu.node
+            rust/crates/ponte/wasm/
           retention-days: 1
           if-no-files-found: error
 
@@ -186,7 +200,9 @@ jobs:
       - name: Workflows válidos (actionlint + shellcheck)
         run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.7@sha256:887a259a5a534f3c4f36cb02dca341673c6089431057242cdc931e9f133147e9 -color=false
       # `nice`: divide a CPU com a suíte do banco e com o build do outro job.
-      - run: nice -n 10 node scripts/record-check.mjs static -- npm run check:ci
+      # `test:ponte-wasm`: os testes de quem importa a ponte, de novo, contra o
+      # lado do navegador (WebAssembly), com o binário do job `rust`.
+      - run: nice -n 10 node scripts/record-check.mjs static -- bash -c 'npm run check:ci && npm run test:ponte-wasm'
       # Scripts Python que rodam na VPS (backup, logs, deploy). O de logs cifra
       # e decifra de verdade, por isso precisa do `age`.
       - name: Testes Python do host (deploy/ e infra/observability/)
@@ -316,6 +332,8 @@ jobs:
         with:
           name: ci-rust
           path: .
+      # Pasta real no node_modules (o link do npm faria o SSR empacotar o .node).
+      - run: node scripts/build-ponte.mjs --instalar
       - run: node scripts/record-check.mjs build -- npm run build
       - run: npm run package:worker
       - name: Construir imagem do worker
@@ -325,7 +343,7 @@ jobs:
       - name: Ponte Rust carrega nas imagens
         run: |
           set -euo pipefail
-          carregar='import { carregarDominioNode } from "/verificar/dominio-node.mjs"; console.log(JSON.stringify(carregarDominioNode("/app")));'
+          carregar='import { carregarPonte } from "/verificar/ponte.mjs"; console.log(JSON.stringify(carregarPonte("/app")));'
           docker run --rm -v "$PWD/scripts/lib:/verificar:ro" automabaca-worker:check node --input-type=module -e "$carregar"
           base=$(sed -n 's/^FROM //p' Dockerfile.web)
           docker run --rm -v "$PWD/scripts/lib:/verificar:ro" -v "$PWD/.next/standalone:/app:ro" -w /app "$base" node --input-type=module -e "$carregar"
