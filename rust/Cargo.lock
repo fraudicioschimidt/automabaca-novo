@@ -45,6 +45,9 @@ dependencies = [
 [[package]]
 name = "dominio"
 version = "0.1.0"
+dependencies = [
+ "js-math",
+]
 
 [[package]]
 name = "dominio-ponte"
@@ -143,6 +146,13 @@ dependencies = [
  "memchr",
  "pin-project-lite",
  "slab",
+]
+
+[[package]]
+name = "js-math"
+version = "0.1.0"
+dependencies = [
+ "wasm-bindgen",
 ]
 
 [[package]]

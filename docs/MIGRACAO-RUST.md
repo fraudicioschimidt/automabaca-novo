@@ -89,6 +89,25 @@ libera só isso. Andamento:
 - `kelly` (calculadora de Ferramentas), o primeiro módulo que roda no
   navegador: +31,6 KB com gzip só em `/ferramentas` e ~3 ms de compilação do
   WASM na carga (#14).
+- `decimal-input` (números digitados nas telas e na captura) e `odds` (devig e
+  CLV), com paridade bit a bit contra o TS antigo nos dois lados (#15). O WASM
+  passou a 86 KB (compilado para tamanho), e o chunk que o leva, a ~55 KB com
+  gzip, em 7 telas. O tamanho é medido a cada módulo: quando incomodar, o
+  próximo passo é o `wasm-opt`.
+
+Duas regras de método saíram desses módulos:
+
+- **Funções de `Math` que o IEEE não fixa** (`pow`, trigonometria) passam pelo
+  crate `js-math`: no servidor, o `pow` da glibc, que bateu com o `Math.pow` do
+  V8 em 1 milhão de amostras; no navegador, o próprio `Math.pow`, importado
+  pelo WebAssembly. O crate `libm`, puro Rust, divergia em 10% das amostras e
+  ficou de fora. `sqrt`, `floor`, `abs`, `min` e `max` são exatos e ficam com o
+  `f64` do Rust; o `Math.round` do JS (empate para +∞) tem equivalente próprio.
+- **Borda do JavaScript fica na casca.** O que é conversão de valor JS, e não
+  regra, continua em TypeScript: `toNumber` (Decimal do Prisma, strings),
+  `canonical-json` (protótipos, buracos de array, `Date`, `BigInt`) e os
+  seletores de `sumMoneyBy`. A ponte recebe listas inteiras, não um item por
+  chamada.
 
 Também pesa na estimativa: funções que recebem callback por item (por
 exemplo, `sumMoneyBy(itens, seletor)`) pedem assinatura nova na ponte, com

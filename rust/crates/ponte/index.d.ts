@@ -17,5 +17,17 @@ declare const dominio: {
   /** Ver `src/domain/kelly.ts`: `[implícita, estimada, fração]`, ou `null`. */
   analyzeKelly(odds: number, vantagemPct: number): [number, number, number] | null;
   kellyStake(odds: number, vantagemPct: number, fraction: number, capUnits: number): number;
+  /** Ver `src/domain/decimal-input.ts`: só o texto; `null` quando não dá para ler sem adivinhar. */
+  parseDecimalText(value: string): number | null;
+  parseMoneyText(value: string): number | null;
+  /** Ver `src/domain/odds.ts`. */
+  powerFairProbs(odds: readonly number[]): number[] | null;
+  shinFairProbs(odds: readonly number[]): number[] | null;
+  powerFairOdds(odds: readonly number[]): number[] | null;
+  shinFairOdds(odds: readonly number[]): number[] | null;
+  autoFairOdds(odds: readonly number[]): number[] | null;
+  autoFairProbs(odds: readonly number[]): number[] | null;
+  combineQuarterLineOdds(side: string, aLineQ: number, aOdd: number, bLineQ: number, bOdd: number): number | null;
+  percentualContraFair(bookOdd: number, fairOdd: number): number | null;
 };
 export = dominio;

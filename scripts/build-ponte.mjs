@@ -24,8 +24,8 @@ const GLIBC_DAS_IMAGENS = [2, 36];
 const root = fileURLToPath(new URL("..", import.meta.url));
 const rust = path.join(root, "rust");
 
-function run(command, args, cwd = rust) {
-  const result = spawnSync(command, args, { cwd, stdio: "inherit" });
+function run(command, args, env = {}) {
+  const result = spawnSync(command, args, { cwd: rust, stdio: "inherit", env: { ...process.env, ...env } });
   if (result.error) throw new Error(`${command} indisponível: ${result.error.message}`, { cause: result.error });
   if (result.status !== 0) throw new Error(`${command} ${args.join(" ")} falhou (${result.status}).`);
 }
@@ -55,7 +55,10 @@ function compilarWasm() {
   if (!versao || instalada !== versao) {
     throw new Error(`wasm-bindgen ${instalada ?? "ausente"}; o Cargo.lock pede ${versao}. Instale: cargo install wasm-bindgen-cli --version ${versao} --locked`);
   }
-  run("cargo", ["build", "--release", "--locked", "-p", "dominio-ponte", "--target", "wasm32-unknown-unknown"]);
+  // O WebAssembly viaja para o navegador em cada tela que usa a ponte: otimizado
+  // para tamanho (−11% contra o padrão), sem mexer no binário do servidor.
+  run("cargo", ["build", "--release", "--locked", "-p", "dominio-ponte", "--target", "wasm32-unknown-unknown"],
+    { CARGO_PROFILE_RELEASE_OPT_LEVEL: "s" });
   const saida = path.join(root, PONTE_DIR, "wasm");
   mkdirSync(saida, { recursive: true });
   run("wasm-bindgen", ["--target", "web", "--no-typescript", "--out-dir", saida, "--out-name", "dominio_ponte",

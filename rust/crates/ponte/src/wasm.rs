@@ -57,3 +57,85 @@ pub fn analyze_kelly(odds: f64, vantagem_pct: f64) -> JsValue {
 pub fn kelly_stake(odds: f64, vantagem_pct: f64, fraction: f64, cap_units: f64) -> f64 {
     dominio::kelly::kelly_stake(odds, vantagem_pct, fraction, cap_units)
 }
+
+fn number_or_null(value: Option<f64>) -> JsValue {
+    value.map_or(JsValue::NULL, JsValue::from)
+}
+
+#[wasm_bindgen(js_name = parseDecimalText)]
+pub fn parse_decimal_text(value: &str) -> JsValue {
+    number_or_null(dominio::decimal_input::parse_decimal_text(value))
+}
+
+#[wasm_bindgen(js_name = parseMoneyText)]
+pub fn parse_money_text(value: &str) -> JsValue {
+    number_or_null(dominio::decimal_input::parse_money_text(value))
+}
+
+fn numbers_or_null(values: Option<Vec<f64>>) -> JsValue {
+    values.map_or(JsValue::NULL, |values| {
+        JsValue::from(
+            values
+                .into_iter()
+                .map(JsValue::from)
+                .collect::<Vec<JsValue>>(),
+        )
+    })
+}
+
+#[wasm_bindgen(js_name = powerFairProbs)]
+pub fn power_fair_probs(odds: &[f64]) -> JsValue {
+    numbers_or_null(dominio::odds::power_fair_probs(odds))
+}
+
+#[wasm_bindgen(js_name = shinFairProbs)]
+pub fn shin_fair_probs(odds: &[f64]) -> JsValue {
+    numbers_or_null(dominio::odds::shin_fair_probs(odds))
+}
+
+#[wasm_bindgen(js_name = powerFairOdds)]
+pub fn power_fair_odds(odds: &[f64]) -> JsValue {
+    numbers_or_null(dominio::odds::power_fair_odds(odds))
+}
+
+#[wasm_bindgen(js_name = shinFairOdds)]
+pub fn shin_fair_odds(odds: &[f64]) -> JsValue {
+    numbers_or_null(dominio::odds::shin_fair_odds(odds))
+}
+
+#[wasm_bindgen(js_name = autoFairOdds)]
+pub fn auto_fair_odds(odds: &[f64]) -> JsValue {
+    numbers_or_null(dominio::odds::auto_fair_odds(odds))
+}
+
+#[wasm_bindgen(js_name = autoFairProbs)]
+pub fn auto_fair_probs(odds: &[f64]) -> JsValue {
+    numbers_or_null(dominio::odds::auto_fair_probs(odds))
+}
+
+#[wasm_bindgen(js_name = combineQuarterLineOdds)]
+pub fn combine_quarter_line_odds(
+    side: &str,
+    a_line_q: f64,
+    a_odd: f64,
+    b_line_q: f64,
+    b_odd: f64,
+) -> JsValue {
+    use dominio::odds::QuarterLineComponent;
+    number_or_null(dominio::odds::combine_quarter_line_odds(
+        side,
+        QuarterLineComponent {
+            line_q: a_line_q,
+            odd: a_odd,
+        },
+        QuarterLineComponent {
+            line_q: b_line_q,
+            odd: b_odd,
+        },
+    ))
+}
+
+#[wasm_bindgen(js_name = percentualContraFair)]
+pub fn percentual_contra_fair(book_odd: f64, fair_odd: f64) -> JsValue {
+    number_or_null(dominio::odds::percentual_contra_fair(book_odd, fair_odd))
+}

@@ -11,6 +11,7 @@ publish = false
 
 [workspace.dependencies]
 dominio = { path = "crates/dominio" }
+js-math = { path = "crates/js-math" }
 napi = "3.16.2"
 napi-derive = "3.7.1"
 napi-build = "2.6.0"
