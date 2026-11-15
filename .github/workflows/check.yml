@@ -177,6 +177,9 @@ jobs:
         with:
           name: ci-rust
           path: .
+      # O cache do node_modules guarda a cópia da ponte de outro commit (o build
+      # a instala como pasta real): o tsc leria os tipos velhos dela.
+      - run: node scripts/build-ponte.mjs --instalar
       # Processo em segundo plano sobrevive ao fim do passo (o runner só mata os
       # órfãos no fim do job); o passo "Esperar" colhe o resultado.
       - name: Testes com PostgreSQL (em segundo plano)
