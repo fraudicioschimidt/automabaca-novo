@@ -20,7 +20,9 @@
     "@prisma/client",
     "pino-pretty"
   ],
-  "ignoreBinaries": [],
+  "ignoreBinaries": [
+    "wasm-bindgen"
+  ],
   "prisma": {
     "config": [],
     "entry": [

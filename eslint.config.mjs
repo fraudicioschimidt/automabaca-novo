@@ -153,6 +153,9 @@ const eslintConfig = [
       "reports/**",
       "coverage/**",
       "src/generated/**",
+      // Saída de `npm run build:ponte`: a cola do wasm-bindgen e o binário em base64.
+      "rust/crates/ponte/wasm/**",
+      "rust/target/**",
       "next-env.d.ts",
       "scripts/.tmp-*",
       ".claude/worktrees/**",
