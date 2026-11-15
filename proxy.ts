@@ -47,7 +47,10 @@ const PWA_PUBLIC_ASSETS = new Set([
 export function buildContentSecurityPolicy(nonce: string, isDev = false): string {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
+    // 'wasm-unsafe-eval' libera só a compilação de WebAssembly (a ponte Rust no
+    // navegador, rust/crates/ponte/browser.mjs): nem eval de JS, nem script
+    // sem nonce. O dev do Next ainda pede o 'unsafe-eval' inteiro.
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval'${isDev ? " 'unsafe-eval'" : ""}`,
     `style-src 'self' 'nonce-${nonce}'`,
     // O front Refino calcula layout por React style props. CSP não aceita nonce
     // em atributos style; isolamos a exceção só neles, sem abrir scripts nem

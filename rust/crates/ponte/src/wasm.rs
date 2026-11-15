@@ -37,3 +37,23 @@ pub fn latest_cron_firing(
         .map(|firing| firing.map_or(JsValue::NULL, JsValue::from))
         .map_err(js_error)
 }
+
+#[wasm_bindgen(js_name = analyzeKelly)]
+pub fn analyze_kelly(odds: f64, vantagem_pct: f64) -> JsValue {
+    dominio::kelly::analyze_kelly(odds, vantagem_pct).map_or(JsValue::NULL, |analysis| {
+        let valores: Vec<JsValue> = [
+            analysis.implied_probability,
+            analysis.estimated_probability,
+            analysis.full_fraction,
+        ]
+        .into_iter()
+        .map(JsValue::from)
+        .collect();
+        JsValue::from(valores)
+    })
+}
+
+#[wasm_bindgen(js_name = kellyStake)]
+pub fn kelly_stake(odds: f64, vantagem_pct: f64, fraction: f64, cap_units: f64) -> f64 {
+    dominio::kelly::kelly_stake(odds, vantagem_pct, fraction, cap_units)
+}

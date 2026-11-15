@@ -34,3 +34,21 @@ pub fn latest_cron_firing(
 ) -> Result<Option<f64>> {
     cron::latest_cron_firing(&cron, after_ms, until_ms, utc_offset_hours).map_err(js_error)
 }
+
+/// `[probabilidade implícita, estimada, fração de Kelly]`; `null` quando a
+/// vantagem e a odd não dão probabilidade possível.
+#[napi]
+pub fn analyze_kelly(odds: f64, vantagem_pct: f64) -> Option<Vec<f64>> {
+    dominio::kelly::analyze_kelly(odds, vantagem_pct).map(|analysis| {
+        vec![
+            analysis.implied_probability,
+            analysis.estimated_probability,
+            analysis.full_fraction,
+        ]
+    })
+}
+
+#[napi]
+pub fn kelly_stake(odds: f64, vantagem_pct: f64, fraction: f64, cap_units: f64) -> f64 {
+    dominio::kelly::kelly_stake(odds, vantagem_pct, fraction, cap_units)
+}
