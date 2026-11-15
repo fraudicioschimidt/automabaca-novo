@@ -4,6 +4,9 @@ node_modules
 dist/
 src/generated/
 next-env.d.ts
+rust/target/
+# Binário da ponte N-API: sai do `cargo build` (npm run build:dominio-node)
+*.node
 *.tsbuildinfo
 __pycache__/
 *.pyc

@@ -45,6 +45,7 @@
     "check:deploy-drift": "node scripts/check-deploy-drift.mjs",
     "check": "bash scripts/vez.sh --peso 3 -- node scripts/check-project.mjs full",
     "check:fast": "node scripts/check-project.mjs fast",
+    "check:rust": "bash scripts/vez.sh -- bash -c 'cd rust && cargo fmt --all --check && cargo clippy --workspace --all-targets --locked -- -D warnings && cargo test --workspace --locked'",
     "knip": "knip",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "node scripts/prisma-migrate-dev.mjs",

@@ -25,8 +25,8 @@ concurrency:
 # um numa máquina nova: os jobs trocam os registros e o runtime do build por
 # ARTEFATO (`ci-*`, de vida curta) e guardam node_modules, tsc e Next no cache
 # do GitHub. Repositório privado gasta a cota de minutos do plano; cada minuto
-# de cada job conta, então poucos jobs, e grandes. Um PR ocupa dois em paralelo
-# (`verificações` e `build e navegador`) e depois um (`release verificada`).
+# de cada job conta, então poucos jobs, e grandes. Um PR ocupa três em paralelo
+# (`rust`, `verificações` e `build e navegador`) e depois um (`release verificada`).
 #
 # Cada job com banco sobe o PRÓPRIO PostgreSQL em RAM (`scripts/ci-postgres.sh`),
 # numa porta aleatória do host, como no desenvolvimento local.
@@ -58,6 +58,67 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/ci-reaproveitar.mjs
+
+  # Workspace Cargo em `rust/` (docs/MIGRACAO-RUST.md): formatação, clippy sem
+  # aviso e testes, com a toolchain de `rust/rust-toolchain.toml`. Roda também
+  # na main com as verificações do PR reaproveitadas: é curto, e o registro
+  # `rust` entra no manifesto da release deste commit.
+  rust:
+    name: rust
+    needs: reaproveitar
+    # A mesma trava do `verificações` para PR do Dependabot.
+    if: >-
+      ${{ !cancelled()
+      && (github.event.pull_request.user.login != 'dependabot[bot]'
+      || (github.event.action == 'labeled' && github.event.label.name == 'dependencias-revisadas')) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: ./.github/actions/setup-node-npm
+        with:
+          install-deps: "false"
+      - name: Toolchain fixada
+        working-directory: rust
+        run: |
+          versao=$(sed -n 's/^channel = "\(.*\)"$/\1/p' rust-toolchain.toml)
+          test -n "$versao"
+          rustup toolchain install "$versao" --profile minimal --component rustfmt,clippy --no-self-update
+          rustc --version
+      # As dependências compiladas mudam só com o Cargo.lock ou a toolchain: uma
+      # entrada por combinação, gravada na primeira execução que não a achou.
+      - name: Restaurar cache do Cargo
+        id: cargo-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            rust/target
+          key: cargo-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml') }}
+          restore-keys: cargo-${{ runner.os }}-
+      - run: node scripts/record-check.mjs rust -- npm run check:rust
+      - name: Salvar cache do Cargo
+        if: steps.cargo-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            rust/target
+          key: cargo-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml') }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ci-rust
+          overwrite: true
+          path: reports/ci/rust.json
+          retention-days: 1
+          if-no-files-found: error
 
   # Estáticas + unitários (`check:ci`) e a suíte com PostgreSQL, em paralelo no
   # mesmo job: a do banco sobe em segundo plano logo no começo e é esperada no
@@ -299,7 +360,7 @@ jobs:
 
   release:
     name: release verificada
-    needs: [reaproveitar, verificacoes, build]
+    needs: [reaproveitar, rust, verificacoes, build]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -313,6 +374,7 @@ jobs:
       # propósito; em qualquer outro caso, tudo tem de estar verde.
       - name: Exigir todos os gates aprovados
         env:
+          RUST_RESULT: ${{ needs.rust.result }}
           VERIFICACOES_RESULT: ${{ needs.verificacoes.result }}
           BUILD_RESULT: ${{ needs.build.result }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
@@ -322,6 +384,8 @@ jobs:
           if [ "$PR_AUTHOR" = 'dependabot[bot]' ] && [ "$BUILD_RESULT" = skipped ]; then
             echo "::error::PR do Dependabot: a CI só roda quando o rótulo dependencias-revisadas é posto (de novo a cada push), depois de ler o diff do lockfile e as notas de versão"
           fi
+          echo "rust = $RUST_RESULT (esperado success)"
+          test "$RUST_RESULT" = success
           test "$VERIFICACOES_RESULT/$BUILD_RESULT" = "$esperado"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: ./.github/actions/setup-node-npm
@@ -334,6 +398,11 @@ jobs:
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ci-build
+          path: reports/ci
+      - name: Rust desta execução
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ci-rust
           path: reports/ci
       - name: Verificações desta execução
         if: env.REUSO != 'true'
@@ -353,7 +422,7 @@ jobs:
           github-token: ${{ github.token }}
       - name: Todos os registros presentes
         run: |
-          for nome in build package runtime static database browser; do
+          for nome in build package runtime static database browser rust; do
             test -f "reports/ci/$nome.json" || { echo "::error::falta reports/ci/$nome.json"; exit 1; }
           done
           test -f reports/ci/runtime.tar.gz

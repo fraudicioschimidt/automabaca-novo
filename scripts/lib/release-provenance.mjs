@@ -18,7 +18,7 @@ export function sourceSnapshot(root = process.cwd()) {
 }
 
 export function verifyChecks(snapshot, checks) {
-  for (const name of ["static", "database", "browser", "build", "package"]) {
+  for (const name of ["static", "database", "browser", "build", "package", "rust"]) {
     const check = checks.find((item) => item.name === name);
     if (!check || check.exitCode !== 0) throw new Error(`Verificação ausente ou reprovada: ${name}`);
     if (check.source.sourceSha256 !== snapshot.sourceSha256) throw new Error(`Fonte mudou após a verificação: ${name}`);

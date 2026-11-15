@@ -32,7 +32,7 @@ describe("rastreabilidade da release", () => {
   });
   it("recusa gate faltante, falho e evidência de outro fonte", () => {
     const source = sourceSnapshot(fixture());
-    const checks = ["static", "database", "browser", "build", "package"].map((name) => ({ name, source, exitCode: 0 }));
+    const checks = ["static", "database", "browser", "build", "package", "rust"].map((name) => ({ name, source, exitCode: 0 }));
     expect(() => verifyChecks(source, checks)).not.toThrow();
     expect(() => verifyChecks(source, checks.slice(1))).toThrow(/static/);
     expect(() => verifyChecks(source, checks.map((c) => ({ ...c, exitCode: 1 })))).toThrow(/reprovada/);
@@ -44,7 +44,7 @@ describe("rastreabilidade da release", () => {
     const archive = "fixture de bytes de um artefato";
     writeFileSync(join(folder, "runtime.tar.gz"), archive);
     writeFileSync(join(folder, "runtime.json"), JSON.stringify({ source, archive: "runtime.tar.gz", sha256: sha256(archive) }));
-    for (const name of ["static", "database", "browser", "build", "package"]) {
+    for (const name of ["static", "database", "browser", "build", "package", "rust"]) {
       writeFileSync(join(folder, `${name}.json`), JSON.stringify({ name, source, exitCode: 0 }));
     }
     const run = (script: string) => execFileSync(process.execPath, [join(process.cwd(), "scripts", script)], { cwd: root, stdio: "pipe" });
@@ -66,7 +66,7 @@ describe("rastreabilidade da release", () => {
       for (const name of ["static", "database", "browser"]) {
         writeFileSync(join(folder, `${name}.json`), JSON.stringify({ name, source: reaproveitadas, exitCode: 0 }));
       }
-      for (const name of ["build", "package"]) {
+      for (const name of ["build", "package", "rust"]) {
         writeFileSync(join(folder, `${name}.json`), JSON.stringify({ name, source, exitCode: 0 }));
       }
     };

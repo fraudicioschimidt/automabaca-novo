@@ -4,7 +4,7 @@ import { sha256, sourceSnapshot, verifyChecks } from "./lib/release-provenance.m
 const source = sourceSnapshot();
 if (process.env.CI && source.dirty) throw new Error("Release de CI exige checkout limpo.");
 const root = "reports/ci";
-const checks = readdirSync(root).filter((name) => /^(static|database|browser|build|package)\.json$/.test(name))
+const checks = readdirSync(root).filter((name) => /^(static|database|browser|build|package|rust)\.json$/.test(name))
   .map((name) => JSON.parse(readFileSync(`${root}/${name}`, "utf8")));
 verifyChecks(source, checks);
 // Na main, static/database/browser podem vir da execução do PR cujo commit de
