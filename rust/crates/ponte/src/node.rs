@@ -122,3 +122,79 @@ pub fn combine_quarter_line_odds(
 pub fn percentual_contra_fair(book_odd: f64, fair_odd: f64) -> Option<f64> {
     dominio::odds::percentual_contra_fair(book_odd, fair_odd)
 }
+
+/// Ver `src/domain/dates.ts`: instantes em milissegundos desde a época.
+fn date_error(error: dominio::dates::DateError) -> Error {
+    Error::from_reason(error.0)
+}
+
+#[napi]
+pub fn sp_day_key(ms: f64) -> Result<String> {
+    dominio::dates::sp_day_key(ms).map_err(date_error)
+}
+
+#[napi]
+pub fn format_sp_time(ms: f64) -> String {
+    dominio::dates::format_sp_time(ms)
+}
+
+#[napi]
+pub fn format_sp_day_month(ms: f64) -> String {
+    dominio::dates::format_sp_day_month(ms)
+}
+
+#[napi]
+pub fn format_sp_date_time(ms: f64) -> String {
+    dominio::dates::format_sp_date_time(ms)
+}
+
+#[napi]
+pub fn format_sp_date_with_year(ms: f64) -> String {
+    dominio::dates::format_sp_date_with_year(ms)
+}
+
+#[napi]
+pub fn sp_greeting(ms: f64) -> String {
+    dominio::dates::sp_greeting(ms).to_owned()
+}
+
+#[napi]
+pub fn format_sp_full_date(ms: f64) -> String {
+    dominio::dates::format_sp_full_date(ms)
+}
+
+#[napi]
+pub fn sp_start_of_today_utc(now_ms: f64) -> f64 {
+    dominio::dates::sp_start_of_today_utc(now_ms)
+}
+
+#[napi]
+pub fn sp_week_key(ms: f64) -> String {
+    dominio::dates::sp_week_key(ms)
+}
+
+#[napi]
+pub fn sp_relative(date_ms: f64, now_ms: f64) -> String {
+    dominio::dates::sp_relative(date_ms, now_ms)
+}
+
+#[napi]
+pub fn sp_to_utc(year: f64, month: f64, day: f64, hour: f64, minute: f64) -> f64 {
+    dominio::dates::sp_to_utc(year, month, day, hour, minute)
+}
+
+/// `null` sem valor.
+#[napi]
+pub fn format_duration_minutes(minutes: Option<f64>) -> String {
+    dominio::dates::format_duration_minutes(minutes)
+}
+
+#[napi]
+pub fn shift_day_key(day_key: String, days: f64) -> Result<String> {
+    dominio::dates::shift_day_key(&day_key, days).map_err(date_error)
+}
+
+#[napi]
+pub fn parse_sp_date_time_input(date_text: String, time_text: String) -> Option<f64> {
+    dominio::dates::parse_sp_date_time_input(&date_text, &time_text)
+}

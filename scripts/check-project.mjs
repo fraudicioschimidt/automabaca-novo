@@ -252,6 +252,13 @@ async function runFast() {
   }
 
   writeLine(`Check incremental: ${files.length} arquivo(s) alterado(s).`);
+  // A ponte antes de tudo: o tsc lê os tipos dela no node_modules, e o build
+  // só depois de fmt/clippy/testes do Rust. Os testes pelo WebAssembly vêm
+  // junto com os outros, abaixo.
+  if (impact.rustChanged) {
+    failIfNeeded(await runPhase([npmTask("Rust (fmt, clippy, testes)", "check:rust")], 1));
+    failIfNeeded(await runPhase([npmTask("ponte Rust", "build:ponte")], 1));
+  }
   const staticTasks = [];
   if (impact.lintFiles.length) staticTasks.push(npmTask("lint alterado", "lint:affected", impact.lintFiles));
   if (files.some(isCode) || files.some((file) => /^(?:tsconfig|next\.config|prisma\/)/.test(file))) {
@@ -266,13 +273,7 @@ async function runFast() {
   }
   failIfNeeded(await runPhase(staticTasks, 3));
 
-  // Em ordem: o build da ponte só depois de fmt/clippy/testes do Rust, e os
-  // testes em TypeScript só com o binário novo.
-  if (impact.rustChanged) {
-    failIfNeeded(await runPhase([npmTask("Rust (fmt, clippy, testes)", "check:rust")], 1));
-    failIfNeeded(await runPhase([npmTask("ponte Rust", "build:ponte")], 1));
-    failIfNeeded(await runPhase([ponteWasmTask()], 1));
-  }
+  if (impact.rustChanged) failIfNeeded(await runPhase([ponteWasmTask()], 1));
   const relatedFiles = [...new Set([...impact.codeFiles, ...(impact.rustChanged ? bridgeImporters() : [])])];
 
   const testTasks = [];

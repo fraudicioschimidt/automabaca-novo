@@ -29,5 +29,20 @@ declare const dominio: {
   autoFairProbs(odds: readonly number[]): number[] | null;
   combineQuarterLineOdds(side: string, aLineQ: number, aOdd: number, bLineQ: number, bOdd: number): number | null;
   percentualContraFair(bookOdd: number, fairOdd: number): number | null;
+  /** Ver `src/domain/dates.ts`: instantes em milissegundos desde a época. */
+  spDayKey(ms: number): string;
+  formatSpTime(ms: number): string;
+  formatSpDayMonth(ms: number): string;
+  formatSpDateTime(ms: number): string;
+  formatSpDateWithYear(ms: number): string;
+  spGreeting(ms: number): string;
+  formatSpFullDate(ms: number): string;
+  spStartOfTodayUtc(nowMs: number): number;
+  spWeekKey(ms: number): string;
+  spRelative(dateMs: number, nowMs: number): string;
+  spToUtc(year: number, month: number, day: number, hour: number, minute: number): number;
+  formatDurationMinutes(minutes: number | null): string;
+  shiftDayKey(dayKey: string, days: number): string;
+  parseSpDateTimeInput(dateText: string, timeText: string): number | null;
 };
 export = dominio;

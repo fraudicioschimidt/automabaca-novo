@@ -101,6 +101,13 @@ WebAssembly. Andamento:
   escalava: o `regress`, o motor de regex com a semântica do ECMAScript que a
   leitura de apostas e a liquidação vão usar, pesa sozinho 490 KB de WASM
   (137 KB com gzip), e 40 dos 58 módulos com regex chegam ao navegador.
+- `dates` e a parte sem regex do `dates-parsing` (formatos no relógio de São
+  Paulo, chave de dia e de semana, campos de data e hora do painel) (#17). O
+  módulo `js` do crate reproduz o `Date` do ECMAScript (`Date.UTC` com ano de
+  dois dígitos e rollover, getters, `toISOString`), o `toFixed` (empate para o
+  maior) e o `String(número)`; o fuzz contra o TS antigo achou e fez corrigir
+  duas quinas dele (o dia da semana do ano 0-99 e os campos NaN na borda da
+  faixa). A leitura de data e hora no texto do post espera o `regress`.
 
 Duas regras de método saíram desses módulos:
 
