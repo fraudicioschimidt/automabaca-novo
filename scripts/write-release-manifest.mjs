@@ -35,11 +35,11 @@ for (const caminho of PONTE_NO_RUNTIME) {
     throw new Error(`Ponte Rust no runtime (${caminho}) não é o binário do job rust (${binario}).`);
   }
 }
-// O mesmo para o WebAssembly embutido nos chunks do navegador.
+// O mesmo para o WebAssembly que o navegador baixa.
 const wasm = sha256(readFileSync(PONTE_WASM));
-const chunksComWasm = Object.entries(runtime.ponteWasm ?? {});
-if (chunksComWasm.length === 0 || chunksComWasm.some(([, hash]) => hash !== wasm)) {
-  throw new Error(`WebAssembly da ponte nos chunks do navegador não é o do job rust (${wasm}).`);
+const publicados = Object.values(runtime.ponteWasm ?? {});
+if (publicados.length !== 1 || publicados[0] !== wasm) {
+  throw new Error(`WebAssembly da ponte publicado para o navegador não é o do job rust (${wasm}).`);
 }
 writeFileSync(`${root}/release-manifest.json`, JSON.stringify({
   schemaVersion: 1, generatedAt: new Date().toISOString(), source, runtime,

@@ -18,6 +18,6 @@
     "browser.mjs",
     "dominio.linux-x64-gnu.node",
     "wasm/dominio_ponte.mjs",
-    "wasm/bytes.mjs"
+    "wasm/dominio_ponte_bg.wasm"
   ]
 }

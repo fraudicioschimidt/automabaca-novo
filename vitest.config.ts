@@ -13,7 +13,7 @@ const alias = {
   // DOMINIO_PONTE=wasm, os testes rodam contra o lado do navegador
   // (`npm run test:ponte-wasm`).
   "@automabaca/dominio": fileURLToPath(new URL(
-    process.env.DOMINIO_PONTE === "wasm" ? "./rust/crates/ponte/browser.mjs" : "./rust/crates/ponte/index.cjs",
+    process.env.DOMINIO_PONTE === "wasm" ? "./rust/crates/ponte/wasm-node.mjs" : "./rust/crates/ponte/index.cjs",
     import.meta.url,
   )),
 };
