@@ -1,4 +1,4 @@
-# Aviso no Telegram a partir do PC do dono, pelo bot de NOTIFICAÇÕES de produção
+# Aviso no Telegram pelo bot de NOTIFICAÇÕES de produção
 # (o que só envia; nunca o bot que lê os canais). Para `source`.
 #
 # O token e o chat ficam fora do repositório e do `.env` do projeto, em

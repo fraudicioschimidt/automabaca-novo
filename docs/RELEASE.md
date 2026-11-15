@@ -8,7 +8,7 @@ depois o que foi publicado.
 Desde 21/09/2026 o dono autorizou publicar todo merge na `main` com a CI verde,
 sem consulta a cada commit (relate o que saiu depois). Desde 23/09/2026 isso é
 automático: o [`scripts/publicador-automatico.sh`](../scripts/publicador-automatico.sh),
-no crontab do `fabricio` no PC do dono, olha a cada minuto os commits da `main`
+no crontab do `deploy` na VPS, olha a cada minuto os commits da `main`
 à frente do que está no ar e, para o mais novo com a execução do `check.yml`
 verde (inclusive *imagens*), roda o comando 2 abaixo com `--nome auto-<sha7>` e
 `--commit`. Com a CI do topo ainda rodando, um commit anterior já verde sai na
@@ -21,9 +21,9 @@ ou que falhou, e não publica sozinho nada anterior a ele: esses saem à mão.
 Causa passageira (saída 4 do `publicar.sh`: produção não saudável antes de
 publicar, rede no download do artefato ou no pull das imagens) ele tenta de
 novo a cada 5 min, até 8 vezes, e só então marca como falha. Log e estado em
-`~/.local/state/automabaca/`; instalação por `scripts/publicador-automatico-instalar.sh`.
-Se a conexão cair no meio, a publicação continua na VPS (`setsid`), com a
-reversão automática de sempre.
+`~/.local/state/automabaca/` do `deploy`; instalação por `scripts/publicador-automatico-instalar.sh`,
+na VPS como `deploy`. Ele chama o `publicar.sh` direto, sem ssh, com a reversão
+automática de sempre.
 
 À mão (migration que o `migrar.py` recusou, ou refazer uma release recusada):
 

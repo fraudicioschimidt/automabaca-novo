@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Publica sozinho o commit mais novo da `main` com a CI verde.
 #
-# Roda no PC do dono, no crontab do usuário `fabricio`, a cada minuto
-# (instalado por `scripts/publicador-automatico-instalar.sh`). Usa o `gh` e o
-# `ssh hermes` desse usuário; nada de chave nova, nem acesso da CI à VPS.
+# Roda na VPS, no crontab do usuário `deploy`, a cada minuto (instalado por
+# `scripts/publicador-automatico-instalar.sh`). Usa o `gh` desse usuário para
+# ler a CI e chama o `deploy/publicar.sh` direto, como o usuário `deploy`; a CI
+# continua sem acesso nenhum à VPS.
 #
 # Não decide nada que o `deploy/publicar.sh` já decida: ele só o chama, do jeito
 # que o AGENTS.md manda, para o commit escolhido. As guardas continuam lá
@@ -44,7 +45,7 @@
 set -euo pipefail
 
 REPO=fraudicioschimidt/automabaca-novo
-PUBLICAR=/srv/apps/automabaca-novo/source/deploy/publicar.sh
+PUBLICAR="${AUTOMABACA_PUBLICAR:-/srv/apps/automabaca-novo/source/deploy/publicar.sh}"
 HEALTH=https://v2.fraudicio.com.br/api/health
 JOB_IMAGENS="imagens publicadas no registry"
 MAX_TENTATIVAS=8
@@ -116,7 +117,7 @@ avisar() {
   local sha="$1" titulo="$2" motivo
   # O fim da saída do publicar.sh é onde a guarda ou o erro se explicam.
   motivo="$(grep -v '^[[:space:]]*$' "$saida" 2>/dev/null | tail -n 4 | cut -c1-300 || true)"
-  printf '%s\ncommit %s\n%s\n👉 Log: %s (no PC); na VPS, evidence/releases.\n' \
+  printf '%s\ncommit %s\n%s\n👉 Log: %s na VPS; e evidence/releases.\n' \
     "$titulo" "${sha:0:7}" "${motivo:-(o publicar.sh não disse o motivo)}" "$log" > "$avisos/$sha"
   enviar_avisos
 }
@@ -127,7 +128,7 @@ avisar() {
 topo="$(gh api "repos/$REPO/commits/main" --jq .sha 2>/dev/null)" || { situacao "gh api falhou; tento no próximo minuto"; exit 0; }
 [[ "$topo" =~ ^[0-9a-f]{40}$ ]] || { situacao "resposta inesperada do gh: $topo"; exit 0; }
 # Commit já tratado: registra "em dia" uma vez, para uma falha passageira
-# (gh, ssh) não ficar como última linha do log depois de resolvida.
+# (gh, rede) não ficar como última linha do log depois de resolvida.
 [[ -f "$tratados/$topo" ]] && { situacao "${topo:0:7}: em dia ($(cut -d" " -f2- "$tratados/$topo"))"; exit 0; }
 curto="${topo:0:7}"
 
@@ -213,21 +214,9 @@ registrar "$curto: publicando (CI verde na execução $execucao; no ar: ${no_ar:
 saida="$(mktemp)"
 trap 'rm -f "$saida"' EXIT
 set +e
-# `setsid nohup`, com a saída num arquivo na VPS: se a conexão cair no meio (PC
-# suspenso, rede), a publicação segue até o fim lá, com a reversão automática
-# dela, em vez de morrer entre um passo e outro. Daqui só se acompanha o log.
-ssh -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
-  hermes bash -s -- "$PUBLICAR" "auto-$curto" "$alvo" <<'REMOTO' | tee "$saida"
-set -u
-log="$(mktemp -t publicar-auto-XXXXXX.log)"
-setsid -w nohup bash "$1" --nome "$2" --commit "$3" --com-migration >"$log" 2>&1 </dev/null &
-pid=$!
-tail -n +1 -f --pid="$pid" "$log"
-wait "$pid"
-codigo=$?
-rm -f "$log"
-exit "$codigo"
-REMOTO
+# Na própria VPS: o `publicar.sh` roda até o fim, com a reversão automática
+# dele, e a saída vai para o log e para o motivo do aviso.
+bash "$PUBLICAR" --nome "auto-$curto" --commit "$alvo" --com-migration </dev/null 2>&1 | tee "$saida"
 codigo=${PIPESTATUS[0]}
 set -e
 
@@ -254,10 +243,6 @@ case "$codigo" in
       printf '%s\n' "$feitas" > "$tentativas/$alvo"
       situacao "$curto: causa passageira (saída 4, motivo acima), tentativa $feitas de $MAX_TENTATIVAS; tento de novo em $(( ESPERA_ENTRE_TENTATIVAS_S / 60 )) min"
     fi ;;
-  255)
-    # Falha do próprio ssh. Se a publicação chegou a começar, ela segue na VPS,
-    # e a próxima tentativa encontra a trava dela (acima) ou o commit já no ar.
-    situacao "$curto: ssh falhou (255); tento de novo no próximo minuto" ;;
   *)
     marcar "$alvo" "FALHOU (saída $codigo): veja o log acima e a pasta evidence/releases na VPS; não tento de novo"
     avisar "$alvo" "❌ Publicação FALHOU (saída $codigo): não tento de novo" ;;
