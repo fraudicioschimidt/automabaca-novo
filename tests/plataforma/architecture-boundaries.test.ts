@@ -107,20 +107,37 @@ function dbTestsWithoutTeardown(): string[] {
 }
 
 /**
- * A ponte Rust é CommonJS com o binário num `require`: no ESM do Node (o bundle
- * do worker) só existe o default, e um import nomeado passa no vitest e no
- * Next mas chega `undefined` ao worker de produção.
+ * A ponte Rust entra só pelo nome do pacote e pelo default. O nome deixa o
+ * bundler escolher o lado (WebAssembly no navegador, N-API no servidor): um
+ * caminho interno levaria o `.node` ao cliente. E o default é o único nome que
+ * o ESM do Node enxerga no CommonJS do servidor: um import nomeado passa no
+ * vitest e no Next, mas chega `undefined` ao worker de produção. A exceção é
+ * o teste da própria ponte, que carrega cada lado pelo caminho.
  */
-function nonDefaultBridgeImports(): string[] {
+function bridgeImportViolations(): string[] {
+  const doPacote = (specifier: string) => specifier === "@automabaca/dominio"
+    || specifier.startsWith("@automabaca/dominio/") || specifier.includes("rust/crates/ponte");
   return ["app", "src", "scripts", "tests"]
     .flatMap((raiz) => sourceFiles(raiz))
-    .filter((absolute) => readFileSync(absolute, "utf8").includes("@automabaca/dominio-node"))
+    .filter((absolute) => !absolute.endsWith(`${path.sep}tests${path.sep}plataforma${path.sep}ponte.test.ts`))
+    .filter((absolute) => /@automabaca\/dominio|rust\/crates\/ponte/.test(readFileSync(absolute, "utf8")))
     .flatMap((absolute) => {
       const ast = ts.createSourceFile(absolute, readFileSync(absolute, "utf8"), ts.ScriptTarget.Latest, true);
-      return ast.statements.filter((node): node is ts.ImportDeclaration => ts.isImportDeclaration(node)
-        && ts.isStringLiteral(node.moduleSpecifier) && node.moduleSpecifier.text === "@automabaca/dominio-node"
-        && (node.importClause?.name === undefined || node.importClause.namedBindings !== undefined))
-        .map((node) => `${path.relative(ROOT, absolute).replaceAll(path.sep, "/")}: ${node.getText()}`);
+      const violations: string[] = [];
+      const visit = (node: ts.Node) => {
+        const specifier = ts.isImportDeclaration(node) || ts.isExportDeclaration(node)
+          ? node.moduleSpecifier
+          : ts.isCallExpression(node) && (node.expression.kind === ts.SyntaxKind.ImportKeyword
+            || (ts.isIdentifier(node.expression) && node.expression.text === "require")) ? node.arguments[0] : undefined;
+        if (specifier && ts.isStringLiteral(specifier) && doPacote(specifier.text)) {
+          const defaultOnly = ts.isImportDeclaration(node) && specifier.text === "@automabaca/dominio"
+            && node.importClause?.name !== undefined && node.importClause.namedBindings === undefined;
+          if (!defaultOnly) violations.push(`${path.relative(ROOT, absolute).replaceAll(path.sep, "/")}: ${node.getText()}`);
+        }
+        ts.forEachChild(node, visit);
+      };
+      visit(ast);
+      return violations;
     });
 }
 
@@ -166,7 +183,7 @@ describe("fronteiras arquiteturais", () => {
     expect(forbiddenClientDependencies(graph)).toEqual([]);
   });
 
-  it("importa a ponte Rust só pelo default, o único nome que o ESM do Node enxerga", () => {
-    expect(nonDefaultBridgeImports()).toEqual([]);
+  it("importa a ponte Rust só pelo nome do pacote e pelo default", () => {
+    expect(bridgeImportViolations()).toEqual([]);
   });
 });

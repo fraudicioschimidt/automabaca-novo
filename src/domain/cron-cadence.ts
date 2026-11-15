@@ -1,6 +1,6 @@
 // A regra mora em Rust (`rust/crates/dominio/src/cron.rs`), pela ponte N-API.
 // Este arquivo só converte `Date` em milissegundos e de volta.
-import dominio from "@automabaca/dominio-node";
+import dominio from "@automabaca/dominio";
 
 /**
  * Cadência de um cron de cinco campos: o MAIOR intervalo, em minutos, entre

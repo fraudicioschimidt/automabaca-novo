@@ -4,3 +4,5 @@
 channel = "1.99.0"
 profile = "minimal"
 components = ["rustfmt", "clippy"]
+# O navegador recebe o mesmo crate compilado para WebAssembly.
+targets = ["wasm32-unknown-unknown"]

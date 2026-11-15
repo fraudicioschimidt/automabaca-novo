@@ -5,8 +5,9 @@ dist/
 src/generated/
 next-env.d.ts
 rust/target/
-# Binário da ponte N-API: sai do `cargo build` (npm run build:dominio-node)
+# Binários da ponte Rust: saem de `npm run build:ponte`
 *.node
+rust/crates/ponte/wasm/
 *.tsbuildinfo
 __pycache__/
 *.pyc

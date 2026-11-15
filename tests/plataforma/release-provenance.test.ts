@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { DOMINIO_NODE_BINARIO, DOMINIO_NODE_NO_RUNTIME } from "@/scripts/lib/dominio-node.mjs";
+import { PONTE_BINARIO, PONTE_NO_RUNTIME } from "@/scripts/lib/ponte.mjs";
 import { sha256, sourceSnapshot, verifyChecks } from "@/scripts/lib/release-provenance.mjs";
 import { safeRemoveTreeSync } from "@/scripts/lib/safe-fs.mjs";
 
@@ -24,9 +24,9 @@ function fixture() {
  */
 function pacote(root: string, source: ReturnType<typeof sourceSnapshot>, binarioNoPacote = "binario da ponte") {
   const folder = join(root, "reports/ci"); mkdirSync(folder, { recursive: true });
-  mkdirSync(join(root, DOMINIO_NODE_BINARIO, ".."), { recursive: true });
-  writeFileSync(join(root, DOMINIO_NODE_BINARIO), "binario da ponte");
-  for (const caminho of DOMINIO_NODE_NO_RUNTIME) {
+  mkdirSync(join(root, PONTE_BINARIO, ".."), { recursive: true });
+  writeFileSync(join(root, PONTE_BINARIO), "binario da ponte");
+  for (const caminho of PONTE_NO_RUNTIME) {
     mkdirSync(join(root, "stage", caminho, ".."), { recursive: true });
     writeFileSync(join(root, "stage", caminho), binarioNoPacote);
   }
@@ -34,7 +34,7 @@ function pacote(root: string, source: ReturnType<typeof sourceSnapshot>, binario
   const archive = readFileSync(join(folder, "runtime.tar.gz"));
   writeFileSync(join(folder, "runtime.json"), JSON.stringify({
     source, archive: "runtime.tar.gz", sha256: sha256(archive),
-    dominioNode: Object.fromEntries(DOMINIO_NODE_NO_RUNTIME.map((caminho) => [caminho, sha256(binarioNoPacote)])),
+    ponteNode: Object.fromEntries(PONTE_NO_RUNTIME.map((caminho) => [caminho, sha256(binarioNoPacote)])),
   }));
   return folder;
 }

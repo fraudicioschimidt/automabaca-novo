@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { DOMINIO_NODE_BINARIO, DOMINIO_NODE_NO_RUNTIME } from "./lib/dominio-node.mjs";
+import { PONTE_BINARIO, PONTE_NO_RUNTIME } from "./lib/ponte.mjs";
 import { sha256, sourceSnapshot, verifyChecks } from "./lib/release-provenance.mjs";
 
 const source = sourceSnapshot();
@@ -29,9 +29,9 @@ if (runtime.archive !== "runtime.tar.gz" || runtime.source.sourceSha256 !== sour
 }
 // O binário da ponte Rust no pacote (web e worker) é o que o job `rust`
 // compilou e testou: o artefato `ci-rust` o devolve ao caminho do checkout.
-const binario = sha256(readFileSync(DOMINIO_NODE_BINARIO));
-for (const caminho of DOMINIO_NODE_NO_RUNTIME) {
-  if (runtime.dominioNode?.[caminho] !== binario) {
+const binario = sha256(readFileSync(PONTE_BINARIO));
+for (const caminho of PONTE_NO_RUNTIME) {
+  if (runtime.ponteNode?.[caminho] !== binario) {
     throw new Error(`Ponte Rust no runtime (${caminho}) não é o binário do job rust (${binario}).`);
   }
 }

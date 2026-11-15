@@ -44,7 +44,7 @@ async function runTask(task) {
   return new Promise((resolve) => {
     const child = spawn(task.command, task.args, {
       cwd: ROOT,
-      env: { ...process.env, FORCE_COLOR: "0", npm_config_loglevel: "error" },
+      env: { ...process.env, FORCE_COLOR: "0", npm_config_loglevel: "error", ...task.env },
       stdio: ["ignore", "pipe", "pipe"],
     });
     activeChildren.add(child);
@@ -194,7 +194,7 @@ export function bridgeImporters(roots = ["src", "app"]) {
   return roots.flatMap((root) => readdirSync(path.join(ROOT, root), { recursive: true, encoding: "utf8" })
     .map((name) => `${root}/${name.replaceAll("\\", "/")}`))
     .filter((file) => isCode(file) && !file.startsWith("src/generated/"))
-    .filter((file) => readFileSync(path.join(ROOT, file), "utf8").includes('"@automabaca/dominio-node"'))
+    .filter((file) => readFileSync(path.join(ROOT, file), "utf8").includes('"@automabaca/dominio"'))
     .sort();
 }
 
@@ -207,6 +207,20 @@ export function staticGateTasks() {
     npmTask("operacoes destrutivas", "security:destructive"),
     npmTask("dependencias de producao", "security:audit"),
   ];
+}
+
+/**
+ * Os testes de quem importa a ponte, de novo, contra o lado do navegador
+ * (WebAssembly): o alias do vitest troca de lado com DOMINIO_PONTE=wasm.
+ */
+function ponteWasmTask() {
+  return {
+    label: "testes pela ponte WebAssembly",
+    command: process.execPath,
+    args: [path.join(ROOT, "node_modules/vitest/vitest.mjs"), "related", "--run", "--project", "unit", "--passWithNoTests",
+      "tests/plataforma/ponte.test.ts", ...bridgeImporters()],
+    env: { DOMINIO_PONTE: "wasm" },
+  };
 }
 
 async function runCi() {
@@ -256,7 +270,8 @@ async function runFast() {
   // testes em TypeScript só com o binário novo.
   if (impact.rustChanged) {
     failIfNeeded(await runPhase([npmTask("Rust (fmt, clippy, testes)", "check:rust")], 1));
-    failIfNeeded(await runPhase([npmTask("ponte Rust", "build:dominio-node")], 1));
+    failIfNeeded(await runPhase([npmTask("ponte Rust", "build:ponte")], 1));
+    failIfNeeded(await runPhase([ponteWasmTask()], 1));
   }
   const relatedFiles = [...new Set([...impact.codeFiles, ...(impact.rustChanged ? bridgeImporters() : [])])];
 
@@ -289,8 +304,9 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   if (mode === "full") await runFull();
   else if (mode === "fast") await runFast();
   else if (mode === "ci") await runCi();
+  else if (mode === "ponte-wasm") failIfNeeded(await runPhase([ponteWasmTask()], 1));
   else {
-    console.error(`Modo desconhecido: ${mode}. Use fast, ci ou full.`);
+    console.error(`Modo desconhecido: ${mode}. Use fast, ci, full ou ponte-wasm.`);
     process.exit(2);
   }
 }

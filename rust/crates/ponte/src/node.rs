@@ -1,6 +1,4 @@
-//! Ponte N-API do crate `dominio`. Cada função aqui só converte os tipos do
-//! JavaScript e delega; a regra mora no `dominio`. O erro do domínio vira um
-//! `Error` do JavaScript com a mesma mensagem.
+//! Lado N-API da ponte (web e worker, `index.cjs`).
 
 use dominio::cron;
 use napi::{Error, Result};

@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
-import { carregarDominioNode } from "./lib/dominio-node.mjs";
+import { carregarPonte } from "./lib/ponte.mjs";
 
 const root = path.resolve(".next", "standalone");
 const forbidden = [
@@ -74,9 +74,9 @@ try {
 }
 
 try {
-  carregarDominioNode(root);
+  carregarPonte(root);
 } catch (error) {
-  throw new Error("Standalone não consegue carregar a ponte Rust (@automabaca/dominio-node).", { cause: error });
+  throw new Error("Standalone não consegue carregar a ponte Rust (@automabaca/dominio).", { cause: error });
 }
 
 const nestedAssets = [".next/static/static", "public/public"].filter((entry) =>

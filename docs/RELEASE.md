@@ -121,7 +121,7 @@ Do artefato que a CI produziu e testou, **nunca** de um build no servidor.
 
 1. O job *release verificada* do `check.yml` publica `runtime.tar.gz` e
    `release-manifest.json`, amarrados ao commit e aos resultados de cada job.
-   A ponte Rust (`@automabaca/dominio-node`) vai no pacote duas vezes (no
+   A ponte Rust (`@automabaca/dominio`) vai no pacote duas vezes (no
    standalone e no worker), e o manifesto exige que as duas sejam o binário
    que o job `rust` compilou e testou; o `verify-release` as confere de novo
    dentro do `runtime.tar.gz`.

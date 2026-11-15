@@ -45,10 +45,16 @@ normal, **Node 24.20.0 e npm 11.19.0**. A versão está fixada em `.node-version
 
 O código em Rust (`rust/`, ver [docs/MIGRACAO-RUST.md](docs/MIGRACAO-RUST.md))
 pede o `rustup`: a versão fica em `rust/rust-toolchain.toml`, e
-`cd rust && rustup toolchain install` a instala. A ponte N-API
-(`@automabaca/dominio-node`, que web, worker e testes carregam) sai de
-`npm run build:dominio-node`: o `dev:setup` já a compila, e depois de mudar
-`rust/` é preciso rodar de novo.
+`cd rust && rustup toolchain install` a instala (com o alvo
+`wasm32-unknown-unknown`). A ponte `@automabaca/dominio` tem dois lados: o
+binário N-API, que web, worker e testes carregam no servidor, e o
+WebAssembly, que o navegador recebe pela condição `browser` do pacote. Os dois
+saem de `npm run build:ponte`, que pede o `wasm-bindgen-cli` da versão do
+`rust/Cargo.lock` e põe o pacote como pasta real em `node_modules` (o link do
+npm faria o SSR do Next empacotar o `.node`). O `dev:setup` instala e compila
+tudo; depois de mudar `rust/` ou de um `npm ci`, rode `npm run build:ponte` de
+novo. `npm run test:ponte-wasm` roda os testes de quem importa a ponte contra
+o WebAssembly.
 
 ```bash
 git clone https://github.com/fraudicioschimidt/automabaca-novo.git

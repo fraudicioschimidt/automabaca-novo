@@ -1,6 +1,6 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import path from "node:path";
-import { DOMINIO_NODE_ARQUIVOS, DOMINIO_NODE_DIR, DOMINIO_NODE_PACOTE } from "./lib/dominio-node.mjs";
+import { PONTE_ARQUIVOS, PONTE_DIR, PONTE_PACOTE } from "./lib/ponte.mjs";
 import { safeRemoveTreeSync } from "./lib/safe-fs.mjs";
 
 const projectRoot = path.resolve(".");
@@ -54,14 +54,14 @@ for (const packageName of Object.keys(sharpPackage.optionalDependencies ?? {})) 
 // A ponte Rust (`serverExternalPackages`) vai como pasta real em node_modules,
 // só com os arquivos do pacote: o tracing seguiria o link do npm até
 // `rust/crates/...` e levaria o caminho do checkout para dentro do runtime.
-const dominioNode = path.join(root, "node_modules", DOMINIO_NODE_PACOTE);
-safeRemoveTreeSync(projectRoot, dominioNode);
+const pacotePonte = path.join(root, "node_modules", PONTE_PACOTE);
+safeRemoveTreeSync(projectRoot, pacotePonte);
 safeRemoveTreeSync(projectRoot, path.join(root, "rust"));
-mkdirSync(dominioNode, { recursive: true });
-for (const arquivo of DOMINIO_NODE_ARQUIVOS) {
-  const origem = path.resolve(DOMINIO_NODE_DIR, arquivo);
-  if (!existsSync(origem)) throw new Error(`Ponte Rust sem ${origem}: rode npm run build:dominio-node antes do build.`);
-  cpSync(origem, path.join(dominioNode, arquivo));
+mkdirSync(pacotePonte, { recursive: true });
+for (const arquivo of PONTE_ARQUIVOS) {
+  const origem = path.resolve(PONTE_DIR, arquivo);
+  if (!existsSync(origem)) throw new Error(`Ponte Rust sem ${origem}: rode npm run build:ponte antes do build.`);
+  cpSync(origem, path.join(pacotePonte, arquivo));
 }
 
 process.stdout.write("OK ambiente removido e assets preparados no standalone.\n");
