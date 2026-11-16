@@ -62,8 +62,10 @@ function compilarWasm() {
   const saida = path.join(root, PONTE_DIR, "wasm");
   mkdirSync(saida, { recursive: true });
   // `--weak-refs`: o objeto Rust de uma classe da ponte (o acumulador) é
-  // liberado quando o JavaScript o descarta, sem `free()` à mão.
-  run("wasm-bindgen", ["--target", "web", "--no-typescript", "--weak-refs", "--out-dir", saida, "--out-name", "dominio_ponte",
+  // liberado quando o JavaScript o descarta, sem `free()` à mão. Os nomes de
+  // função (a seção `name`, um oitavo do arquivo) só serviriam ao depurador.
+  run("wasm-bindgen", ["--target", "web", "--no-typescript", "--weak-refs", "--remove-name-section",
+    "--remove-producers-section", "--out-dir", saida, "--out-name", "dominio_ponte",
     path.join(rust, "target/wasm32-unknown-unknown/release/dominio_ponte.wasm")]);
   // A cola acharia o .wasm por conta própria (`new URL(..., import.meta.url)`);
   // o browser.mjs passa o endereço, e uma referência só faz o bundler publicar

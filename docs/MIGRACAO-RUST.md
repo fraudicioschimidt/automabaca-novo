@@ -110,8 +110,11 @@ WebAssembly. Andamento:
   faixa). A leitura de data e hora no texto do post espera o `regress`.
 - `money` (somas, arredondamento e produtos em inteiro escalado, o invariante
   de integridade financeira) (#18). O caminho quente é `i128`, e o
-  `num-bigint` fica para a conta que estoura, como o BigInt do TS; somas e
-  produtos ficaram de 1,1× a 3,8× mais rápidos que o TS no servidor. O fuzz
+  `num-bigint` fica para a conta que estoura, como o BigInt do TS. Com 5 mil
+  valores, a soma ficou 3,8× mais rápida que o TS no servidor e 2,8× no
+  navegador, e o produto, 1,1× e empatado. O WASM foi a 189 KB (84,5 KB com
+  gzip), já sem a seção de nomes de função, que ia junto desde o começo; o
+  `num-bigint` é ~44 KB dele, e o `wasm-opt` continua o próximo passo. O fuzz
   achou uma quina do `String(número)` do Rust: no empate de 17 dígitos
   (1000000000000000.2 vale …0.25) o `{:e}` não escolhe o par, como o
   ECMAScript manda; o módulo `js` corrige, conferido contra o V8 em 5 milhões

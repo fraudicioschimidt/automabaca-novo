@@ -301,14 +301,31 @@ pub fn multiply_money_decimal(
     if let Some(scaled) = multiply_small(value, multiplier, divisor, scales) {
         return small_to_number(scaled, factor(result_decimals), "multiplyMoneyDecimal");
     }
-    let scaled_divisor = to_scaled(divisor, options.divisor_decimals)?;
+    let scaled = multiply_big(value, multiplier, divisor, scales)?;
+    scaled_to_number(&scaled, factor(result_decimals), "multiplyMoneyDecimal")
+}
+
+/// `multiply_money_decimal` em precisão arbitrária, com os erros do TS.
+fn multiply_big(
+    value: f64,
+    multiplier: f64,
+    divisor: f64,
+    scales: [u32; 4],
+) -> Result<BigInt, MoneyError> {
+    let [
+        decimals,
+        multiplier_decimals,
+        divisor_decimals,
+        result_decimals,
+    ] = scales;
+    let scaled_divisor = to_scaled(divisor, f64::from(divisor_decimals))?;
     if !scaled_divisor.is_positive() {
         return Err(error(
             "multiplyMoneyDecimal: divisor arredondado a zero".to_owned(),
         ));
     }
-    let product =
-        to_scaled(value, options.decimals)? * to_scaled(multiplier, options.multiplier_decimals)?;
+    let product = to_scaled(value, f64::from(decimals))?
+        * to_scaled(multiplier, f64::from(multiplier_decimals))?;
     let shift = i64::from(result_decimals) + i64::from(divisor_decimals)
         - i64::from(decimals + multiplier_decimals);
     let numerator = if shift > 0 {
@@ -321,8 +338,7 @@ pub fn multiply_money_decimal(
     } else {
         scaled_divisor
     };
-    let scaled = divide_round_half_away(&numerator, &denominator)?;
-    scaled_to_number(&scaled, factor(result_decimals), "multiplyMoneyDecimal")
+    divide_round_half_away(&numerator, &denominator)
 }
 
 /// `multiply_money_decimal` em i128; `None` quando algum passo estoura ou
@@ -464,6 +480,11 @@ mod tests {
             message(round_money(1e300, 6.0)),
             "roundMoney: roundMoney: total fora da faixa numérica segura"
         );
+        // O mesmo prefixo duplo do TS quando a conta cabe no i128.
+        assert_eq!(
+            message(round_money(9_007_199_254_740_992.0, 0.0)),
+            "roundMoney: roundMoney: total fora da faixa numérica segura"
+        );
         assert_eq!(units_to_brl(1.234_567, 100.0), Ok(123.46));
         assert_eq!(money_by_percent(200.0, 12.5), Ok(25.0));
         let opts = MultiplyOptions {
@@ -487,6 +508,52 @@ mod tests {
             ..DEFAULT_OPTIONS
         };
         assert_eq!(multiply_money_decimal(1000.0, 1000.0, big), Ok(1_000_000.0));
+        // 1000000000000000.2 vale …0.25: o `toString` do JS dá …0.2 (o par).
+        assert_eq!(
+            money_by_percent(0.0005, 1_000_000_000_000_000.2),
+            Ok(5_000_000_000.000_001)
+        );
+    }
+
+    #[test]
+    fn caminho_rapido_igual_ao_bigint() {
+        let to_small = |big: BigInt| big.to_i128();
+        for (value, multiplier) in [
+            (1.005, 1.87),
+            (-2.675, 0.5),
+            (123_456.785, -3.17),
+            (1e20, 1e17),
+            (9.999_999_999_999_999e20, 1.7e16),
+            (-1.2e19, 1.4e19),
+            (0.000_000_5, 1e21),
+            (5e-324, 1e300),
+        ] {
+            for scales in [
+                [6, 4, 0, 6],
+                [18, 18, 0, 2],
+                [6, 6, 0, 6],
+                [0, 0, 3, 18],
+                [2, 2, 18, 0],
+            ] {
+                for divisor in [1.0, 2.0, 100.0, 0.001, 1e15] {
+                    let big = multiply_big(value, multiplier, divisor, scales).ok();
+                    if let Some(small) = multiply_small(value, multiplier, divisor, scales) {
+                        let expected = big.and_then(to_small);
+                        assert_eq!(
+                            Some(small),
+                            expected,
+                            "{value} {multiplier} {divisor} {scales:?}"
+                        );
+                    }
+                }
+            }
+            for places in 0..=18 {
+                let big = to_scaled(value, f64::from(places)).ok();
+                if let Some(small) = to_scaled_small(value, places) {
+                    assert_eq!(Some(small), big.and_then(to_small), "{value} {places}");
+                }
+            }
+        }
     }
 
     #[test]
