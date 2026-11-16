@@ -8,4 +8,5 @@ pub mod dates;
 pub mod decimal_input;
 pub mod js;
 pub mod kelly;
+pub mod money;
 pub mod odds;

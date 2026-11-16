@@ -1,6 +1,8 @@
 //! Equivalências do JavaScript que o domínio portado precisa reproduzir bit a
 //! bit, porque o TypeScript que ele substitui dependia delas.
 
+use std::fmt::Write as _;
+
 /// O `\s` e o `trim()` do JavaScript: o espaço do Unicode, sem o NEL
 /// (U+0085), mais o BOM (U+FEFF).
 pub fn is_whitespace(c: char) -> bool {
@@ -43,6 +45,52 @@ pub fn round(x: f64) -> f64 {
     }
 }
 
+/// Os dígitos do `Number::toString` em notação `{:e}` (`d.ddde±x`): os
+/// menos dígitos que voltam ao mesmo número e, entre os de mesmo tamanho, os
+/// mais próximos dele, com empate para o par (ECMAScript, Number::toString).
+/// O `{:e}` do Rust dá o tamanho certo, mas no empate não escolhe o par
+/// (1000000000000000.2, que vale …0.25, sai `1.0000000000000003e15`). Com até
+/// 15 dígitos só um candidato cabe no intervalo do número; com 16 e 17 vale
+/// o arredondamento exato do Rust (empate para o par), se ele voltar ao número.
+pub(crate) fn shortest_exp(x: f64) -> ShortText {
+    let mut shortest = ShortText::default();
+    // `{:e}` de um f64 cabe em 24 bytes ("-2.2250738585072014e-308").
+    let _ = write!(shortest, "{x:e}");
+    let mantissa = shortest.as_str().split('e').next().unwrap_or_default();
+    let digits = mantissa.bytes().filter(u8::is_ascii_digit).count();
+    if digits >= 16 {
+        let mut closest = ShortText::default();
+        let _ = write!(closest, "{x:.*e}", digits - 1);
+        if closest.as_str().parse::<f64>() == Ok(x) {
+            return closest;
+        }
+    }
+    shortest
+}
+
+/// Texto curto na pilha, para o caminho quente não alocar.
+#[derive(Default)]
+pub(crate) struct ShortText {
+    bytes: [u8; 32],
+    len: usize,
+}
+
+impl ShortText {
+    pub(crate) fn as_str(&self) -> &str {
+        std::str::from_utf8(&self.bytes[..self.len]).unwrap_or_default()
+    }
+}
+
+impl std::fmt::Write for ShortText {
+    fn write_str(&mut self, part: &str) -> std::fmt::Result {
+        let end = self.len + part.len();
+        let slot = self.bytes.get_mut(self.len..end).ok_or(std::fmt::Error)?;
+        slot.copy_from_slice(part.as_bytes());
+        self.len = end;
+        Ok(())
+    }
+}
+
 /// `String(x)` de um número (o `Number.prototype.toString()`): os dígitos da
 /// representação mais curta, em notação exponencial abaixo de 1e-6 e a partir
 /// de 1e21, `-0` como `0`.
@@ -59,9 +107,9 @@ pub fn number_to_string(x: f64) -> String {
     if x.is_infinite() {
         return "Infinity".to_owned();
     }
-    // O `{:e}` do Rust dá os dígitos da representação mais curta, como o JS.
-    let scientific = format!("{x:e}");
-    let (mantissa, exponent) = scientific.split_once('e').unwrap_or((&scientific, "0"));
+    let scientific = shortest_exp(x);
+    let scientific = scientific.as_str();
+    let (mantissa, exponent) = scientific.split_once('e').unwrap_or((scientific, "0"));
     let digits: String = mantissa.chars().filter(char::is_ascii_digit).collect();
     let k = digits.len() as i64;
     let n = exponent.parse::<i64>().unwrap_or(0) + 1;
@@ -322,6 +370,9 @@ mod tests {
             (f64::NAN, "NaN"),
             (f64::NEG_INFINITY, "-Infinity"),
             (5e-324, "5e-324"),
+            // Vale …0.25: dois candidatos de 17 dígitos à mesma distância, e
+            // o JS fica com o par (o `{:e}` do Rust daria …0.3).
+            (1_000_000_000_000_000.2, "1000000000000000.2"),
         ] {
             assert_eq!(number_to_string(x), esperado, "{x:e}");
         }

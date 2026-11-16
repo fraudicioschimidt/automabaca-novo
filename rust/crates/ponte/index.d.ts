@@ -44,5 +44,20 @@ declare const dominio: {
   formatDurationMinutes(minutes: number | null): string;
   shiftDayKey(dayKey: string, days: number): string;
   parseSpDateTimeInput(dateText: string, timeText: string): number | null;
+  /** Ver `src/domain/money.ts`. */
+  sumMoneyDecimal(values: readonly number[], decimals: number): number;
+  sumMoneyBy(values: readonly number[], decimals: number): number;
+  roundMoney(value: number, decimals: number): number;
+  multiplyMoneyDecimal(
+    value: number, multiplier: number, decimals: number, multiplierDecimals: number,
+    divisor: number, divisorDecimals: number, resultDecimals: number,
+  ): number;
+  moneyByPercent(value: number, percent: number): number;
+  unitsToBrl(units: number, valorUnidade: number): number;
+  unitsToReais(units: number, unitValue: number): number;
+  kahanSum(values: readonly number[]): number;
+  /** Inteiros em texto decimal: o BigInt atravessa como `toString()`. */
+  divideRoundHalfAway(value: string, divisor: string): string;
+  MoneyAccumulator: new (decimals: number) => { add(value: number): number; readonly value: number };
 };
 export = dominio;

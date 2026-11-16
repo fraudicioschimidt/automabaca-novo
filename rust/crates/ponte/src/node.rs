@@ -198,3 +198,94 @@ pub fn shift_day_key(day_key: String, days: f64) -> Result<String> {
 pub fn parse_sp_date_time_input(date_text: String, time_text: String) -> Option<f64> {
     dominio::dates::parse_sp_date_time_input(&date_text, &time_text)
 }
+
+/// Ver `src/domain/money.ts`.
+fn money_error(error: dominio::money::MoneyError) -> Error {
+    Error::from_reason(error.0)
+}
+
+#[napi]
+pub fn sum_money_decimal(values: Vec<f64>, decimals: f64) -> Result<f64> {
+    dominio::money::sum_money_decimal(&values, decimals).map_err(money_error)
+}
+
+#[napi]
+pub fn sum_money_by(values: Vec<f64>, decimals: f64) -> Result<f64> {
+    dominio::money::sum_money_by(&values, decimals).map_err(money_error)
+}
+
+#[napi]
+pub fn round_money(value: f64, decimals: f64) -> Result<f64> {
+    dominio::money::round_money(value, decimals).map_err(money_error)
+}
+
+#[napi]
+pub fn multiply_money_decimal(
+    value: f64,
+    multiplier: f64,
+    decimals: f64,
+    multiplier_decimals: f64,
+    divisor: f64,
+    divisor_decimals: f64,
+    result_decimals: f64,
+) -> Result<f64> {
+    let options = dominio::money::MultiplyOptions {
+        decimals,
+        multiplier_decimals,
+        divisor,
+        divisor_decimals,
+        result_decimals,
+    };
+    dominio::money::multiply_money_decimal(value, multiplier, options).map_err(money_error)
+}
+
+#[napi]
+pub fn money_by_percent(value: f64, percent: f64) -> Result<f64> {
+    dominio::money::money_by_percent(value, percent).map_err(money_error)
+}
+
+#[napi]
+pub fn units_to_brl(units: f64, valor_unidade: f64) -> Result<f64> {
+    dominio::money::units_to_brl(units, valor_unidade).map_err(money_error)
+}
+
+#[napi]
+pub fn units_to_reais(units: f64, unit_value: f64) -> Result<f64> {
+    dominio::money::units_to_reais(units, unit_value).map_err(money_error)
+}
+
+#[napi]
+pub fn kahan_sum(values: Vec<f64>) -> Result<f64> {
+    dominio::money::kahan_sum(&values).map_err(money_error)
+}
+
+/// Inteiros em texto decimal: o BigInt do JavaScript atravessa como `toString()`.
+#[napi]
+pub fn divide_round_half_away(value: String, divisor: String) -> Result<String> {
+    dominio::money::divide_round_half_away_text(&value, &divisor).map_err(money_error)
+}
+
+#[napi(js_name = "MoneyAccumulator")]
+pub struct MoneyAccumulator {
+    inner: dominio::money::MoneyAccumulator,
+}
+
+#[napi]
+impl MoneyAccumulator {
+    #[napi(constructor)]
+    pub fn new(decimals: f64) -> Result<Self> {
+        dominio::money::MoneyAccumulator::new(decimals)
+            .map(|inner| Self { inner })
+            .map_err(money_error)
+    }
+
+    #[napi]
+    pub fn add(&mut self, value: f64) -> Result<f64> {
+        self.inner.add(value).map_err(money_error)
+    }
+
+    #[napi(getter)]
+    pub fn value(&self) -> Result<f64> {
+        self.inner.value().map_err(money_error)
+    }
+}

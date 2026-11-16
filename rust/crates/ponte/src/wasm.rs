@@ -215,3 +215,91 @@ pub fn parse_sp_date_time_input(date_text: &str, time_text: &str) -> JsValue {
         date_text, time_text,
     ))
 }
+
+fn money_error(error: dominio::money::MoneyError) -> JsError {
+    JsError::new(&error.0)
+}
+
+#[wasm_bindgen(js_name = sumMoneyDecimal)]
+pub fn sum_money_decimal(values: &[f64], decimals: f64) -> Result<f64, JsError> {
+    dominio::money::sum_money_decimal(values, decimals).map_err(money_error)
+}
+
+#[wasm_bindgen(js_name = sumMoneyBy)]
+pub fn sum_money_by(values: &[f64], decimals: f64) -> Result<f64, JsError> {
+    dominio::money::sum_money_by(values, decimals).map_err(money_error)
+}
+
+#[wasm_bindgen(js_name = roundMoney)]
+pub fn round_money(value: f64, decimals: f64) -> Result<f64, JsError> {
+    dominio::money::round_money(value, decimals).map_err(money_error)
+}
+
+#[wasm_bindgen(js_name = multiplyMoneyDecimal)]
+pub fn multiply_money_decimal(
+    value: f64,
+    multiplier: f64,
+    decimals: f64,
+    multiplier_decimals: f64,
+    divisor: f64,
+    divisor_decimals: f64,
+    result_decimals: f64,
+) -> Result<f64, JsError> {
+    let options = dominio::money::MultiplyOptions {
+        decimals,
+        multiplier_decimals,
+        divisor,
+        divisor_decimals,
+        result_decimals,
+    };
+    dominio::money::multiply_money_decimal(value, multiplier, options).map_err(money_error)
+}
+
+#[wasm_bindgen(js_name = moneyByPercent)]
+pub fn money_by_percent(value: f64, percent: f64) -> Result<f64, JsError> {
+    dominio::money::money_by_percent(value, percent).map_err(money_error)
+}
+
+#[wasm_bindgen(js_name = unitsToBrl)]
+pub fn units_to_brl(units: f64, valor_unidade: f64) -> Result<f64, JsError> {
+    dominio::money::units_to_brl(units, valor_unidade).map_err(money_error)
+}
+
+#[wasm_bindgen(js_name = unitsToReais)]
+pub fn units_to_reais(units: f64, unit_value: f64) -> Result<f64, JsError> {
+    dominio::money::units_to_reais(units, unit_value).map_err(money_error)
+}
+
+#[wasm_bindgen(js_name = kahanSum)]
+pub fn kahan_sum(values: &[f64]) -> Result<f64, JsError> {
+    dominio::money::kahan_sum(values).map_err(money_error)
+}
+
+#[wasm_bindgen(js_name = divideRoundHalfAway)]
+pub fn divide_round_half_away(value: &str, divisor: &str) -> Result<String, JsError> {
+    dominio::money::divide_round_half_away_text(value, divisor).map_err(money_error)
+}
+
+#[wasm_bindgen]
+pub struct MoneyAccumulator {
+    inner: dominio::money::MoneyAccumulator,
+}
+
+#[wasm_bindgen]
+impl MoneyAccumulator {
+    #[wasm_bindgen(constructor)]
+    pub fn new(decimals: f64) -> Result<MoneyAccumulator, JsError> {
+        dominio::money::MoneyAccumulator::new(decimals)
+            .map(|inner| Self { inner })
+            .map_err(money_error)
+    }
+
+    pub fn add(&mut self, value: f64) -> Result<f64, JsError> {
+        self.inner.add(value).map_err(money_error)
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn value(&self) -> Result<f64, JsError> {
+        self.inner.value().map_err(money_error)
+    }
+}

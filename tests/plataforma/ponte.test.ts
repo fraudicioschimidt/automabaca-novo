@@ -12,7 +12,7 @@ import type ponte from "@automabaca/dominio";
 const servidor = createRequire(import.meta.url)(path.resolve("rust/crates/ponte/index.cjs")) as typeof ponte;
 const navegador = (await import(pathToFileURL(path.resolve("rust/crates/ponte/wasm-node.mjs")).href) as { default: typeof ponte }).default;
 
-const lados = { servidor, navegador } as Record<string, Record<string, (...args: unknown[]) => unknown>>;
+const lados = { servidor, navegador } as unknown as Record<string, Record<string, (...args: unknown[]) => unknown>>;
 
 function nomesDoTipo(): string[] {
   const fonte = ts.createSourceFile("index.d.ts", readFileSync("rust/crates/ponte/index.d.ts", "utf8"), ts.ScriptTarget.Latest, true);
