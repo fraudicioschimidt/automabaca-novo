@@ -108,6 +108,15 @@ WebAssembly. Andamento:
   maior) e o `String(número)`; o fuzz contra o TS antigo achou e fez corrigir
   duas quinas dele (o dia da semana do ano 0-99 e os campos NaN na borda da
   faixa). A leitura de data e hora no texto do post espera o `regress`.
+- `money` (somas, arredondamento e produtos em inteiro escalado, o invariante
+  de integridade financeira) (#18). O caminho quente é `i128`, e o
+  `num-bigint` fica para a conta que estoura, como o BigInt do TS; somas e
+  produtos ficaram de 1,1× a 3,8× mais rápidos que o TS no servidor. O fuzz
+  achou uma quina do `String(número)` do Rust: no empate de 17 dígitos
+  (1000000000000000.2 vale …0.25) o `{:e}` não escolhe o par, como o
+  ECMAScript manda; o módulo `js` corrige, conferido contra o V8 em 5 milhões
+  de números (nas datas só passam inteiros, sem empate: não houve efeito em
+  produção).
 
 Duas regras de método saíram desses módulos:
 
