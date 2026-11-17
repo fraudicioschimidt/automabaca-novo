@@ -95,8 +95,9 @@ pub struct Regex {
 
 static CATALOG: Mutex<BTreeSet<(String, String)>> = Mutex::new(BTreeSet::new());
 
-/// Todo padrão compilado neste processo, com as flags: o teste permanente
-/// compara cada um com o V8.
+/// Os padrões do domínio compilados neste processo (`regex!` e
+/// `Regex::cataloged`), com as flags: o teste permanente compara cada um com
+/// o V8.
 pub fn catalog() -> Vec<(String, String)> {
     CATALOG
         .lock()
@@ -111,7 +112,7 @@ pub fn catalog() -> Vec<(String, String)> {
 macro_rules! regex {
     ($source:expr, $flags:expr $(,)?) => {{
         static REGEX: ::std::sync::LazyLock<$crate::Regex> = ::std::sync::LazyLock::new(|| {
-            $crate::Regex::new($source, $flags)
+            $crate::Regex::cataloged($source, $flags)
                 .unwrap_or_else(|error| panic!("regex inválida /{}/{}: {error}", $source, $flags))
         });
         &*REGEX
@@ -119,13 +120,23 @@ macro_rules! regex {
 }
 
 impl Regex {
-    /// `new RegExp(source, flags)`.
-    pub fn new(source: &str, flags: &str) -> Result<Regex, SyntaxError> {
-        let parsed = Flags::parse(flags).map_err(SyntaxError)?;
-        let compiled = backend::compile(source, parsed).map_err(SyntaxError)?;
+    /// `new RegExp(source, flags)` de um padrão do domínio, que entra no
+    /// catálogo comparado com o V8. O padrão montado em tempo de execução
+    /// (lista de nomes, por exemplo) vem por aqui também.
+    #[allow(clippy::disallowed_methods)]
+    pub fn cataloged(source: &str, flags: &str) -> Result<Regex, SyntaxError> {
+        let regex = Regex::new(source, flags)?;
         if let Ok(mut catalog) = CATALOG.lock() {
             catalog.insert((source.to_owned(), flags.to_owned()));
         }
+        Ok(regex)
+    }
+
+    /// `new RegExp(source, flags)` fora do catálogo: só para quem testa a
+    /// camada (o domínio usa `regex!` ou `Regex::cataloged`; o clippy cobra).
+    pub fn new(source: &str, flags: &str) -> Result<Regex, SyntaxError> {
+        let parsed = Flags::parse(flags).map_err(SyntaxError)?;
+        let compiled = backend::compile(source, parsed).map_err(SyntaxError)?;
         Ok(Regex {
             source: source.to_owned(),
             flags_text: flags.to_owned(),

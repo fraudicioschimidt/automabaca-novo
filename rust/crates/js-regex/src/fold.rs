@@ -1,49 +1,101 @@
-//! O ajuste de caixa do `regress` (só no servidor): o padrão reescrito e o
-//! texto com os caracteres divergentes trocados, para o `/i` sem `u` casar
-//! como no V8.
+//! O `/i` sem `u` do `regress` (só no servidor). O JavaScript compara pela
+//! regra `Canonicalize`: o `toUpperCase` de uma unidade UTF-16, se der uma
+//! unidade só e não levar um não-ASCII para ASCII. O `regress` compara pela
+//! dobra de caixa do Unicode, e os dois discordam em dezenas de caracteres
+//! (ı e ſ casariam com i e s; o grego com iota subscrito, com a forma
+//! titlecase; K de Kelvin, Å de Ångström, Ω de Ohm, ẞ, ϴ… dentro de
+//! intervalos de classe). Por isso o padrão vai ao `regress` sem o `i`, e cada
+//! letra (literal ou de classe) vira a classe exata dos caracteres que o V8
+//! iguala a ela.
 
-/// O `/i` sem `u` do JavaScript compara pela regra do `toUpperCase` (uma
-/// unidade só, e nunca de não-ASCII para ASCII); o `regress` compara pela
-/// dobra de caixa do Unicode. Os dois só discordam nestes caracteres do BMP
-/// (varredura de todos os que mudam de caixa): para o V8, `ı` e `ſ` não casam
-/// com `i` e `s`, e a letra grega com iota subscrito não casa com a forma
-/// titlecase. Do lado do `regress`, cada um vira um não-caractere do Unicode
-/// (U+FDD0…), no texto e no padrão, e assim só casa consigo mesmo, como no V8.
-pub(crate) const FOLD_DIVERGENT: [u16; 29] = [
-    0x0131, 0x017F, // ı ſ
-    0x1F88, 0x1F89, 0x1F8A, 0x1F8B, 0x1F8C, 0x1F8D, 0x1F8E, 0x1F8F, // ᾈ…ᾏ
-    0x1F98, 0x1F99, 0x1F9A, 0x1F9B, 0x1F9C, 0x1F9D, 0x1F9E, 0x1F9F, // ᾘ…ᾟ
-    0x1FA8, 0x1FA9, 0x1FAA, 0x1FAB, 0x1FAC, 0x1FAD, 0x1FAE, 0x1FAF, // ᾨ…ᾯ
-    0x1FBC, 0x1FCC, 0x1FFC, // ᾼ ῌ ῼ
-];
-const PLACEHOLDER_START: u16 = 0xFDD0;
-const PLACEHOLDER_END: u16 = 0xFDEF;
+use std::collections::HashMap;
+use std::sync::LazyLock;
 
-/// O substituto de um caractere de `FOLD_DIVERGENT`.
-pub(crate) fn placeholder(unit: u16) -> Option<u16> {
-    FOLD_DIVERGENT
-        .iter()
-        .position(|divergent| *divergent == unit)
-        .map(|index| PLACEHOLDER_START + index as u16)
+/// `Canonicalize(ch)` do ECMAScript sem a flag `u`.
+fn canonicalize(unit: u16) -> u16 {
+    let Some(character) = char::from_u32(u32::from(unit)) else {
+        return unit;
+    };
+    let mut upper = character.to_uppercase();
+    let (Some(single), None) = (upper.next(), upper.next()) else {
+        return unit;
+    };
+    let mut buffer = [0u16; 2];
+    let units = single.encode_utf16(&mut buffer);
+    if units.len() != 1 || (unit >= 128 && units[0] < 128) {
+        return unit;
+    }
+    units[0]
 }
 
-/// O padrão com cada caractere de `FOLD_DIVERGENT` trocado pelo substituto, e
-/// com o substituto acrescentado à classe cujo intervalo contém o caractere.
-/// Recusa o que a reescrita não sabe tratar (intervalo de classe com ponta que
-/// ela não lê, ou que cobre os próprios substitutos): o catálogo de regex do
-/// domínio é compilado nos testes, e a recusa aparece lá.
+/// Para cada valor canônico com mais de um caractere, os caracteres que o têm.
+static EQUIVALENTS: LazyLock<HashMap<u16, Vec<u16>>> = LazyLock::new(|| {
+    let mut classes: HashMap<u16, Vec<u16>> = HashMap::new();
+    for unit in 0..=u16::MAX {
+        classes.entry(canonicalize(unit)).or_default().push(unit);
+    }
+    classes.retain(|_, members| members.len() > 1);
+    classes
+});
+
+/// Os caracteres que o V8 iguala a `unit` no `/i` sem `u` (ele mesmo incluso).
+fn equivalents(unit: u16) -> Vec<u16> {
+    EQUIVALENTS
+        .get(&canonicalize(unit))
+        .cloned()
+        .unwrap_or_else(|| vec![unit])
+}
+
+/// O padrão para o `regress` compilar sem `i`, com o casamento sem caixa do V8.
 pub(crate) fn rewrite_for_fold(source: &str) -> Result<String, String> {
     let chars: Vec<char> = source.chars().collect();
-    let mut out = String::with_capacity(source.len());
+    let mut out = String::with_capacity(source.len() * 2);
     let mut i = 0;
     while i < chars.len() {
-        if chars[i] == '[' {
-            i = rewrite_class(&chars, i, &mut out)?;
-            continue;
+        match chars[i] {
+            '[' => {
+                i = rewrite_class(&chars, i, &mut out)?;
+                continue;
+            }
+            // Nome de grupo e de referência nomeada não são letras do padrão.
+            '(' if chars.get(i + 1) == Some(&'?')
+                && chars.get(i + 2) == Some(&'<')
+                && !matches!(chars.get(i + 3), Some('=') | Some('!')) =>
+            {
+                let close = chars[i..]
+                    .iter()
+                    .position(|c| *c == '>')
+                    .map_or(chars.len(), |p| i + p + 1);
+                out.extend(&chars[i..close]);
+                i = close;
+                continue;
+            }
+            '\\' if chars.get(i + 1) == Some(&'k') && chars.get(i + 2) == Some(&'<') => {
+                let close = chars[i..]
+                    .iter()
+                    .position(|c| *c == '>')
+                    .map_or(chars.len(), |p| i + p + 1);
+                out.extend(&chars[i..close]);
+                i = close;
+                continue;
+            }
+            '\\' if chars.get(i + 1).is_some_and(|c| ('1'..='9').contains(c)) => {
+                // O `regress` sem `i` compararia o grupo com caixa.
+                return Err(
+                    "referência a grupo com /i sem u: o ajuste de caixa não a trata".to_owned(),
+                );
+            }
+            _ => {}
         }
         let (atom, next) = read_atom(&chars, i);
         match atom {
-            Atom::Unit(unit) if placeholder(unit).is_some() => push_placeholder(&mut out, unit),
+            Atom::Unit(unit) if equivalents(unit).len() > 1 => {
+                out.push('[');
+                for member in equivalents(unit) {
+                    push_unit(&mut out, member);
+                }
+                out.push(']');
+            }
             _ => out.extend(&chars[i..next]),
         }
         i = next;
@@ -55,7 +107,7 @@ pub(crate) fn rewrite_for_fold(source: &str) -> Result<String, String> {
 enum Atom {
     /// Um caractere de valor conhecido (literal, `\uXXXX`, `\xHH`, escape de identidade).
     Unit(u16),
-    /// Escape de classe ou de valor que a reescrita não precisa saber (`\d`, `\b`, `\1`…).
+    /// Escape de classe ou de valor que a reescrita não precisa saber (`\d`, `\b`…).
     Other,
 }
 
@@ -102,22 +154,22 @@ fn read_atom(chars: &[char], i: usize) -> (Atom, usize) {
     }
 }
 
-fn push_placeholder(out: &mut String, unit: u16) {
-    if let Some(substitute) = placeholder(unit) {
-        out.push_str(&format!("\\u{substitute:04X}"));
-    }
+fn push_unit(out: &mut String, unit: u16) {
+    out.push_str(&format!("\\u{unit:04X}"));
 }
 
 /// Reescreve a classe que começa em `start` (no `[`) e devolve a posição
-/// depois do `]`.
+/// depois do `]`. Cada membro ganha os equivalentes do V8 que estão fora
+/// dela: a classe passa a casar sem `i` exatamente o que o V8 casa com `i`,
+/// e a negada, o complemento disso, como no V8.
 fn rewrite_class(chars: &[char], start: usize, out: &mut String) -> Result<usize, String> {
     let mut i = start + 1;
-    let mut body = String::new();
-    let mut extra: Vec<u16> = Vec::new();
+    out.push('[');
     if chars.get(i) == Some(&'^') {
-        body.push('^');
+        out.push('^');
         i += 1;
     }
+    let mut members: Vec<(u16, u16)> = Vec::new();
     // No JavaScript o `]` logo depois do `[` fecha a classe (`[]` não casa nada).
     while i < chars.len() && chars[i] != ']' {
         let (low, after_low) = read_atom(chars, i);
@@ -131,31 +183,33 @@ fn rewrite_class(chars: &[char], start: usize, out: &mut String) -> Result<usize
                     chars[i..after_high].iter().collect::<String>()
                 ));
             };
-            if low <= PLACEHOLDER_END && high >= PLACEHOLDER_START {
-                return Err("intervalo de classe que cobre U+FDD0–U+FDEF".to_owned());
-            }
-            extra.extend(
-                FOLD_DIVERGENT
-                    .iter()
-                    .filter(|unit| (low..=high).contains(unit)),
-            );
-            body.extend(&chars[i..after_high]);
+            members.push((low, high));
+            out.extend(&chars[i..after_high]);
             i = after_high;
             continue;
         }
-        match low {
-            Atom::Unit(unit) if placeholder(unit).is_some() => push_placeholder(&mut body, unit),
-            Atom::Unit(unit) if (PLACEHOLDER_START..=PLACEHOLDER_END).contains(&unit) => {
-                return Err("classe com caractere de U+FDD0–U+FDEF".to_owned());
-            }
-            _ => body.extend(&chars[i..after_low]),
+        if let Atom::Unit(unit) = low {
+            members.push((unit, unit));
         }
+        out.extend(&chars[i..after_low]);
         i = after_low;
     }
-    out.push('[');
-    out.push_str(&body);
+    let inside = |unit: u16| {
+        members
+            .iter()
+            .any(|(low, high)| (*low..=*high).contains(&unit))
+    };
+    let mut extra: Vec<u16> = members
+        .iter()
+        .flat_map(|(low, high)| *low..=*high)
+        .filter(|unit| EQUIVALENTS.contains_key(&canonicalize(*unit)))
+        .flat_map(equivalents)
+        .filter(|unit| !inside(*unit))
+        .collect();
+    extra.sort_unstable();
+    extra.dedup();
     for unit in extra {
-        push_placeholder(out, unit);
+        push_unit(out, unit);
     }
     out.push(']');
     Ok(i + 1)
@@ -166,18 +220,19 @@ mod tests {
     use super::*;
 
     #[test]
-    fn reescrita_do_ajuste_de_caixa() {
+    fn classe_exata_do_v8() {
+        assert_eq!(rewrite_for_fold("k1").as_deref(), Ok(r"[\u004B\u006B]1"));
+        // ı e ſ não têm equivalente no V8: ficam como estão.
+        assert_eq!(rewrite_for_fold("ı").as_deref(), Ok("ı"));
         assert_eq!(
-            rewrite_for_fold("kası[ıa]").as_deref(),
-            Ok(r"kas\uFDD0[\uFDD0a]")
+            rewrite_for_fold("[a-c]").as_deref(),
+            Ok(r"[a-c\u0041\u0042\u0043]")
         );
-        assert_eq!(rewrite_for_fold(r"\u017F").as_deref(), Ok(r"\uFDD1"));
-        // Intervalo que contém o ı e o ſ ganha os dois substitutos.
         assert_eq!(
-            rewrite_for_fold(r"[a-z\u0100-\u017F]").as_deref(),
-            Ok(r"[a-z\u0100-\u017F\uFDD0\uFDD1]")
+            rewrite_for_fold(r"(?<dia>x)\k<dia>").as_deref(),
+            Ok(r"(?<dia>[\u0058\u0078])\k<dia>")
         );
         assert_eq!(rewrite_for_fold(r"[^\d\s-]").as_deref(), Ok(r"[^\d\s-]"));
-        assert!(rewrite_for_fold(r"[\uFD00-\uFDFF]").is_err());
+        assert!(rewrite_for_fold(r"(\w)\1").is_err());
     }
 }

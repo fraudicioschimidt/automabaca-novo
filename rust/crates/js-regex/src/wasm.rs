@@ -64,10 +64,30 @@ pub(crate) fn compile(source: &str, flags: Flags) -> Result<Compiled, String> {
     }
     let index = COMPILED.with(|all| {
         let mut all = all.borrow_mut();
-        all.push(compiled);
-        all.len() - 1
+        match all.iter().position(JsValue::is_undefined) {
+            Some(free) => {
+                all[free] = compiled;
+                free
+            }
+            None => {
+                all.push(compiled);
+                all.len() - 1
+            }
+        }
     });
     Ok(Compiled { index })
+}
+
+impl Drop for Compiled {
+    // O padrão montado em tempo de execução não pode prender o RegExp do host.
+    fn drop(&mut self) {
+        // `try_with`: na saída da thread a tabela pode já ter ido embora.
+        let _ = COMPILED.try_with(|all| {
+            if let Some(slot) = all.borrow_mut().get_mut(self.index) {
+                *slot = JsValue::UNDEFINED;
+            }
+        });
+    }
 }
 
 pub(crate) struct Searcher<'c> {

@@ -10,7 +10,6 @@ use std::borrow::Cow;
 pub(crate) struct Compiled {
     regex: regress::Regex,
     unicode: bool,
-    fold: bool,
 }
 
 pub(crate) fn compile(source: &str, flags: Flags) -> Result<Compiled, String> {
@@ -21,7 +20,7 @@ pub(crate) fn compile(source: &str, flags: Flags) -> Result<Compiled, String> {
         Cow::Borrowed(source)
     };
     let regress_flags: String = [
-        (flags.ignore_case, 'i'),
+        (flags.ignore_case && !fold, 'i'),
         (flags.multiline, 'm'),
         (flags.dot_all, 's'),
         (flags.unicode, 'u'),
@@ -34,28 +33,16 @@ pub(crate) fn compile(source: &str, flags: Flags) -> Result<Compiled, String> {
     Ok(Compiled {
         regex,
         unicode: flags.unicode,
-        fold,
     })
 }
 
 pub(crate) struct Searcher<'c, 'h> {
     compiled: &'c Compiled,
-    units: Cow<'h, [u16]>,
+    units: &'h [u16],
 }
 
 impl Compiled {
     pub(crate) fn searcher<'c, 'h>(&'c self, units: &'h [u16], _text: &str) -> Searcher<'c, 'h> {
-        let divergent = |unit: &u16| fold::placeholder(*unit).is_some();
-        let units = if self.fold && units.iter().any(divergent) {
-            Cow::Owned(
-                units
-                    .iter()
-                    .map(|unit| fold::placeholder(*unit).unwrap_or(*unit))
-                    .collect(),
-            )
-        } else {
-            Cow::Borrowed(units)
-        };
         Searcher {
             compiled: self,
             units,
@@ -68,9 +55,9 @@ impl Searcher<'_, '_> {
     pub(crate) fn exec(&self, from: usize) -> Option<GroupRanges> {
         let regex = &self.compiled.regex;
         let found = if self.compiled.unicode {
-            regex.find_from_utf16(&self.units, from).next()
+            regex.find_from_utf16(self.units, from).next()
         } else {
-            regex.find_from_ucs2(&self.units, from).next()
+            regex.find_from_ucs2(self.units, from).next()
         }?;
         let mut groups = Vec::with_capacity(found.captures.len() + 1);
         groups.push(Some((found.range.start, found.range.end)));

@@ -1,6 +1,9 @@
 //! Casos com o resultado que o V8 dá (conferidos no Node); o teste da ponte
 //! compara os dois lados com o V8 num corpus maior.
 
+// Os testes da camada compilam fora do catálogo.
+#![allow(clippy::disallowed_methods)]
+
 use super::*;
 
 fn re(source: &str, flags: &str) -> Regex {

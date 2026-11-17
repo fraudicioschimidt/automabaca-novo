@@ -17,6 +17,8 @@ fn compiled(source: &str, flags: &str) -> Result<Rc<Regex>, String> {
     if let Some(regex) = COMPILED.with(|all| all.borrow().iter().find(same).cloned()) {
         return Ok(regex);
     }
+    // Fora do catálogo: as quinas e a varredura do teste não são do domínio.
+    #[allow(clippy::disallowed_methods)]
     let regex = Rc::new(Regex::new(source, flags).map_err(|error| error.0)?);
     COMPILED.with(|all| all.borrow_mut().push(Rc::clone(&regex)));
     Ok(regex)

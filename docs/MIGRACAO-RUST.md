@@ -150,9 +150,11 @@ Três regras de método saíram desses módulos:
   (normalização e comparação de nomes de time no pareamento) vira Rust
   direto, 3× mais rápido que o V8; o `fancy-regex` empatou com o V8 ali, com a
   semântica Unicode do `\s`, `\w` e `\b`, e ficou de fora. O `/i` sem `u` do
-  `regress` diverge do V8 em 60 caracteres do BMP (ı, ſ e o grego com iota
-  subscrito, achados varrendo todos os que mudam de caixa) e passa por um
-  ajuste. Cada backend só executa uma busca; a busca global, a troca com `$`,
+  `regress` diverge do V8 (varrendo todo caractere do BMP que muda de caixa:
+  60 sozinhos, como ı, ſ e o grego com iota subscrito, e mais 8 dentro de
+  intervalo de classe, como o K de Kelvin e o Ω de Ohm). Por isso o padrão
+  vai ao `regress` sem o `i`, com cada letra virando a classe exata do que o
+  V8 iguala a ela (a regra `Canonicalize`). Cada backend só executa uma busca; a busca global, a troca com `$`,
   o `split` e o mapa de índices são escritos uma vez, em Rust, pela
   especificação. `tests/plataforma/js-regex.test.ts` compara servidor e
   navegador com o V8 em cada padrão do catálogo do domínio. Onde o JS deixaria

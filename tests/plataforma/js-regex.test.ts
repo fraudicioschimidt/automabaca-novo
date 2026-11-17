@@ -24,7 +24,8 @@ const QUINAS: Array<[string, string]> = [
   [String.raw`x*`, "g"],
   [String.raw``, "gu"],
   [String.raw`(a)|(b)`, "g"],
-  [String.raw`(\w)\1`, "gi"],
+  [String.raw`(\w)\1`, "g"],
+  [String.raw`(\w)\1`, "giu"],
   [String.raw`kas[iı]mpa[sş]a`, "i"],
   [String.raw`[a-z\u0100-\u017F]+`, "gi"],
   [String.raw`[a-zĀ-ſ]+`, "gi"],
@@ -96,7 +97,7 @@ describe("regex do domínio: servidor e navegador dão o que o V8 dá", () => {
     }
   });
 
-  it("caixa sem u: cada caractere do BMP que muda de caixa casa os mesmos que no V8", () => {
+  it("caixa sem u: cada caractere do BMP que muda de caixa, sozinho e em intervalo de classe, casa os mesmos que no V8", () => {
     const cased = new Set<number>();
     for (let code = 0; code < 0x10000; code++) {
       if (code >= 0xd800 && code <= 0xdfff) continue;
@@ -109,11 +110,14 @@ describe("regex do domínio: servidor e navegador dão o que o V8 dá", () => {
       }
     }
     const texto = String.fromCharCode(...[...cased].sort((a, b) => a - b));
+    const hex = (code: number) => `\\u${code.toString(16).padStart(4, "0")}`;
     for (const flags of ["gi", "giu"]) {
       for (const code of cased) {
-        const source = `\\u${code.toString(16).padStart(4, "0")}`;
-        const esperado = texto.replace(new RegExp(source, flags), "\u0000");
-        expect(servidor.regexReplace(source, flags, texto, "\u0000"), `/${source}/${flags}`).toBe(esperado);
+        const intervalo = `${hex(code - 1)}-${hex(code + 1)}`;
+        for (const source of [hex(code), `[${intervalo}]`, `[^${intervalo}]`]) {
+          const esperado = texto.replace(new RegExp(source, flags), "\u0000");
+          expect(servidor.regexReplace(source, flags, texto, "\u0000"), `/${source}/${flags}`).toBe(esperado);
+        }
       }
     }
   });

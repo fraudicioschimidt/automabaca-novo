@@ -61,7 +61,7 @@
     "postinstall": "node scripts/postinstall.mjs",
     "toolchain:check": "node scripts/check-toolchain.mjs",
     "package:worker": "node scripts/package-worker.mjs",
-    "test:browser:critical": "node --import tsx node_modules/@playwright/test/cli.js test critical.spec.ts config.spec.ts security.spec.ts login.spec.ts analyzer-server.spec.ts --project=desktop --workers=1 && node --import tsx node_modules/@playwright/test/cli.js test smoke.spec.ts --project=desktop --workers=2",
+    "test:browser:critical": "node --import tsx node_modules/@playwright/test/cli.js test critical.spec.ts config.spec.ts security.spec.ts login.spec.ts analyzer-server.spec.ts --project=desktop --workers=1 && node --import tsx node_modules/@playwright/test/cli.js test smoke.spec.ts ponte.spec.ts --project=desktop --workers=2",
     "package:release": "node scripts/package-release.mjs",
     "release:manifest": "node scripts/write-release-manifest.mjs",
     "check:ci": "bash scripts/vez.sh --peso 3 -- node scripts/check-project.mjs ci"
