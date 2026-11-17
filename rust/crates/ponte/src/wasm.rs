@@ -316,6 +316,53 @@ pub fn parse_br_kickoff(text: &str, ref_ms: f64) -> Result<JsValue, JsError> {
     }))
 }
 
+#[wasm_bindgen(js_name = normalizeStr)]
+pub fn normalize_str(text: &str) -> String {
+    dominio::text_normalization::normalize_str(text)
+}
+
+#[wasm_bindgen(js_name = canonicalizeTeamName)]
+pub fn canonicalize_team_name(text: &str) -> String {
+    dominio::text_normalization::canonicalize_team_name(text)
+}
+
+#[wasm_bindgen(js_name = isProtectedToken)]
+pub fn is_protected_token(token: &str) -> bool {
+    dominio::text_normalization::is_protected_token(token)
+}
+
+fn strings<S: AsRef<str>>(items: impl IntoIterator<Item = S>) -> JsValue {
+    JsValue::from(
+        items
+            .into_iter()
+            .map(|item| JsValue::from(item.as_ref()))
+            .collect::<Vec<_>>(),
+    )
+}
+
+#[wasm_bindgen(js_name = teamNameVariants)]
+pub fn team_name_variants(canon: &str) -> JsValue {
+    strings(dominio::text_normalization::team_name_variants(canon))
+}
+
+#[wasm_bindgen(js_name = teamNameVocabulary)]
+pub fn team_name_vocabulary() -> Vec<JsValue> {
+    use dominio::text_normalization as names;
+    vec![
+        strings(names::TEAM_STOP_WORDS.iter()),
+        strings(names::RESERVE_CLASS_TOKENS.iter()),
+        strings([names::RESERVE_CLASS_MARKER]),
+    ]
+}
+
+#[wasm_bindgen(js_name = teamNameEquivalents)]
+pub fn team_name_equivalents() -> Vec<JsValue> {
+    dominio::text_normalization::TEAM_NAME_EQUIVALENTS
+        .iter()
+        .map(|row| strings(row.iter()))
+        .collect()
+}
+
 #[wasm_bindgen(js_name = regexCatalog)]
 pub fn regex_catalog() -> Vec<JsValue> {
     crate::regex_probe::catalog()

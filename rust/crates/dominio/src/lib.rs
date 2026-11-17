@@ -11,6 +11,7 @@ pub mod kelly;
 pub mod kickoff;
 pub mod money;
 pub mod odds;
+pub mod text_normalization;
 
 /// Todo regex do domínio, com as flags, para o teste que compara os dois
 /// lados da ponte com o V8. Cada módulo com regex compila as suas aqui.

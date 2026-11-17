@@ -13,9 +13,11 @@ publish = false
 dominio = { path = "crates/dominio" }
 js-math = { path = "crates/js-math" }
 js-regex = { path = "crates/js-regex" }
+js-text = { path = "crates/js-text" }
 napi = "3.16.2"
 num-bigint = "0.5.1"
 num-traits = "0.2.19"
+unicode-normalization = "0.1.26"
 regress = { version = "0.12.0", default-features = false, features = ["std", "utf16"] }
 napi-derive = "3.7.1"
 napi-build = "2.6.0"
