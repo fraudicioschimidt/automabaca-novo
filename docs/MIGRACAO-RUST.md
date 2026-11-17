@@ -83,7 +83,8 @@ e a ponte N-API não carrega no navegador (a fronteira em
 (`rust/crates/ponte`) entrega o `.node` ao servidor e o WebAssembly ao
 navegador pela condição `browser` do pacote, e a CSP ganhou
 `'wasm-unsafe-eval'` no `script-src`, que libera só a compilação de
-WebAssembly. Andamento:
+WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
+16.4) são os que aceitam essa diretiva. Andamento:
 
 - ponte única, com os testes dos dois lados (#13);
 - `kelly` (calculadora de Ferramentas), o primeiro módulo que roda no
@@ -120,6 +121,10 @@ WebAssembly. Andamento:
   ECMAScript manda; o módulo `js` corrige, conferido contra o V8 em 5 milhões
   de números (nas datas só passam inteiros, sem empate: não houve efeito em
   produção).
+- o build da ponte sai sem caminho da máquina (`--remap-path-prefix` para a
+  pasta do cargo e do repositório; o `num-bigint` gravava o caminho nas
+  mensagens de pânico): o mesmo commit dá o mesmo `.wasm` em qualquer máquina
+  e na CI, e o build recusa o binário que ainda guarde um caminho.
 
 Duas regras de método saíram desses módulos:
 

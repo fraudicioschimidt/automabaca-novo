@@ -298,6 +298,11 @@ defeito nem proponha desfazê-las sem o dono pedir.
   inferido (handebol, futsal, futebol de praia, hóquei de grama, rugby)
   liquidam pelo placar listado, mesmo com risco de prorrogação em mata-mata,
   porque o Flashscore não informa prorrogação.
+- **Navegadores mínimos** (17/11/2026): Chrome e Edge 97, Firefox 102, Safari
+  e iOS 16.4, no `browserslist` do `package.json`. São os primeiros com
+  `'wasm-unsafe-eval'` na CSP (a ponte WebAssembly) e, no Safari, com
+  lookbehind em regex, que o domínio usa. O build recusa JavaScript de
+  navegador além de ES2022 (`scripts/verify-standalone.mjs`).
 - **Painel só com senha**, sem segundo fator (sessão de até 30 dias, bloqueio de
   tentativas, aviso de dispositivo novo).
 - **Migrations antigas ficam.** O repositório nasceu em 09/09/2026 importando o

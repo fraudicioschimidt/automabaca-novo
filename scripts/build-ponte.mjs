@@ -10,12 +10,16 @@
  *   cola do `wasm-bindgen`, na mesma versão do crate). O navegador baixa o
  *   .wasm como arquivo estático (ver browser.mjs).
  *
+ * Os dois saem sem caminho da máquina que compilou (pasta do cargo, do
+ * repositório): o mesmo commit dá o mesmo .wasm aqui e na CI.
+ *
  *   node scripts/build-ponte.mjs              compila e instala no node_modules
  *   node scripts/build-ponte.mjs --instalar   só instala (binários do artefato `ci-rust`)
  */
 import { spawnSync } from "node:child_process";
 import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { homedir } from "node:os";
 import path from "node:path";
 import { sha256 } from "./lib/release-provenance.mjs";
 import { instalarPonteNoNodeModules, PONTE_BINARIO, PONTE_DIR, PONTE_WASM } from "./lib/ponte.mjs";
@@ -23,6 +27,14 @@ import { instalarPonteNoNodeModules, PONTE_BINARIO, PONTE_DIR, PONTE_WASM } from
 const GLIBC_DAS_IMAGENS = [2, 36];
 const root = fileURLToPath(new URL("..", import.meta.url));
 const rust = path.join(root, "rust");
+const cargoHome = process.env.CARGO_HOME ?? path.join(homedir(), ".cargo");
+
+// O rustc grava o caminho do fonte nas mensagens de pânico (as do num-bigint,
+// por exemplo): sem o remapeamento, o sha muda com a pasta de quem compila.
+// Só o build de release da ponte usa estas flags, então o cache do clippy e
+// dos testes não é invalidado.
+const RUSTFLAGS = [process.env.RUSTFLAGS, `--remap-path-prefix=${cargoHome}=/cargo`,
+  `--remap-path-prefix=${rust}=/automabaca/rust`].filter(Boolean).join(" ");
 
 function run(command, args, env = {}) {
   const result = spawnSync(command, args, { cwd: rust, stdio: "inherit", env: { ...process.env, ...env } });
@@ -31,9 +43,10 @@ function run(command, args, env = {}) {
 }
 
 function compilarNode() {
-  run("cargo", ["build", "--release", "--locked", "-p", "dominio-ponte"]);
+  run("cargo", ["build", "--release", "--locked", "-p", "dominio-ponte"], { RUSTFLAGS });
   const destino = path.join(root, PONTE_BINARIO);
   copyFileSync(path.join(rust, "target/release/libdominio_ponte.so"), destino);
+  recusarCaminhoDaMaquina(destino);
   // As versões de símbolo GLIBC_x.y que o binário exige, lidas do próprio ELF
   // (tabela .gnu.version_r): sem depender de objdump/readelf na máquina.
   const versoes = [...new Set(readFileSync(destino).toString("latin1").match(/GLIBC_\d+\.\d+(?:\.\d+)?/g) ?? [])];
@@ -58,7 +71,7 @@ function compilarWasm() {
   // O WebAssembly viaja para o navegador em cada tela que usa a ponte: otimizado
   // para tamanho (−11% contra o padrão), sem mexer no binário do servidor.
   run("cargo", ["build", "--release", "--locked", "-p", "dominio-ponte", "--target", "wasm32-unknown-unknown"],
-    { CARGO_PROFILE_RELEASE_OPT_LEVEL: "s" });
+    { CARGO_PROFILE_RELEASE_OPT_LEVEL: "s", RUSTFLAGS });
   const saida = path.join(root, PONTE_DIR, "wasm");
   mkdirSync(saida, { recursive: true });
   // `--weak-refs`: o objeto Rust de uma classe da ponte (o acumulador) é
@@ -77,6 +90,15 @@ function compilarWasm() {
   writeFileSync(path.join(saida, "dominio_ponte.mjs"), texto.replace(referencia, "undefined"));
   rmSync(gerada);
   rmSync(path.join(saida, "bytes.mjs"), { force: true });
+  recusarCaminhoDaMaquina(path.join(root, PONTE_WASM));
+}
+
+function recusarCaminhoDaMaquina(arquivo) {
+  const bytes = readFileSync(arquivo);
+  const vazados = [cargoHome, root, homedir()].filter((caminho) => bytes.includes(caminho));
+  if (vazados.length > 0) {
+    throw new Error(`${path.relative(root, arquivo)} guarda caminho desta máquina (${vazados.join(", ")}): o sha não bateria com o da CI`);
+  }
 }
 
 if (!process.argv.includes("--instalar")) {

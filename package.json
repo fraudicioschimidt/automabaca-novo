@@ -93,6 +93,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitest/coverage-v8": "5.0.3",
+    "acorn": "8.18.0",
     "esbuild": "0.28.2",
     "eslint": "10.12.0",
     "eslint-plugin-import-x": "4.17.1",
@@ -124,5 +125,12 @@
     "unrs-resolver@1.12.2": true,
     "@google/genai": false,
     "protobufjs": false
-  }
+  },
+  "browserslist": [
+    "chrome >= 97",
+    "edge >= 97",
+    "firefox >= 102",
+    "safari >= 16.4",
+    "ios_saf >= 16.4"
+  ]
 }
