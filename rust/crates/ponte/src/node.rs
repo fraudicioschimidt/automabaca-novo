@@ -300,6 +300,46 @@ pub fn parse_br_kickoff(text: String, ref_ms: f64) -> Result<Option<(f64, bool)>
 }
 
 #[napi]
+pub fn normalize_str(text: String) -> String {
+    dominio::text_normalization::normalize_str(&text)
+}
+
+#[napi]
+pub fn canonicalize_team_name(text: String) -> String {
+    dominio::text_normalization::canonicalize_team_name(&text)
+}
+
+#[napi]
+pub fn is_protected_token(token: String) -> bool {
+    dominio::text_normalization::is_protected_token(&token)
+}
+
+#[napi]
+pub fn team_name_variants(canon: String) -> Vec<String> {
+    dominio::text_normalization::team_name_variants(&canon)
+}
+
+/// As listas de vocabulário de nome de time, carregadas uma vez pela casca.
+#[napi]
+pub fn team_name_vocabulary() -> Vec<Vec<String>> {
+    use dominio::text_normalization as names;
+    let list = |words: &[&str]| words.iter().map(|word| (*word).to_owned()).collect();
+    vec![
+        list(names::TEAM_STOP_WORDS),
+        list(names::RESERVE_CLASS_TOKENS),
+        vec![names::RESERVE_CLASS_MARKER.to_owned()],
+    ]
+}
+
+#[napi]
+pub fn team_name_equivalents() -> Vec<Vec<String>> {
+    dominio::text_normalization::TEAM_NAME_EQUIVALENTS
+        .iter()
+        .map(|row| row.iter().map(|form| (*form).to_owned()).collect())
+        .collect()
+}
+
+#[napi]
 pub fn regex_catalog() -> Vec<Vec<String>> {
     crate::regex_probe::catalog()
 }

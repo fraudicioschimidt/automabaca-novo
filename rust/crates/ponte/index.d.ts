@@ -61,6 +61,14 @@ declare const dominio: {
   MoneyAccumulator: new (decimals: number) => { add(value: number): number; readonly value: number };
   /** `[instante, só a data]`; ver `parseBrKickoffDetailed` em `src/domain/dates-parsing.ts`. */
   parseBrKickoff(text: string, refMs: number): [ms: number, dateOnly: boolean] | null;
+  /** Ver `src/domain/text-normalization.ts`. */
+  normalizeStr(text: string): string;
+  canonicalizeTeamName(text: string): string;
+  isProtectedToken(token: string): boolean;
+  teamNameVariants(canon: string): string[];
+  /** `[palavras de parada, tokens da classe reserva, [marcador da classe reserva]]`. */
+  teamNameVocabulary(): [string[], string[], [string]];
+  teamNameEquivalents(): string[][];
   /**
    * O regex do domínio cru, só para `tests/plataforma/js-regex.test.ts`
    * comparar os dois lados com o V8. `regexExec` devolve `[início, fim]` UTF-16

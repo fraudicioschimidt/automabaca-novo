@@ -132,6 +132,19 @@ WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
   navegador, contra 3 µs), irrelevante no volume de posts; o WASM foi a
   93 KB com gzip.
 
+- `text-normalization` (o caminho quente do pareamento: `normalizeStr`,
+  `canonicalizeTeamName`, `teamNameVariants` e o vocabulário de nome de time)
+  em Rust direto, sem motor de regex: depois da limpeza o nome só tem
+  `[a-z0-9]` e espaços, e os 7 padrões do TS viram regras sobre os tokens.
+  O crate `js-text` faz o `normalize("NFD")` + `\p{Diacritic}` + `toLowerCase`
+  numa chamada: no navegador, pelo host; no servidor, pelo
+  `unicode-normalization` e pela std (Unicode 17, como o Node 24) e por uma
+  tabela de `\p{Diacritic}` tirada do V8, conferidos em cada ponto de código
+  por `tests/plataforma/js-text.test.ts`. Por nome, `canonicalizeTeamName`
+  ficou 1,8× mais rápido que o TS no servidor (já contando a travessia da
+  ponte) e empatou no navegador. A memória do `teamNameVariants` fica na
+  casca TS enquanto o `text.ts`, que o chama em laço, não vem para o Rust.
+
 Três regras de método saíram desses módulos:
 
 - **Funções de `Math` que o IEEE não fixa** (`pow`, trigonometria) passam pelo
