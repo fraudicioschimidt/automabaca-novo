@@ -1,6 +1,7 @@
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
+import { parse } from "acorn";
 import { carregarPonte } from "./lib/ponte.mjs";
 
 const root = path.resolve(".next", "standalone");
@@ -77,6 +78,31 @@ try {
   carregarPonte(root);
 } catch (error) {
   throw new Error("Standalone não consegue carregar a ponte Rust (@automabaca/dominio).", { cause: error });
+}
+
+// O `browserslist` do package.json (Chrome/Edge 97, Firefox 102, Safari 16.4)
+// lê ES2022 inteiro e nada além: sintaxe mais nova (inclusive de regex, como a
+// flag `v`), vinda do código ou de dependência, quebraria a tela inteira lá.
+const ECMA_DOS_NAVEGADORES = 2022;
+const chunksDoNavegador = readdirSync(path.join(root, ".next/static/chunks"), { recursive: true })
+  .filter((arquivo) => String(arquivo).endsWith(".js"));
+const sintaxeNova = chunksDoNavegador.flatMap((arquivo) => {
+  const codigo = readFileSync(path.join(root, ".next/static/chunks", String(arquivo)), "utf8");
+  const erros = ["module", "script"].map((sourceType) => {
+    try {
+      parse(codigo, { ecmaVersion: ECMA_DOS_NAVEGADORES, sourceType, allowHashBang: false });
+      return null;
+    } catch (error) {
+      return error instanceof Error ? error.message : String(error);
+    }
+  });
+  return erros.includes(null) ? [] : [`${String(arquivo)}: ${erros[0]}`];
+});
+if (chunksDoNavegador.length === 0) {
+  throw new Error("Standalone sem chunks de navegador em .next/static/chunks");
+}
+if (sintaxeNova.length > 0) {
+  throw new Error(`JavaScript do navegador além de ES${ECMA_DOS_NAVEGADORES} (browserslist):\n${sintaxeNova.join("\n")}`);
 }
 
 const nestedAssets = [".next/static/static", "public/public"].filter((entry) =>
