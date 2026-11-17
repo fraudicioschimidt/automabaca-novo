@@ -302,7 +302,10 @@ defeito nem proponha desfazê-las sem o dono pedir.
   e iOS 16.4, no `browserslist` do `package.json`. São os primeiros com
   `'wasm-unsafe-eval'` na CSP (a ponte WebAssembly) e, no Safari, com
   lookbehind em regex, que o domínio usa. O build recusa JavaScript de
-  navegador além de ES2022 (`scripts/verify-standalone.mjs`).
+  navegador além de ES2022 (`scripts/verify-standalone.mjs`); o CSS não é
+  conferido, e o de hoje (`subgrid`, `color-mix()` com variável, unidades de
+  container) pede Chrome 117 e Firefox 113: abaixo disso as telas perdem
+  estilo, sem quebrar.
 - **Painel só com senha**, sem segundo fator (sessão de até 30 dias, bloqueio de
   tentativas, aviso de dispositivo novo).
 - **Migrations antigas ficam.** O repositório nasceu em 09/09/2026 importando o
