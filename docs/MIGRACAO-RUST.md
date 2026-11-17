@@ -144,6 +144,8 @@ WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
   ficou 1,8× mais rápido que o TS no servidor (já contando a travessia da
   ponte) e empatou no navegador. A memória do `teamNameVariants` fica na
   casca TS enquanto o `text.ts`, que o chama em laço, não vem para o Rust.
+  O WASM foi a 114 KB com gzip (o código e o vocabulário dos nomes, sem
+  tabela do Unicode).
 
 Três regras de método saíram desses módulos:
 
