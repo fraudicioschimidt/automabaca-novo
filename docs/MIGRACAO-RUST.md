@@ -127,7 +127,7 @@ WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
   e na CI, e o build recusa o binário que ainda guarde um caminho.
 - regex pelo crate `js-regex` e a leitura de data e hora do post
   (`parseBrKickoffDetailed`, em `kickoff.rs`), o primeiro módulo com regex
-  (#20). Paridade com o TS antigo em 200 mil textos com cara de post, nos
+  (#21). Paridade com o TS antigo em 200 mil textos com cara de post, nos
   dois lados. A leitura ficou mais lenta (14 µs por post no servidor e 8 µs no
   navegador, contra 3 µs), irrelevante no volume de posts; o WASM foi a
   93 KB com gzip.
