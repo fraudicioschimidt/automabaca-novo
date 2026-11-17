@@ -289,3 +289,40 @@ impl MoneyAccumulator {
         self.inner.value().map_err(money_error)
     }
 }
+
+#[napi]
+pub fn regex_catalog() -> Vec<Vec<String>> {
+    crate::regex_probe::catalog()
+}
+
+/// Intervalos UTF-16 `[início, fim]` de cada grupo (-1 no que não participou),
+/// como `exec` com `lastIndex = from`; `null` sem casamento.
+#[napi]
+pub fn regex_exec(
+    source: String,
+    flags: String,
+    text: String,
+    from: u32,
+) -> Result<Option<Vec<i64>>> {
+    crate::regex_probe::exec(&source, &flags, &text, from).map_err(Error::from_reason)
+}
+
+#[napi]
+pub fn regex_replace(
+    source: String,
+    flags: String,
+    text: String,
+    replacement: String,
+) -> Result<String> {
+    crate::regex_probe::replace(&source, &flags, &text, &replacement).map_err(Error::from_reason)
+}
+
+#[napi]
+pub fn regex_split(
+    source: String,
+    flags: String,
+    text: String,
+    limit: Option<u32>,
+) -> Result<Vec<String>> {
+    crate::regex_probe::split(&source, &flags, &text, limit).map_err(Error::from_reason)
+}

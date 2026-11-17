@@ -303,3 +303,48 @@ impl MoneyAccumulator {
         self.inner.value().map_err(money_error)
     }
 }
+
+#[wasm_bindgen(js_name = regexCatalog)]
+pub fn regex_catalog() -> Vec<JsValue> {
+    crate::regex_probe::catalog()
+        .into_iter()
+        .map(|pair| JsValue::from(pair.into_iter().map(JsValue::from).collect::<Vec<_>>()))
+        .collect()
+}
+
+#[wasm_bindgen(js_name = regexExec)]
+pub fn regex_exec(source: &str, flags: &str, text: &str, from: u32) -> Result<JsValue, JsError> {
+    let ranges = crate::regex_probe::exec(source, flags, text, from)
+        .map_err(|error| JsError::new(&error))?;
+    Ok(ranges.map_or(JsValue::NULL, |ranges| {
+        JsValue::from(
+            ranges
+                .into_iter()
+                .map(|at| JsValue::from(at as f64))
+                .collect::<Vec<_>>(),
+        )
+    }))
+}
+
+#[wasm_bindgen(js_name = regexReplace)]
+pub fn regex_replace(
+    source: &str,
+    flags: &str,
+    text: &str,
+    replacement: &str,
+) -> Result<String, JsError> {
+    crate::regex_probe::replace(source, flags, text, replacement)
+        .map_err(|error| JsError::new(&error))
+}
+
+#[wasm_bindgen(js_name = regexSplit)]
+pub fn regex_split(
+    source: &str,
+    flags: &str,
+    text: &str,
+    limit: Option<u32>,
+) -> Result<Vec<JsValue>, JsError> {
+    crate::regex_probe::split(source, flags, text, limit)
+        .map(|pieces| pieces.into_iter().map(JsValue::from).collect())
+        .map_err(|error| JsError::new(&error))
+}

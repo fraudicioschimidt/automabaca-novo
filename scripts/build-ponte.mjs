@@ -87,10 +87,22 @@ function compilarWasm() {
   const texto = readFileSync(gerada, "utf8");
   const referencia = "new URL('dominio_ponte_bg.wasm', import.meta.url)";
   if (texto.split(referencia).length !== 2) throw new Error(`cola do wasm-bindgen mudou: sem ${referencia}`);
-  writeFileSync(path.join(saida, "dominio_ponte.mjs"), texto.replace(referencia, "undefined"));
+  writeFileSync(path.join(saida, "dominio_ponte.mjs"), embutirSnippets(saida, texto.replace(referencia, "undefined")));
   rmSync(gerada);
   rmSync(path.join(saida, "bytes.mjs"), { force: true });
   recusarCaminhoDaMaquina(path.join(root, PONTE_WASM));
+}
+
+// JS que um crate embute (`inline_js`, o RegExp do host no js-regex) sai em
+// `snippets/`, importado pela cola: vai para dentro dela, e o pacote continua
+// com dois arquivos de WebAssembly.
+function embutirSnippets(saida, cola) {
+  const importacao = /^import \{[^}]*\} from '\.\/(snippets\/[^']+\.js)';\n/gm;
+  const comSnippets = cola.replace(importacao, (_linha, relativo) =>
+    `${readFileSync(path.join(saida, relativo), "utf8").replace(/^export function /gm, "function ")}\n`);
+  if (comSnippets.includes("snippets/")) throw new Error("cola do wasm-bindgen com import de snippet que o build não embutiu");
+  rmSync(path.join(saida, "snippets"), { recursive: true, force: true });
+  return comSnippets;
 }
 
 function recusarCaminhoDaMaquina(arquivo) {

@@ -7,5 +7,6 @@
 
 #[cfg(not(target_arch = "wasm32"))]
 pub mod node;
+mod regex_probe;
 #[cfg(target_arch = "wasm32")]
 pub mod wasm;
