@@ -1,0 +1,5 @@
+# Regex do domínio entra no catálogo que tests/plataforma/js-regex.test.ts
+# compara com o V8: pelo `regex!` ou pelo `Regex::cataloged`.
+disallowed-methods = [
+  { path = "js_regex::Regex::new", reason = "use js_regex::regex! ou Regex::cataloged, que entram no catálogo comparado com o V8" },
+]

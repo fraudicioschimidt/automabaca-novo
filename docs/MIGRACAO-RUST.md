@@ -108,7 +108,7 @@ WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
   dois dígitos e rollover, getters, `toISOString`), o `toFixed` (empate para o
   maior) e o `String(número)`; o fuzz contra o TS antigo achou e fez corrigir
   duas quinas dele (o dia da semana do ano 0-99 e os campos NaN na borda da
-  faixa). A leitura de data e hora no texto do post espera o `regress`.
+  faixa).
 - `money` (somas, arredondamento e produtos em inteiro escalado, o invariante
   de integridade financeira) (#18). O caminho quente é `i128`, e o
   `num-bigint` fica para a conta que estoura, como o BigInt do TS. Com 5 mil
@@ -125,8 +125,14 @@ WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
   pasta do cargo e do repositório; o `num-bigint` gravava o caminho nas
   mensagens de pânico): o mesmo commit dá o mesmo `.wasm` em qualquer máquina
   e na CI, e o build recusa o binário que ainda guarde um caminho.
+- regex pelo crate `js-regex` e a leitura de data e hora do post
+  (`parseBrKickoffDetailed`, em `kickoff.rs`), o primeiro módulo com regex
+  (#21). Paridade com o TS antigo em 200 mil textos com cara de post, nos
+  dois lados. A leitura ficou mais lenta (14 µs por post no servidor e 8 µs no
+  navegador, contra 3 µs), irrelevante no volume de posts; o WASM foi a
+  93 KB com gzip.
 
-Duas regras de método saíram desses módulos:
+Três regras de método saíram desses módulos:
 
 - **Funções de `Math` que o IEEE não fixa** (`pow`, trigonometria) passam pelo
   crate `js-math`: no servidor, o `pow` da glibc, que bateu com o `Math.pow` do
@@ -134,6 +140,26 @@ Duas regras de método saíram desses módulos:
   pelo WebAssembly. O crate `libm`, puro Rust, divergia em 10% das amostras e
   ficou de fora. `sqrt`, `floor`, `abs`, `min` e `max` são exatos e ficam com o
   `f64` do Rust; o `Math.round` do JS (empate para +∞) tem equivalente próprio.
+- **Regex com a semântica do `RegExp`** (decisão de 17/11/2026, medida em
+  posts e nomes de time reais). No navegador, o próprio `RegExp` do host,
+  chamado do WebAssembly: o mesmo motor que o TS usava ali, ~3,5 KB no
+  binário e 24% mais lento que o JS puro em 629 regexes do domínio; o
+  `regress` no navegador custaria 130 KB com gzip e seria 9× mais lento. No
+  servidor, o `regress` (o V8 não está lá; e é o que um worker em Rust sem
+  Node usaria), 5 a 6× mais lento que o V8. Por isso o caminho quente
+  (normalização e comparação de nomes de time no pareamento) vira Rust
+  direto, 3× mais rápido que o V8; o `fancy-regex` empatou com o V8 ali, com a
+  semântica Unicode do `\s`, `\w` e `\b`, e ficou de fora. O `/i` sem `u` do
+  `regress` diverge do V8 (varrendo todo caractere do BMP que muda de caixa:
+  60 sozinhos, como ı, ſ e o grego com iota subscrito, e mais 8 dentro de
+  intervalo de classe, como o K de Kelvin e o Ω de Ohm). Por isso o padrão
+  vai ao `regress` sem o `i`, com cada letra virando a classe exata do que o
+  V8 iguala a ela (a regra `Canonicalize`). Cada backend só executa uma busca; a busca global, a troca com `$`,
+  o `split` e o mapa de índices são escritos uma vez, em Rust, pela
+  especificação. `tests/plataforma/js-regex.test.ts` compara servidor e
+  navegador com o V8 em cada padrão do catálogo do domínio. Onde o JS deixaria
+  meia unidade UTF-16 solta (troca sem `u` que parte um emoji), o Rust põe
+  U+FFFD, como o `toWellFormed()`: cada chamada assim é lida ao portar.
 - **Borda do JavaScript fica na casca.** O que é conversão de valor JS, e não
   regra, continua em TypeScript: `toNumber` (Decimal do Prisma, strings),
   `canonical-json` (protótipos, buracos de array, `Date`, `BigInt`) e os

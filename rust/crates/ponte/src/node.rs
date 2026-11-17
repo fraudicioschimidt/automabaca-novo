@@ -289,3 +289,49 @@ impl MoneyAccumulator {
         self.inner.value().map_err(money_error)
     }
 }
+
+/// `[instante em ms, só a data]`; `null` sem data no texto. A referência
+/// inválida dá o erro do `utcToSpParts` só quando é usada, como no TS.
+#[napi]
+pub fn parse_br_kickoff(text: String, ref_ms: f64) -> Result<Option<(f64, bool)>> {
+    dominio::kickoff::parse_br_kickoff(&text, ref_ms)
+        .map(|parsed| parsed.map(|parsed| (parsed.ms, parsed.date_only)))
+        .map_err(|error| Error::from_reason(error.0))
+}
+
+#[napi]
+pub fn regex_catalog() -> Vec<Vec<String>> {
+    crate::regex_probe::catalog()
+}
+
+/// Intervalos UTF-16 `[início, fim]` de cada grupo (-1 no que não participou),
+/// como `exec` com `lastIndex = from`; `null` sem casamento.
+#[napi]
+pub fn regex_exec(
+    source: String,
+    flags: String,
+    text: String,
+    from: u32,
+) -> Result<Option<Vec<i64>>> {
+    crate::regex_probe::exec(&source, &flags, &text, from).map_err(Error::from_reason)
+}
+
+#[napi]
+pub fn regex_replace(
+    source: String,
+    flags: String,
+    text: String,
+    replacement: String,
+) -> Result<String> {
+    crate::regex_probe::replace(&source, &flags, &text, &replacement).map_err(Error::from_reason)
+}
+
+#[napi]
+pub fn regex_split(
+    source: String,
+    flags: String,
+    text: String,
+    limit: Option<u32>,
+) -> Result<Vec<String>> {
+    crate::regex_probe::split(&source, &flags, &text, limit).map_err(Error::from_reason)
+}

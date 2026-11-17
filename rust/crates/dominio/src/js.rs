@@ -308,6 +308,84 @@ pub mod date {
         })
     }
 
+    /// `new Date(texto).getTime()` para o ISO com fuso que o domínio lê
+    /// (`AAAA-MM-DDTHH:mm`, segundos e fração opcionais, `Z` ou `±HH:mm`), com
+    /// as regras do V8: `t` e `z` minúsculos valem, mês 1-12, dia 1-31 com
+    /// rollover (31/02 vira março), 24:00 só com zeros, fração cortada em
+    /// milissegundos, fuso até 23:59. NaN no resto.
+    pub fn parse_iso_zoned(text: &str) -> f64 {
+        parse_iso_zoned_parts(text).unwrap_or(f64::NAN)
+    }
+
+    fn parse_iso_zoned_parts(text: &str) -> Option<f64> {
+        let bytes = text.as_bytes();
+        let number = |from: usize, len: usize| -> Option<f64> {
+            let digits = bytes.get(from..from + len)?;
+            digits.iter().all(u8::is_ascii_digit).then(|| {
+                digits
+                    .iter()
+                    .fold(0.0, |n, d| n * 10.0 + f64::from(d - b'0'))
+            })
+        };
+        let at = |index: usize, expected: u8| {
+            bytes
+                .get(index)
+                .is_some_and(|b| b.eq_ignore_ascii_case(&expected))
+        };
+        let (year, month, day) = (number(0, 4)?, number(5, 2)?, number(8, 2)?);
+        if !(at(4, b'-') && at(7, b'-') && at(10, b'T') && at(13, b':')) {
+            return None;
+        }
+        let (hour, minute) = (number(11, 2)?, number(14, 2)?);
+        let mut i = 16;
+        let (mut second, mut millis) = (0.0, 0.0);
+        if at(i, b':') {
+            second = number(i + 1, 2)?;
+            i += 3;
+            if at(i, b'.') {
+                let digits = bytes[i + 1..]
+                    .iter()
+                    .take_while(|b| b.is_ascii_digit())
+                    .count();
+                if digits == 0 {
+                    return None;
+                }
+                let kept: String = text[i + 1..i + 1 + digits.min(3)].to_owned();
+                millis = kept.parse::<f64>().ok()? * 10f64.powi(3 - kept.len() as i32);
+                i += 1 + digits;
+            }
+        }
+        let offset_minutes = if at(i, b'Z') && i + 1 == bytes.len() {
+            0.0
+        } else if matches!(bytes.get(i), Some(b'+' | b'-'))
+            && at(i + 3, b':')
+            && i + 6 == bytes.len()
+        {
+            let (hours, minutes) = (number(i + 1, 2)?, number(i + 4, 2)?);
+            if hours > 23.0 || minutes > 59.0 {
+                return None;
+            }
+            let sign = if bytes[i] == b'+' { 1.0 } else { -1.0 };
+            sign * (hours * 60.0 + minutes)
+        } else {
+            return None;
+        };
+        let end_of_day = hour == 24.0 && minute == 0.0 && second == 0.0 && millis == 0.0;
+        if !(1.0..=12.0).contains(&month)
+            || !(1.0..=31.0).contains(&day)
+            || (hour > 23.0 && !end_of_day)
+            || minute > 59.0
+            || second > 59.0
+        {
+            return None;
+        }
+        let time = make_time(hour, minute, second, millis);
+        let instant =
+            make_day(year, month - 1.0, day) * MS_PER_DAY + time - offset_minutes * 60_000.0;
+        let clipped = time_clip(instant);
+        (!clipped.is_nan()).then_some(clipped)
+    }
+
     /// `toISOString()`; `None` onde o JavaScript lança "Invalid time value".
     pub fn to_iso_string(ms: f64) -> Option<String> {
         let p = parts(ms)?;
