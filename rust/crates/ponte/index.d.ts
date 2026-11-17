@@ -59,6 +59,8 @@ declare const dominio: {
   /** Inteiros em texto decimal: o BigInt atravessa como `toString()`. */
   divideRoundHalfAway(value: string, divisor: string): string;
   MoneyAccumulator: new (decimals: number) => { add(value: number): number; readonly value: number };
+  /** `[instante, só a data]`; ver `parseBrKickoffDetailed` em `src/domain/dates-parsing.ts`. */
+  parseBrKickoff(text: string, refMs: number): [ms: number, dateOnly: boolean] | null;
   /**
    * O regex do domínio cru, só para `tests/plataforma/js-regex.test.ts`
    * comparar os dois lados com o V8. `regexExec` devolve `[início, fim]` UTF-16

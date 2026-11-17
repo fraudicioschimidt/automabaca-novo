@@ -304,6 +304,18 @@ impl MoneyAccumulator {
     }
 }
 
+#[wasm_bindgen(js_name = parseBrKickoff)]
+pub fn parse_br_kickoff(text: &str, ref_ms: f64) -> Result<JsValue, JsError> {
+    let parsed =
+        dominio::kickoff::parse_br_kickoff(text, ref_ms).map_err(|error| JsError::new(&error.0))?;
+    Ok(parsed.map_or(JsValue::NULL, |parsed| {
+        JsValue::from(vec![
+            JsValue::from(parsed.ms),
+            JsValue::from(parsed.date_only),
+        ])
+    }))
+}
+
 #[wasm_bindgen(js_name = regexCatalog)]
 pub fn regex_catalog() -> Vec<JsValue> {
     crate::regex_probe::catalog()
