@@ -129,6 +129,11 @@ export function declaresRegulationTime(text: string): boolean {
 const BTTS_MARKET_RE =
   /\bboth teams to score\b|\bboth score\b|\bbtts\b|\bambas (?:as )?equipes marcam\b|\bambas marcam\b|\bambos marcam\b|\bambas as equipes marcarao\b|\bambos os times marcarao\b|\bpara ambos marcarem\b|\bgol gol\b/;
 
+/** As frases de BTTS de um texto, para apagar todas e ler o que sobra. */
+const BTTS_MARKET_ALL = new RegExp(BTTS_MARKET_RE, "g");
+const BTTS_RESIDUE_NAMES_MARKET =
+  /\b(?:1x2|resultado|result|winner|vencedor|vencedora|vence|vencer|venca|win|wins|ganha|ganhador|empate|draw|over|under|mais|menos|acima|abaixo|total|totais|handicap|spread|escanteios?|corners?|cartoes|carteos|cards?)\b/;
+
 export function isBttsMarket(mercado: string): boolean {
   return BTTS_MARKET_RE.test(normalizeMercadoKey(mercado));
 }
@@ -172,10 +177,7 @@ export function isCombinedBttsMarket(mercado: string): boolean {
   const key = halfAwareKey(mercado);
   if (!BTTS_MARKET_RE.test(key)) return false;
   if (namesBothHalves(key)) return true;
-  const resto = key.replace(new RegExp(BTTS_MARKET_RE, "g"), " ");
-  return /\b(?:1x2|resultado|result|winner|vencedor|vencedora|vence|vencer|venca|win|wins|ganha|ganhador|empate|draw|over|under|mais|menos|acima|abaixo|total|totais|handicap|spread|escanteios?|corners?|cartoes|carteos|cards?)\b/.test(
-    resto,
-  );
+  return BTTS_RESIDUE_NAMES_MARKET.test(key.replace(BTTS_MARKET_ALL, " "));
 }
 
 /**
@@ -250,15 +252,7 @@ export function bttsSelectionSide(selecao: string): "yes" | "no" | null {
  */
 function bttsPhraseAlone(key: string): boolean {
   if (!BTTS_MARKET_RE.test(key)) return false;
-  const filler = [
-    ...MATCH_SCOPE_NOUNS, "no", "na", "em", "o", "a", "in", "the", "ft", "full time",
-    ...HALF_PERIOD_PHRASES.first, ...HALF_PERIOD_PHRASES.second,
-    ...HALF_PERIOD_ABBREVIATIONS.first, ...HALF_PERIOD_ABBREVIATIONS.second,
-  ];
-  return key
-    .replace(new RegExp(BTTS_MARKET_RE, "g"), " ")
-    .replace(new RegExp(String.raw`\b(?:${filler.join("|")})\b`, "g"), " ")
-    .trim() === "";
+  return key.replace(BTTS_MARKET_ALL, " ").replace(BTTS_FILLER, " ").trim() === "";
 }
 
 /**
@@ -315,15 +309,16 @@ export const OUTRIGHT_WINNER_PHRASES = [
   "para vencer", "para ganhar", "to win the", "to lift", "winner",
 ] as const;
 
+const OUTRIGHT_SCOPE = OUTRIGHT_SCOPE_NOUNS.join("|");
+const OUTRIGHT_MARKET = new RegExp(
+  // `(?:${OUTRIGHT_SCOPE})\s+winners?` é a ordem EN (escopo ANTES do verbo); a ordem PT
+  // usa preposição. As duas leem a MESMA lista.
+  String.raw`\b(?:outrights?|futures?|to\s+lift|to\s+win\s+the|(?:${OUTRIGHT_SCOPE})\s+winners?|winner\s+of\s+the\s+(?:${OUTRIGHT_SCOPE})|campe(?:ao|a|oes|as)|vencedor(?:a)?\s+final|(?:vencedor(?:a)?|ganhador(?:a)?|campe(?:ao|a))\s+d[oa]\s+(?:${OUTRIGHT_SCOPE})|para\s+(?:vencer|ganhar)\s+(?:(?:o|a)\s+)?(?:${OUTRIGHT_SCOPE})|quem\s+(?:vencera|vence|ganhara|ganha|leva)\s+(?:(?:o|a)\s+)?(?:${OUTRIGHT_SCOPE}))\b`,
+);
+
 /** Outrights/futures não representam o vencedor da partida corrente. */
 export function isOutrightMarket(mercado: string): boolean {
-  const key = normalizeMercadoKey(mercado);
-  const scope = OUTRIGHT_SCOPE_NOUNS.join("|");
-  return new RegExp(
-    // `(?:${scope})\s+winners?` é a ordem EN (escopo ANTES do verbo); a ordem PT
-    // usa preposição. As duas leem a MESMA lista.
-    String.raw`\b(?:outrights?|futures?|to\s+lift|to\s+win\s+the|(?:${scope})\s+winners?|winner\s+of\s+the\s+(?:${scope})|campe(?:ao|a|oes|as)|vencedor(?:a)?\s+final|(?:vencedor(?:a)?|ganhador(?:a)?|campe(?:ao|a))\s+d[oa]\s+(?:${scope})|para\s+(?:vencer|ganhar)\s+(?:(?:o|a)\s+)?(?:${scope})|quem\s+(?:vencera|vence|ganhara|ganha|leva)\s+(?:(?:o|a)\s+)?(?:${scope}))\b`,
-  ).test(key);
+  return OUTRIGHT_MARKET.test(normalizeMercadoKey(mercado));
 }
 
 /** Método da vitória não equivale ao vencedor da partida. */
@@ -431,15 +426,6 @@ export function isTeamTotalMarket(
   return Boolean(trailing && matchTeamSide(trailing, evento));
 }
 
-
-/**
- * Frases de meio-tempo, como DADO. O filtro SQL precisa das MESMAS: ele negava
- * "segundo tempo" e "1º" mas não "2 tempo"/"2o tempo"/"primeiro tempo", então
- * uma aposta de 2º tempo entrava no lote determinístico (que a recusa pelo
- * período) e, como o IA-Judge seleciona pelo `NOT` do filtro, ficava sem
- * NENHUM liquidador automático. As siglas (HT/H1/2H…) continuam na
- * regex porque exigem limite de token, e no SQL têm filtro próprio.
- */
 /**
  * Combo que exige OS DOIS placares (intervalo E final). Precisa ser testado
  * ANTES do vocabulário de meio-tempo: com "intervalo"/"1st half" no SSOT de
@@ -451,6 +437,14 @@ export function isTeamTotalMarket(
 const COMBO_HT_FT =
   /\b(?:half\s*time\s*full\s*time|ht\s*ft|h5\s*ft|intervalo\s*(?:e\s*)?final|resultado\s+duplo|(?:1t|1o tempo|primeiro tempo|1st half|half time|first half)\s*(?:e|\/)?\s*(?:final|full\s*time|ft)\b)/;
 
+/**
+ * Frases de meio-tempo, como DADO. O filtro SQL precisa das MESMAS: ele negava
+ * "segundo tempo" e "1º" mas não "2 tempo"/"2o tempo"/"primeiro tempo", então
+ * uma aposta de 2º tempo entrava no lote determinístico (que a recusa pelo
+ * período) e, como o IA-Judge seleciona pelo `NOT` do filtro, ficava sem
+ * NENHUM liquidador automático. As siglas (HT/H1/2H…) continuam na
+ * regex porque exigem limite de token, e no SQL têm filtro próprio.
+ */
 export const HALF_PERIOD_PHRASES = {
   first: [
     "1st half", "first half", "half time", "halftime",
@@ -497,6 +491,16 @@ const HALF_MENTION_AT_START = new RegExp(
     ...HALF_PERIOD_PHRASES.first, ...HALF_PERIOD_ABBREVIATIONS.first,
     ...HALF_PERIOD_PHRASES.second, ...HALF_PERIOD_ABBREVIATIONS.second,
   ].join("|")})\b`,
+);
+
+/** O que pode acompanhar a frase de BTTS sem mudar o mercado (`bttsPhraseAlone`). */
+const BTTS_FILLER = new RegExp(
+  String.raw`\b(?:${[
+    ...MATCH_SCOPE_NOUNS, "no", "na", "em", "o", "a", "in", "the", "ft", "full time",
+    ...HALF_PERIOD_PHRASES.first, ...HALF_PERIOD_PHRASES.second,
+    ...HALF_PERIOD_ABBREVIATIONS.first, ...HALF_PERIOD_ABBREVIATIONS.second,
+  ].join("|")})\b`,
+  "g",
 );
 
 /**
@@ -633,6 +637,18 @@ export function marketPeriodOf(
   return "FT";
 }
 
+const MATCH_SCOPE = MATCH_SCOPE_NOUNS.join("|");
+/**
+ * `full time result` e `resultado` nu: `classifyScoreMarket` liquida as duas
+ * grafias como moneyline, e aqui precisam ser moneyline também para a aposta
+ * não ficar sem CLV. O termo amplo é seguro porque `marketKindOf` o lê depois
+ * de outright, placar exato, DNB, dupla chance, team total e handicap: todos
+ * os "resultado de X" já saíram.
+ */
+const MONEYLINE_MARKET = new RegExp(
+  String.raw`\b(moneyline|money line|match winner|winner|vencedor|1x2|ml)\b|^half time result$|\b(?:full time result|resultado)\b|\bganhador(?:a)? d[oa] (?:${MATCH_SCOPE})\b|\bpara (?:vencer|ganhar) (?:[oa] )?(?:${MATCH_SCOPE})\b|\bquem (?:vencera|vence|ganhara|ganha)\b`,
+);
+
 /**
  * `evento` é opcional e só amplia: sem ele o team total é reconhecido apenas
  * na forma com PREFIXO. Com ele, a forma com SUFIXO ("Total Goals" + "Over 1.5
@@ -656,7 +672,7 @@ export function marketKindOf(
   if (/\bcorrect score\b|\bplacar exato\b|\bresultado exato\b/.test(key)) return "correct_score";
   // "Marcar a Qualquer Momento" / Anytime / First / Last Goalscorer / To Score 2+ Goals
   if (
-    /\b(?:goalscorer|anytime|marcador|artilheiro|marcar a qualquer momento|para marcar a qualquer momento|to score anytime|primeiro a marcar|primeiro marcador|primeiro gol|1[º°o]?\s*gol|1[º°o]?\s*marcador|any\s*1[º°o]?\s*gol|ultimo a marcar|ultimo marcador|ultimo gol|last goalscorer|first goalscorer|to score 2\+ goals|2\+ gols|marcar 2\+ gols|marcar 2 ou mais gols|to score 2 or more goals)\b/i.test(
+    /\b(?:goalscorer|anytime|marcador|artilheiro|marcar a qualquer momento|para marcar a qualquer momento|to score anytime|primeiro a marcar|primeiro marcador|primeiro gol|1o?\s*gol|1o?\s*marcador|any\s*1o?\s*gol|ultimo a marcar|ultimo marcador|ultimo gol|last goalscorer|first goalscorer|marcar 2 ou mais gols|to score 2 or more goals)\b/.test(
       key,
     )
   ) {
@@ -677,14 +693,14 @@ export function marketKindOf(
     return "player_props";
   }
   if (
-    !/\b(?:team\s+total|total\s*\()/i.test(key) && (
-      /\b(?:player\s+(?:kills?|deaths?|abates?|mortes?)|(?:kills?|deaths?|abates?|mortes?)\s+(?:ht|1h|2h|do\s+jogador|da\s+jogadora|por\s+jogador|de\s+jogador)|deaths\s+ht|kills\s+ht|player\s*props?)\b|^(?:deaths|mortes|kills|abates|deaths\s+ht|kills\s+ht|player\s+props?)$/i.test(
+    !/\bteam\s+total/.test(key) && (
+      /\b(?:player\s+(?:kills?|deaths?|abates?|mortes?)|(?:kills?|deaths?|abates?|mortes?)\s+(?:ht|1h|2h|do\s+jogador|da\s+jogadora|por\s+jogador|de\s+jogador)|deaths\s+ht|kills\s+ht|player\s*props?)\b|^(?:deaths|mortes|kills|abates|deaths\s+ht|kills\s+ht|player\s+props?)$/.test(
         key,
       ) ||
-      /\b(?:player\s+assists|player\s+shots|player\s+shots\s+on\s+target|shots\s+on\s+target|chutes\s+ao\s+gol|chutes\s+no\s+gol)\b|^(?:shots|chutes|player\s*assists)$/i.test(
+      /\b(?:player\s+assists|player\s+shots|player\s+shots\s+on\s+target|shots\s+on\s+target|chutes\s+ao\s+gol|chutes\s+no\s+gol)\b|^(?:shots|chutes|player\s*assists)$/.test(
         key,
       ) ||
-      /\b(?:p\s*a\s*r|pra|player\s*pra|player\s+points\s+(?:and\s+)?rebounds\s+(?:and\s+)?assists|player\s+points\s*rebounds\s*assists|pontos\s+(?:e\s+)?rebotes\s+(?:e\s+)?assist(?:encias|ências)|pontos\s+rebotes|pontos\s+assist(?:encias|ências)|rebotes\s+assist(?:encias|ências)|player\s+(?:points?|rebounds?|assists?|pts?|rebs?|ast))\b|^(?:p\s*a\s*r|pra|pontos|rebotes|assistencias|assistências)$/i.test(
+      /\b(?:p\s*a\s*r|pra|player\s*pra|player\s+points\s+(?:and\s+)?rebounds\s+(?:and\s+)?assists|player\s+points\s*rebounds\s*assists|pontos\s+(?:e\s+)?rebotes\s+(?:e\s+)?assistencias|pontos\s+rebotes|pontos\s+assistencias|rebotes\s+assistencias|player\s+(?:points?|rebounds?|assists?|pts?|rebs?|ast))\b|^(?:p\s*a\s*r|pra|pontos|rebotes|assistencias)$/.test(
         key,
       )
     )
@@ -695,26 +711,13 @@ export function marketKindOf(
   if (isDoubleChanceMarket(mercado)) return "double_chance";
   if (isTeamTotalMarket(mercado, selecao, evento)) return "team_total";
   // European Handicap é 3-way — não é spread asiático (settlement/odds recusam).
-  if (
-    isThreeWayHandicapMarket(mercado) ||
-    (/\b(europeu|european)\b/.test(key) && /\bhandicap\b/.test(key))
-  ) return "other";
+  if (isThreeWayHandicapMarket(mercado)) return "other";
   if (/\b(handicap|spread|ah)\b|\b(?:run|puck)\s*line\b/.test(key)) return "spread";
   // O escopo da vitória vem de `match-scope.ts`, o mesmo de
   // `classifyScoreMarket`: se os dois divergissem ("Para Ganhar a Partida"), a
   // aposta seria liquidável pelo placar mas ficaria sem CLV, e o filtro SQL
   // (mais largo) ainda a tiraria do IA-Judge.
-  const matchScope = MATCH_SCOPE_NOUNS.join("|");
-  if (
-    new RegExp(
-      // `full time result` e `resultado` nu: `classifyScoreMarket` liquida as
-      // duas grafias como moneyline, e aqui precisam ser moneyline também para a
-      // aposta não ficar sem CLV. O termo amplo é
-      // seguro AQUI porque chega depois de outright, placar exato, DNB, dupla
-      // chance, team total e handicap — todos os "resultado de X" já saíram.
-      String.raw`\b(moneyline|money line|match winner|winner|vencedor|1x2|ml)\b|^half time result$|\b(?:full time result|resultado)\b|\bganhador(?:a)? d[oa] (?:${matchScope})\b|\bpara (?:vencer|ganhar) (?:[oa] )?(?:${matchScope})\b|\bquem (?:vencera|vence|ganhara|ganha)\b`,
-    ).test(key)
-  ) {
+  if (MONEYLINE_MARKET.test(key)) {
     // Alguns capturadores preservaram o mercado genérico "Moneyline" e
     // deixaram a semântica DNB apenas na seleção ("Time DNB"). O qualificador
     // da seleção prevalece somente aqui, depois de excluir mercados explícitos
