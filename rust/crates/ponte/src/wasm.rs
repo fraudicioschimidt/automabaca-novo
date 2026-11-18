@@ -1301,3 +1301,45 @@ pub fn sharp_equivalent_bet(
             strings([bet.mercado, &bet.selecao, bet.nota])
         })
 }
+
+use dominio::settlement::lines;
+
+fn optional_number(value: Option<f64>) -> JsValue {
+    value.map_or(JsValue::NULL, JsValue::from)
+}
+
+#[wasm_bindgen(js_name = unknownLineSeparator)]
+pub fn unknown_line_separator() -> String {
+    lines::UNKNOWN_LINE_SEPARATOR.to_owned()
+}
+
+#[wasm_bindgen(js_name = lineToQuarters)]
+pub fn line_to_quarters(line: f64) -> JsValue {
+    optional_number(lines::line_to_quarters(line))
+}
+
+#[wasm_bindgen(js_name = withoutNumberedHalf)]
+pub fn without_numbered_half(text: &str) -> String {
+    lines::without_numbered_half(text)
+}
+
+/// `number[]`: o `Vec<f64>` do `wasm-bindgen` chegaria como `Float64Array`.
+#[wasm_bindgen(js_name = extractSignedNumbers)]
+pub fn extract_signed_numbers(text: &str) -> JsValue {
+    JsValue::from(
+        lines::extract_signed_numbers(text)
+            .into_iter()
+            .map(JsValue::from)
+            .collect::<Vec<_>>(),
+    )
+}
+
+#[wasm_bindgen(js_name = parseLineQuarters)]
+pub fn parse_line_quarters(selecao: &str, allow_negative: bool) -> JsValue {
+    optional_number(lines::parse_line_quarters(selecao, allow_negative))
+}
+
+#[wasm_bindgen(js_name = statusFromAdjustedQuarters)]
+pub fn status_from_adjusted_quarters(adjusted: f64) -> String {
+    lines::status_from_adjusted_quarters(adjusted).to_owned()
+}

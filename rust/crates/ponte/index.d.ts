@@ -225,6 +225,13 @@ declare const dominio: {
     evento: string,
     esporte?: string,
   ): [mercado: string, selecao: string, nota: "dnb→ah_0.0" | "dc→ah_+0.5"] | null;
+  /** Ver `src/domain/settlement/lines.ts`. */
+  unknownLineSeparator(): string;
+  lineToQuarters(line: number): number | null;
+  withoutNumberedHalf(text: string): string;
+  extractSignedNumbers(text: string): number[];
+  parseLineQuarters(selecao: string, allowNegative: boolean): number | null;
+  statusFromAdjustedQuarters(adjusted: number): "VOID" | "HALF_WON" | "HALF_LOST" | "WON" | "LOST";
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;

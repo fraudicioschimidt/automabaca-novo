@@ -1269,3 +1269,35 @@ pub fn sharp_equivalent_bet(
     sharp_equivalent::sharp_equivalent_bet(&mercado, &selecao, &evento, esporte.as_deref())
         .map(|bet| vec![bet.mercado.to_owned(), bet.selecao, bet.nota.to_owned()])
 }
+
+use dominio::settlement::lines;
+
+#[napi]
+pub fn unknown_line_separator() -> &'static str {
+    lines::UNKNOWN_LINE_SEPARATOR
+}
+
+#[napi]
+pub fn line_to_quarters(line: f64) -> Option<f64> {
+    lines::line_to_quarters(line)
+}
+
+#[napi]
+pub fn without_numbered_half(text: String) -> String {
+    lines::without_numbered_half(&text)
+}
+
+#[napi]
+pub fn extract_signed_numbers(text: String) -> Vec<f64> {
+    lines::extract_signed_numbers(&text)
+}
+
+#[napi]
+pub fn parse_line_quarters(selecao: String, allow_negative: bool) -> Option<f64> {
+    lines::parse_line_quarters(&selecao, allow_negative)
+}
+
+#[napi]
+pub fn status_from_adjusted_quarters(adjusted: f64) -> &'static str {
+    lines::status_from_adjusted_quarters(adjusted)
+}
