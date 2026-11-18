@@ -659,3 +659,69 @@ pub fn mark_soccer_reserve_teams(evento: &str, selecao: &str) -> JsValue {
         pair_value(evento, selecao)
     })
 }
+
+// --- mercados/ ---
+
+use dominio::mercados::{accents, match_scope, total_direction, trailing_side};
+
+fn optional_string(value: Option<String>) -> JsValue {
+    value.map_or(JsValue::NULL, JsValue::from)
+}
+
+#[wasm_bindgen]
+pub fn accentuate(term: &str) -> String {
+    accents::accentuate(term)
+}
+
+#[wasm_bindgen(js_name = accentVariants)]
+pub fn accent_variants(term: &str) -> JsValue {
+    strings(accents::accent_variants(term))
+}
+
+#[wasm_bindgen(js_name = scopeNouns)]
+pub fn scope_nouns() -> Vec<JsValue> {
+    vec![
+        strings(match_scope::MATCH_SCOPE_NOUNS.iter()),
+        strings(match_scope::SIDE_SCOPE_NOUNS.iter()),
+    ]
+}
+
+#[wasm_bindgen(js_name = trailingTeamCandidate)]
+pub fn trailing_team_candidate(trailing: &str) -> JsValue {
+    optional_string(trailing_side::trailing_team_candidate(trailing))
+}
+
+#[wasm_bindgen(js_name = trailingTeamCandidateOfSelection)]
+pub fn trailing_team_candidate_of_selection(selecao: &str) -> JsValue {
+    optional_string(trailing_side::trailing_team_candidate_of_selection(selecao))
+}
+
+#[wasm_bindgen(js_name = separateCompactStatUnit)]
+pub fn separate_compact_stat_unit(text: &str) -> String {
+    total_direction::separate_compact_stat_unit(text)
+}
+
+#[wasm_bindgen(js_name = expandAbbreviatedDirection)]
+pub fn expand_abbreviated_direction(selection: &str) -> String {
+    total_direction::expand_abbreviated_direction(selection)
+}
+
+#[wasm_bindgen(js_name = totalDirectionWords)]
+pub fn total_direction_words() -> Vec<JsValue> {
+    vec![
+        JsValue::from(total_direction::OVER_WORDS),
+        JsValue::from(total_direction::UNDER_WORDS),
+    ]
+}
+
+#[wasm_bindgen(js_name = totalDirectionOf)]
+pub fn total_direction_of(selection: &str, allow_bare_positive_line: bool) -> JsValue {
+    optional_string(
+        total_direction::total_direction_of(selection, allow_bare_positive_line).map(|direction| {
+            match direction {
+                total_direction::TotalDirection::Over => "over".to_owned(),
+                total_direction::TotalDirection::Under => "under".to_owned(),
+            }
+        }),
+    )
+}
