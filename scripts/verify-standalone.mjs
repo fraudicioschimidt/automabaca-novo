@@ -80,7 +80,7 @@ try {
   throw new Error("Standalone não consegue carregar a ponte Rust (@automabaca/dominio).", { cause: error });
 }
 
-// O `browserslist` do package.json (Chrome/Edge 97, Firefox 102, Safari 16.4)
+// O `browserslist` do package.json (Chrome/Edge 117, Firefox 113, Safari 16.4)
 // lê ES2022 inteiro e nada além: sintaxe mais nova (inclusive de regex, como a
 // flag `v`), vinda do código ou de dependência, quebraria a tela inteira lá.
 const ECMA_DOS_NAVEGADORES = 2022;

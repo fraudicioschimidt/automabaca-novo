@@ -83,8 +83,9 @@ e a ponte N-API não carrega no navegador (a fronteira em
 (`rust/crates/ponte`) entrega o `.node` ao servidor e o WebAssembly ao
 navegador pela condição `browser` do pacote, e a CSP ganhou
 `'wasm-unsafe-eval'` no `script-src`, que libera só a compilação de
-WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
-16.4) são os que aceitam essa diretiva. Andamento:
+WebAssembly. Os navegadores mínimos (Chrome e Edge 117, Firefox 113, Safari
+16.4, decisão do dono de 18/11/2026, pelo CSS das telas) aceitam essa
+diretiva. Andamento:
 
 - ponte única, com os testes dos dois lados (#13);
 - `kelly` (calculadora de Ferramentas), o primeiro módulo que roda no
@@ -164,6 +165,16 @@ WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
   milhão de comparações, nos dois lados. O `accentuate` do TS lia o mapa
   num objeto comum, e `accentuate("constructor")` devolvia o texto da função
   `Object` do protótipo; o Rust devolve a palavra, e só listas fixas chegam ali.
+- o catálogo de mercados (`catalog`, os 40 finais com os 291 aliases, os
+  21 intermediários e as 165 traduções) e o vocabulário de Draw No Bet e
+  Dupla Chance (`draw-vocabulary`: as listas, os padrões, a limpeza da
+  seleção e os termos do SQL do lote de liquidação). Os finais estão em
+  `src/domain/mercados/catalog-data.json`, que o TS importa (o tipo
+  `MercadoFinal` sai das chaves) e o `build.rs` do `dominio` lê na
+  compilação. Paridade com o TS antigo em 916 mil comparações, nos dois
+  lados. A Dupla Chance procura o sufixo no texto sem acento e corta o
+  original naquele índice UTF-16, como o TS: o `js-text` ganhou o NFD sem
+  as marcas U+0300–U+036F, conferido em cada ponto de código.
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)

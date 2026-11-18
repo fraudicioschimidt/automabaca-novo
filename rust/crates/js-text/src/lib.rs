@@ -19,6 +19,7 @@ mod backend {
 
     #[wasm_bindgen(inline_js = r#"
 export function jsTextToUpperCase(text) { return text.toUpperCase(); }
+export function jsTextNfdWithoutCombiningMarks(text) { return text.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
 export function jsTextFoldForMatching(text) {
   return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
@@ -28,6 +29,8 @@ export function jsTextFoldForMatching(text) {
         pub fn fold_for_matching(text: &str) -> String;
         #[wasm_bindgen(js_name = jsTextToUpperCase)]
         pub fn to_upper_case(text: &str) -> String;
+        #[wasm_bindgen(js_name = jsTextNfdWithoutCombiningMarks)]
+        pub fn nfd_without_combining_marks(text: &str) -> String;
     }
 }
 
@@ -285,11 +288,23 @@ mod backend {
     pub fn to_upper_case(text: &str) -> String {
         text.to_uppercase()
     }
+
+    pub fn nfd_without_combining_marks(text: &str) -> String {
+        text.nfd()
+            .filter(|c| !('\u{300}'..='\u{36f}').contains(c))
+            .collect()
+    }
 }
 
 /// `text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()`.
 pub fn fold_for_matching(text: &str) -> String {
     backend::fold_for_matching(text)
+}
+
+/// `text.normalize("NFD").replace(/[\u0300-\u036f]/g, "")`: tira só as
+/// marcas combinantes do bloco principal, sem mudar a caixa.
+pub fn nfd_without_combining_marks(text: &str) -> String {
+    backend::nfd_without_combining_marks(text)
 }
 
 /// `text.toUpperCase()` (com as expansões do Unicode: `ß` vira `SS`).

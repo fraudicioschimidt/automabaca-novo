@@ -127,9 +127,9 @@
     "protobufjs": false
   },
   "browserslist": [
-    "chrome >= 97",
-    "edge >= 97",
-    "firefox >= 102",
+    "chrome >= 117",
+    "edge >= 117",
+    "firefox >= 113",
     "safari >= 16.4",
     "ios_saf >= 16.4"
   ]

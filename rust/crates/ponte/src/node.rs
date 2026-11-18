@@ -689,3 +689,99 @@ pub fn total_direction_of(selection: String, allow_bare_positive_line: bool) -> 
         }
     })
 }
+
+use dominio::mercados::{catalog, draw_vocabulary};
+
+fn owned(items: &[&str]) -> Vec<String> {
+    items.iter().map(|item| (*item).to_owned()).collect()
+}
+
+#[napi]
+pub fn mercados_intermediarios() -> Vec<String> {
+    owned(catalog::MERCADOS_INTERMEDIARIOS)
+}
+
+/// As traduções diretas PT/legado, na ordem do catálogo.
+#[napi]
+pub fn mercado_translations() -> Vec<(String, String)> {
+    catalog::MERCADO_TRANSLATIONS
+        .iter()
+        .map(|(from, to)| ((*from).to_owned(), (*to).to_owned()))
+        .collect()
+}
+
+#[napi]
+pub fn normalize_mercado_key(text: String) -> String {
+    catalog::normalize_mercado_key(&text)
+}
+
+#[napi]
+pub fn resolve_mercado_canonical(raw: String) -> Option<String> {
+    catalog::resolve_mercado_canonical(&raw).map(str::to_owned)
+}
+
+#[napi]
+pub fn resolve_mercado_static(raw: String) -> Option<String> {
+    catalog::resolve_mercado_static(&raw).map(str::to_owned)
+}
+
+#[napi]
+pub fn is_mercado_final(mercado: String) -> bool {
+    catalog::is_mercado_final(&mercado)
+}
+
+/// As listas de `DRAW_NO_BET_VOCABULARY` e depois as de
+/// `DOUBLE_CHANCE_VOCABULARY`, na ordem dos campos.
+#[napi]
+pub fn draw_vocabulary() -> Vec<Vec<String>> {
+    let dnb = &draw_vocabulary::DRAW_NO_BET_VOCABULARY;
+    let dc = &draw_vocabulary::DOUBLE_CHANCE_VOCABULARY;
+    [
+        dnb.standalone,
+        dnb.abbreviations,
+        dnb.verbs,
+        dnb.objects,
+        dnb.states,
+        dnb.nouns,
+        dnb.noun_qualifiers,
+        dnb.connectors,
+        dc.standalone,
+        dc.abbreviations,
+        dc.terms,
+    ]
+    .into_iter()
+    .map(owned)
+    .collect()
+}
+
+#[napi]
+pub fn draw_no_bet_pattern(space: String) -> String {
+    draw_vocabulary::draw_no_bet_pattern(&space)
+}
+
+#[napi]
+pub fn double_chance_pattern(space: String) -> String {
+    draw_vocabulary::double_chance_pattern(&space)
+}
+
+/// O time limpo, ou `null` quando a seleção não é DNB.
+#[napi]
+pub fn strip_draw_no_bet_from_selection(selecao: String) -> Option<String> {
+    draw_vocabulary::strip_draw_no_bet_from_selection(&selecao)
+}
+
+/// O time limpo, ou `null` quando a seleção não é Dupla Chance.
+#[napi]
+pub fn strip_double_chance_from_selection(selecao: String) -> Option<String> {
+    draw_vocabulary::strip_double_chance_from_selection(&selecao)
+}
+
+#[napi]
+pub fn draw_no_bet_sql_terms() -> Vec<Vec<String>> {
+    draw_vocabulary::draw_no_bet_sql_terms()
+}
+
+#[napi]
+pub fn double_chance_sql_terms() -> Vec<Vec<String>> {
+    draw_vocabulary::double_chance_sql_terms()
+}
