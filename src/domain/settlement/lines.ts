@@ -7,6 +7,11 @@ import { normalizeStr } from "@/src/domain/text";
  * dinheiro.
  */
 
+/** O número de "2,5" ou "2.5": a primeira vírgula vira o ponto decimal. */
+function decimalNumber(raw: string): number {
+  return Number(raw.replace(",", "."));
+}
+
 /** -0.25 → -1; 2.5 → 10; null quando não é múltiplo de 0.25. */
 export function lineToQuarters(line: number): number | null {
   if (!Number.isFinite(line)) return null;
@@ -60,7 +65,7 @@ function uniqueLooseLineCandidate(text: string): number | null {
   )];
   if (directed.length === 1) {
     const raw = directed[0]?.[1] ?? "";
-    const value = Number(raw.replace(",", "."));
+    const value = decimalNumber(raw);
     if (Number.isFinite(value)) {
       if (/[.,]/.test(raw)) return value;
       // Com mais de um número, uma linha inteira só é inequívoca quando o
@@ -84,7 +89,7 @@ function uniqueLooseLineCandidate(text: string): number | null {
   // invertido. Com um número só ("Flamengo (-1.5)" após remover o nome), o sinal
   // já vem correto pelo caminho de valor único.
   const signed = [...normalized.matchAll(/(?:^|[\s(])([+-]\d+(?:[.,]\d+)?)(?=$|[\s)])/g)]
-    .map((match) => Number((match[1] ?? "").replace(",", ".")))
+    .map((match) => decimalNumber(match[1] ?? ""))
     .filter(Number.isFinite);
   if (signed.length === 1) return signed[0] ?? null;
   // DOIS números assinados que não formaram par (a normalização de split já
@@ -97,7 +102,7 @@ function uniqueLooseLineCandidate(text: string): number | null {
   // como rodada/tempo. Dois inteiros adjacentes ("Over 2 5") são ambíguos:
   // pode ser OCR de 2.5, e escolher 2 ou fazer média gravaria outro mercado.
   const decimals = [...normalized.matchAll(/(?:^|[^0-9])([0-9]+[.,][0-9]+)(?=$|[^0-9])/g)]
-    .map((match) => Number((match[1] ?? "").replace(",", ".")))
+    .map((match) => decimalNumber(match[1] ?? ""))
     .filter(Number.isFinite);
   return decimals.length === 1 ? decimals[0] ?? null : null;
 }
@@ -124,7 +129,7 @@ export function extractSignedNumbers(text: string): number[] {
   while ((match = tokenRe.exec(` ${normalized} `)) !== null) {
     const raw = match[1];
     if (!raw) continue;
-    const parsed = Number(raw.replace(/\s+/g, "").replace(",", "."));
+    const parsed = decimalNumber(raw.replace(/\s+/g, ""));
     if (Number.isFinite(parsed)) values.push(parsed);
   }
   return values;
@@ -183,8 +188,8 @@ export function parseLineQuarters(
           (match, first: string, offset: number, text: string) => {
             const second = text.slice(offset + match.length).match(/^[+-]\d+(?:[.,]\d+)?/)?.[0];
             if (!second) return match;
-            const a = lineToQuarters(Number(first.replace(",", ".")));
-            const b = lineToQuarters(Number(second.replace(",", ".")));
+            const a = lineToQuarters(decimalNumber(first));
+            const b = lineToQuarters(decimalNumber(second));
             if (a === null || b === null || Math.abs(a - b) !== 2) return match;
             return `${first}, `;
           },
@@ -216,7 +221,7 @@ export function parseLineQuarters(
     );
     if (splitMatch) {
       const [, firstSign = "", firstBody = "", sep = ",", secondSignRaw = "", secondBody = ""] = splitMatch;
-      const firstVal = Number(firstBody.replace(",", "."));
+      const firstVal = decimalNumber(firstBody);
       const isSplit =
         sep === "/" ||
         firstBody.includes(".") ||

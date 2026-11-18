@@ -29,7 +29,12 @@ PRs pequenos, com a CI verde e o publicador automático de sempre.
    banco, Telegram, dinheiro): modo sombra, em que o Rust calcula, grava só a
    comparação e o Node continua decidindo, até as duas versões concordarem.
 4. **Liquidação por último, em cada fase.** É o que mexe com dinheiro e erra em
-   silêncio. Ela só vira depois de semanas de sombra sem divergência.
+   silêncio. Ela só vira depois de semanas de sombra sem divergência. Na
+   fase 1, os leitores de `settlement/` de que a leitura de mercados depende
+   vêm antes, cada um no seu PR e com a paridade de sempre (18/11/2026): o
+   lado da aposta (`sides`) e a linha em quartos (`lines`), que a captura
+   também usa. Os resolvedores de resultado (placar, estatística, props,
+   artilheiro) continuam por último.
 5. **A suíte de navegador é o aceite final.** Os 12 specs do Playwright rodam
    contra a versão nova de cada tela antes de ela substituir a antiga.
 6. **Rust estável, versão fixada.** `rust-toolchain.toml`, `cargo fmt`,
