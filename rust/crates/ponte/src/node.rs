@@ -786,6 +786,79 @@ pub fn double_chance_sql_terms() -> Vec<Vec<String>> {
     draw_vocabulary::double_chance_sql_terms()
 }
 
+use dominio::mercados::stat_qualifier;
+
+#[napi]
+pub fn non_score_stat_terms() -> &'static str {
+    stat_qualifier::NON_SCORE_STAT_TERMS
+}
+
+/// `[terms, sports]` de gols, corridas e pontos, nessa ordem.
+#[napi]
+pub fn score_unit_rules() -> Vec<(Vec<String>, Vec<String>)> {
+    stat_qualifier::SCORE_UNIT_RULES
+        .iter()
+        .map(|rule| {
+            let terms = rule.terms.iter().map(|term| (*term).to_owned()).collect();
+            (terms, rule.sports.clone())
+        })
+        .collect()
+}
+
+#[napi]
+pub fn is_both_teams_cards_text(text: String) -> bool {
+    stat_qualifier::is_both_teams_cards_text(&text)
+}
+
+#[napi]
+pub fn selecao_declara_linha_de_estatistica(selecao: String) -> bool {
+    stat_qualifier::selecao_declara_linha_de_estatistica(&selecao)
+}
+
+#[napi]
+pub fn has_non_score_stat_qualifier(mercado: String, selecao: String) -> bool {
+    stat_qualifier::has_non_score_stat_qualifier(&mercado, &selecao)
+}
+
+#[napi]
+pub fn score_qualifier_terms() -> Vec<String> {
+    stat_qualifier::score_qualifier_terms()
+}
+
+#[napi]
+pub fn has_unknown_score_qualifier(mercado: String) -> bool {
+    stat_qualifier::has_unknown_score_qualifier(&mercado)
+}
+
+#[napi]
+pub fn known_score_qualifier_sql_terms() -> Vec<String> {
+    stat_qualifier::known_score_qualifier_sql_terms()
+}
+
+#[napi]
+pub fn non_score_stat_sql_terms() -> Vec<String> {
+    stat_qualifier::non_score_stat_sql_terms()
+}
+
+#[napi]
+pub fn score_unit_terms_for_sql() -> Vec<String> {
+    stat_qualifier::score_unit_terms_for_sql()
+}
+
+#[napi]
+pub fn has_score_unit_mismatch(mercado: String, selecao: String, esporte: Option<String>) -> bool {
+    stat_qualifier::has_score_unit_mismatch(&mercado, &selecao, esporte.as_deref())
+}
+
+#[napi]
+pub fn has_sport_score_unit_mismatch(
+    mercado: String,
+    selecao: String,
+    esporte: Option<String>,
+) -> bool {
+    stat_qualifier::has_sport_score_unit_mismatch(&mercado, &selecao, esporte.as_deref())
+}
+
 // --- sports/ ---
 
 use dominio::sports::{detect, registry};

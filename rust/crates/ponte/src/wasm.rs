@@ -825,6 +825,76 @@ pub fn double_chance_sql_terms() -> JsValue {
     lists(draw_vocabulary::double_chance_sql_terms())
 }
 
+use dominio::mercados::stat_qualifier;
+
+#[wasm_bindgen(js_name = nonScoreStatTerms)]
+pub fn non_score_stat_terms() -> String {
+    stat_qualifier::NON_SCORE_STAT_TERMS.to_owned()
+}
+
+/// `[terms, sports]` de gols, corridas e pontos, nessa ordem.
+#[wasm_bindgen(js_name = scoreUnitRules)]
+pub fn score_unit_rules() -> Vec<JsValue> {
+    stat_qualifier::SCORE_UNIT_RULES
+        .iter()
+        .map(|rule| pair_value(strings(rule.terms.iter()), strings(rule.sports.iter())))
+        .collect()
+}
+
+#[wasm_bindgen(js_name = isBothTeamsCardsText)]
+pub fn is_both_teams_cards_text(text: &str) -> bool {
+    stat_qualifier::is_both_teams_cards_text(text)
+}
+
+#[wasm_bindgen(js_name = selecaoDeclaraLinhaDeEstatistica)]
+pub fn selecao_declara_linha_de_estatistica(selecao: &str) -> bool {
+    stat_qualifier::selecao_declara_linha_de_estatistica(selecao)
+}
+
+#[wasm_bindgen(js_name = hasNonScoreStatQualifier)]
+pub fn has_non_score_stat_qualifier(mercado: &str, selecao: &str) -> bool {
+    stat_qualifier::has_non_score_stat_qualifier(mercado, selecao)
+}
+
+#[wasm_bindgen(js_name = scoreQualifierTerms)]
+pub fn score_qualifier_terms() -> JsValue {
+    strings(stat_qualifier::score_qualifier_terms())
+}
+
+#[wasm_bindgen(js_name = hasUnknownScoreQualifier)]
+pub fn has_unknown_score_qualifier(mercado: &str) -> bool {
+    stat_qualifier::has_unknown_score_qualifier(mercado)
+}
+
+#[wasm_bindgen(js_name = knownScoreQualifierSqlTerms)]
+pub fn known_score_qualifier_sql_terms() -> JsValue {
+    strings(stat_qualifier::known_score_qualifier_sql_terms())
+}
+
+#[wasm_bindgen(js_name = nonScoreStatSqlTerms)]
+pub fn non_score_stat_sql_terms() -> JsValue {
+    strings(stat_qualifier::non_score_stat_sql_terms())
+}
+
+#[wasm_bindgen(js_name = scoreUnitTermsForSql)]
+pub fn score_unit_terms_for_sql() -> JsValue {
+    strings(stat_qualifier::score_unit_terms_for_sql())
+}
+
+#[wasm_bindgen(js_name = hasScoreUnitMismatch)]
+pub fn has_score_unit_mismatch(mercado: &str, selecao: &str, esporte: Option<String>) -> bool {
+    stat_qualifier::has_score_unit_mismatch(mercado, selecao, esporte.as_deref())
+}
+
+#[wasm_bindgen(js_name = hasSportScoreUnitMismatch)]
+pub fn has_sport_score_unit_mismatch(
+    mercado: &str,
+    selecao: &str,
+    esporte: Option<String>,
+) -> bool {
+    stat_qualifier::has_sport_score_unit_mismatch(mercado, selecao, esporte.as_deref())
+}
+
 // --- sports/ ---
 
 use dominio::sports::{detect, registry};

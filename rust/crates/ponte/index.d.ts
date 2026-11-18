@@ -152,6 +152,24 @@ declare const dominio: {
   /** Cada termo: os trechos que precisam estar todos no mercado. */
   drawNoBetSqlTerms(): string[][];
   doubleChanceSqlTerms(): string[][];
+  /** Ver `src/domain/mercados/stat-qualifier.ts`. */
+  nonScoreStatTerms(): string;
+  /** `[terms, sports]` de gols, corridas e pontos, nessa ordem. */
+  scoreUnitRules(): [
+    goals: [terms: string[], sports: string[]],
+    runs: [terms: string[], sports: string[]],
+    points: [terms: string[], sports: string[]],
+  ];
+  isBothTeamsCardsText(text: string): boolean;
+  selecaoDeclaraLinhaDeEstatistica(selecao: string): boolean;
+  hasNonScoreStatQualifier(mercado: string, selecao: string): boolean;
+  scoreQualifierTerms(): string[];
+  hasUnknownScoreQualifier(mercado: string): boolean;
+  knownScoreQualifierSqlTerms(): string[];
+  nonScoreStatSqlTerms(): string[];
+  scoreUnitTermsForSql(): string[];
+  hasScoreUnitMismatch(mercado: string, selecao: string, esporte?: string): boolean;
+  hasSportScoreUnitMismatch(mercado: string, selecao: string, esporte?: string): boolean;
   /** Ver `src/domain/sports/`. */
   canonicalSport(value: string | null | undefined): string | null;
   esportesComUnidade(unidade: string): string[];
