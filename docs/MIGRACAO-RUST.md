@@ -55,6 +55,16 @@ Cada item diz o que muda e onde foi visto. Nenhum está aplicado.
   como unidade nomeada do total do time; chutes e faltas, não). Pode ser de
   propósito. Antes de propor, levanto quais rótulos caem numa lista e não na
   outra e o efeito em apostas reais.
+- **Dois reconhecedores de esporte.** `marketSportOf`
+  (`mercados/compatibility`), que decide se um rótulo final da Pinnacle vale
+  para o esporte da aposta, tem a sua própria lista de nomes, separada do
+  registro de esportes (`sports/registry`). Comparado com os nomes e os
+  aliases do registro: "futebol australiano" (Aussie Rules) cai em futebol,
+  pela palavra "futebol", e um rótulo de futebol seria aceito como final
+  numa aposta de futebol australiano; "basket" cai em "outro", embora o
+  registro o leia como basquete; "Rugby League" cai em rugby (pode ser de
+  propósito). Ler o esporte pelo registro corrige os dois primeiros e muda
+  a compatibilidade dessas apostas.
 
 ## Fases
 

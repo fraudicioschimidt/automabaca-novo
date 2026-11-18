@@ -10,25 +10,20 @@ import {
   type MarketSport,
 } from "./compatibility";
 
+/** "Moneyline" e "Money Line" são o mesmo mercado. */
+const MONEYLINE_BY_SPORT: Partial<Record<MarketSport, string>> = {
+  soccer: "Money Line – Match",
+  esports: "Money Line – Match",
+  basketball: "Money Line – Game",
+  baseball: "Money Line – Game",
+  tennis: "Match Winner",
+  hockey: "Money Line",
+  american_football: "Money Line",
+};
+
 const FINAL_BY_SPORT: Record<string, Partial<Record<MarketSport, string>>> = {
-  Moneyline: {
-    soccer: "Money Line – Match",
-    esports: "Money Line – Match",
-    basketball: "Money Line – Game",
-    baseball: "Money Line – Game",
-    tennis: "Match Winner",
-    hockey: "Money Line",
-    american_football: "Money Line",
-  },
-  "Money Line": {
-    soccer: "Money Line – Match",
-    esports: "Money Line – Match",
-    basketball: "Money Line – Game",
-    baseball: "Money Line – Game",
-    tennis: "Match Winner",
-    hockey: "Money Line",
-    american_football: "Money Line",
-  },
+  Moneyline: MONEYLINE_BY_SPORT,
+  "Money Line": MONEYLINE_BY_SPORT,
   "Asian Handicap": {
     soccer: "Handicap – Match",
     basketball: "Handicap – Game",
@@ -93,21 +88,22 @@ const FINAL_FIXED: Record<string, string> = {
   "Run Line": "Handicap – Game",
 };
 
+/** Props de jogador e gols do jogador: o rótulo já é o final. */
+const FINAL_AS_IS: ReadonlySet<string> = new Set([
+  "Player Props",
+  "Player Points/Rebounds/Assists",
+  "Player Points",
+  "Player Rebounds",
+  "Player Assists",
+  "Shots",
+  "Shots On Target",
+  "To Score 2+ Goals",
+  "To Score 3+ Goals",
+]);
+
 /** Label FINAL Pinnacle a partir do canônico de entrada + esporte. */
 export function finalizePinnacleMarket(mercado: string, esporte?: string): string {
-  if (
-    mercado === "Player Props" ||
-    mercado === "Player Points/Rebounds/Assists" ||
-    mercado === "Player Points" ||
-    mercado === "Player Rebounds" ||
-    mercado === "Player Assists" ||
-    mercado === "Shots" ||
-    mercado === "Shots On Target" ||
-    mercado === "To Score 2+ Goals" ||
-    mercado === "To Score 3+ Goals"
-  ) {
-    return mercado;
-  }
+  if (FINAL_AS_IS.has(mercado)) return mercado;
   const slug = marketSportOf(esporte);
   // Fora dos esportes com prorrogação, o tempo regulamentar É o mercado do
   // jogo (o 1X2 do futebol é o Money Line – Match).
