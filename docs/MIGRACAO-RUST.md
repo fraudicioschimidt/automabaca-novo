@@ -83,8 +83,9 @@ e a ponte N-API não carrega no navegador (a fronteira em
 (`rust/crates/ponte`) entrega o `.node` ao servidor e o WebAssembly ao
 navegador pela condição `browser` do pacote, e a CSP ganhou
 `'wasm-unsafe-eval'` no `script-src`, que libera só a compilação de
-WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
-16.4) são os que aceitam essa diretiva. Andamento:
+WebAssembly. Os navegadores mínimos (Chrome e Edge 117, Firefox 113, Safari
+16.4, decisão do dono de 18/11/2026, pelo CSS das telas) aceitam essa
+diretiva. Andamento:
 
 - ponte única, com os testes dos dois lados (#13);
 - `kelly` (calculadora de Ferramentas), o primeiro módulo que roda no
