@@ -147,6 +147,18 @@ WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
   O WASM foi a 114 KB com gzip (o código e o vocabulário dos nomes, sem
   tabela do Unicode).
 
+- `team-category` e `text` (similaridade de nomes de time, separação "A vs
+  B", slug, o casamento dos dois lados do confronto e o refinamento de
+  candidatos por categoria), juntos porque o Rust não chama TypeScript de
+  volta. Paridade com o TS antigo em 1,9 milhão de comparações, nos dois
+  lados. O laço do pareamento (uma aposta contra o catálogo do dia) ficou
+  2,2× mais rápido no servidor (15 µs contra 34 µs por par, já contando a
+  travessia) e 1,5× no navegador; a memória do `teamNameVariants` saiu da
+  casca. O `refineCategoryCandidates` recebe uma função por candidato: a
+  casca a aplica e a ponte recebe os dados em colunas. O
+  `markSoccerReserveTeams` montava um regex com os nomes de cada aposta, o
+  que encheria o catálogo sem limite: virou código Rust.
+
 Três regras de método saíram desses módulos:
 
 - **Funções de `Math` que o IEEE não fixa** (`pow`, trigonometria) passam pelo

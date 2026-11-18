@@ -11,17 +11,7 @@ export function normalizeStr(s: string): string {
   return dominio.normalizeStr(s || "");
 }
 
-const [stopWords, reserveClassTokens, [reserveClassMarker]] = dominio.teamNameVocabulary();
-
-export const TEAM_STOP_WORDS = new Set(stopWords);
-
-/**
- * Reservas / II / Youth / U21–U23 — mesma "classe" em feeds (Pinnacle vs
- * tipster): "Adelaide United II" ↔ "Adelaide United U23". O "b" solto
- * (Barcelona B) fica fora: em várias ligas o time B ≠ U23.
- */
-export const RESERVE_CLASS_TOKENS = new Set(reserveClassTokens);
-export const RESERVE_CLASS_MARKER = reserveClassMarker!;
+export const TEAM_STOP_WORDS = new Set(dominio.teamStopWords());
 
 /** Token que distingue times diferentes (feminino, sub-20, B, reserva): nunca removido nem expandido. */
 export function isProtectedToken(token: string): boolean {

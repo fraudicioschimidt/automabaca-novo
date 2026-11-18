@@ -66,14 +66,11 @@ declare const dominio: {
   canonicalizeTeamName(text: string): string;
   isProtectedToken(token: string): boolean;
   teamNameVariants(canon: string): string[];
-  /** `[palavras de parada, tokens da classe reserva, [marcador da classe reserva]]`. */
-  teamNameVocabulary(): [string[], string[], [string]];
+  teamStopWords(): string[];
   teamNameEquivalents(): string[][];
   /** Ver `src/domain/team-category.ts`. Ligas nulas valem como ausentes. */
-  protectedCategoryKey(token: string): string;
   teamCategoryTokens(canon: string, digitsOnly: boolean): string[];
   reserveSuffixMismatch(ca: string, cb: string): boolean;
-  protectedCategoriesMismatch(ca: string, cb: string): boolean;
   hasProtectedTeamCategoryConflict(a: string, b: string): boolean;
   teamIdentityCategoryConflict(a: string, b: string): boolean;
   betDeclaresCategoryFixtureLacks(canonAposta: string, canonFixture: string): boolean;
@@ -99,7 +96,7 @@ declare const dominio: {
   teamSideSimilarityCanon(ca: string, cb: string): [score: number, evidence: number];
   teamNameEvidence(a: string, b: string): number;
   fixtureHasAnchorSide(homeEvidence: number, awayEvidence: number): boolean;
-  textThresholds(): [anchorSideFloor: number, sameFixtureMinSimilarity: number];
+  anchorSideFloor(): number;
   bestSearchWord(text: string): string;
   splitEventoTeams(evento: string): [home: string, away: string] | null;
   fixtureHasPlaceholderTeam(evento: string): boolean;

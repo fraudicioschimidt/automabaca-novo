@@ -12,11 +12,6 @@ import dominio from "@automabaca/dominio";
  * quem compara NOME DE TIME com NOME DE TIME o considera.
  */
 
-/** Normaliza tokens protegidos para comparação (II ≡ Youth ≡ Reserves, mas B é distinto). */
-export function protectedCategoryKey(token: string): string {
-  return dominio.protectedCategoryKey(token);
-}
-
 /**
  * Tokens que declaram a CATEGORIA do time — feminino, base, reserva, sufixo
  * numérico. Conjunto vazio = o nome não declara nada.
@@ -28,11 +23,6 @@ export function teamCategoryTokens(canon: string, somenteDigitos = false): Set<s
 /** Os dois nomes (canônicos) divergem no sufixo numérico de reserva? */
 export function reserveSuffixMismatch(ca: string, cb: string): boolean {
   return dominio.reserveSuffixMismatch(ca, cb);
-}
-
-/** Os dois nomes (canônicos) divergem em algum token protegido? */
-export function protectedCategoriesMismatch(ca: string, cb: string): boolean {
-  return dominio.protectedCategoriesMismatch(ca, cb);
 }
 
 /** Impede que feminino, base, reservas ou time B sejam fundidos ao principal. */

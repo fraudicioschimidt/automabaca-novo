@@ -64,7 +64,7 @@ export function teamNameEvidence(a: string, b: string): number {
   return dominio.teamNameEvidence(a || "", b || "");
 }
 
-const [anchorSideFloor, sameFixtureMinSimilarity] = dominio.textThresholds();
+const anchorSideFloor = dominio.anchorSideFloor();
 
 /**
  * Piso do lado ÂNCORA de um confronto, sobre a `evidence` do lado. Um par pode
@@ -103,14 +103,9 @@ export function fixtureHasPlaceholderTeam(evento: string): boolean {
 }
 
 /**
- * Limiar único de "é o MESMO confronto, só com outro alias dos times": a edição
- * pelo painel e a edição no canal decidem a mesma pergunta.
- */
-export const SAME_FIXTURE_MIN_SIMILARITY = sameFixtureMinSimilarity;
-
-/**
  * Os dois eventos descrevem o mesmo confronto? Compara mandante com mandante e
- * visitante com visitante; qualquer lado abaixo do limiar já reprova.
+ * visitante com visitante; qualquer lado abaixo do limiar único de "mesmo
+ * confronto com outro alias" (o da edição pelo painel e no canal) já reprova.
  */
 export function sameFixtureTeams(
   eventoA: string | null | undefined,

@@ -345,14 +345,9 @@ pub fn team_name_variants(canon: &str) -> JsValue {
     strings(dominio::text_normalization::team_name_variants(canon))
 }
 
-#[wasm_bindgen(js_name = teamNameVocabulary)]
-pub fn team_name_vocabulary() -> Vec<JsValue> {
-    use dominio::text_normalization as names;
-    vec![
-        strings(names::TEAM_STOP_WORDS.iter()),
-        strings(names::RESERVE_CLASS_TOKENS.iter()),
-        strings([names::RESERVE_CLASS_MARKER]),
-    ]
+#[wasm_bindgen(js_name = teamStopWords)]
+pub fn team_stop_words() -> JsValue {
+    strings(dominio::text_normalization::TEAM_STOP_WORDS.iter())
 }
 
 #[wasm_bindgen(js_name = teamNameEquivalents)]
@@ -417,11 +412,6 @@ fn pair_value(a: impl Into<JsValue>, b: impl Into<JsValue>) -> JsValue {
     JsValue::from(vec![a.into(), b.into()])
 }
 
-#[wasm_bindgen(js_name = protectedCategoryKey)]
-pub fn protected_category_key(token: &str) -> String {
-    category::protected_category_key(token).to_owned()
-}
-
 #[wasm_bindgen(js_name = teamCategoryTokens)]
 pub fn team_category_tokens(canon: &str, digits_only: bool) -> JsValue {
     strings(category::team_category_tokens(canon, digits_only))
@@ -430,11 +420,6 @@ pub fn team_category_tokens(canon: &str, digits_only: bool) -> JsValue {
 #[wasm_bindgen(js_name = reserveSuffixMismatch)]
 pub fn reserve_suffix_mismatch(ca: &str, cb: &str) -> bool {
     category::reserve_suffix_mismatch(ca, cb)
-}
-
-#[wasm_bindgen(js_name = protectedCategoriesMismatch)]
-pub fn protected_categories_mismatch(ca: &str, cb: &str) -> bool {
-    category::protected_categories_mismatch(ca, cb)
 }
 
 #[wasm_bindgen(js_name = hasProtectedTeamCategoryConflict)]
@@ -562,12 +547,9 @@ pub fn fixture_has_anchor_side(home_evidence: f64, away_evidence: f64) -> bool {
     names::fixture_has_anchor_side(home_evidence, away_evidence)
 }
 
-#[wasm_bindgen(js_name = textThresholds)]
-pub fn text_thresholds() -> Vec<JsValue> {
-    vec![
-        JsValue::from(names::ANCHOR_SIDE_FLOOR),
-        JsValue::from(names::SAME_FIXTURE_MIN_SIMILARITY),
-    ]
+#[wasm_bindgen(js_name = anchorSideFloor)]
+pub fn anchor_side_floor() -> f64 {
+    names::ANCHOR_SIDE_FLOOR
 }
 
 #[wasm_bindgen(js_name = bestSearchWord)]

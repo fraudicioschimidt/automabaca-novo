@@ -319,16 +319,13 @@ pub fn team_name_variants(canon: String) -> Vec<String> {
     dominio::text_normalization::team_name_variants(&canon)
 }
 
-/// As listas de vocabulário de nome de time, carregadas uma vez pela casca.
+/// As palavras de parada dos nomes de time, carregadas uma vez pela casca.
 #[napi]
-pub fn team_name_vocabulary() -> Vec<Vec<String>> {
-    use dominio::text_normalization as names;
-    let list = |words: &[&str]| words.iter().map(|word| (*word).to_owned()).collect();
-    vec![
-        list(names::TEAM_STOP_WORDS),
-        list(names::RESERVE_CLASS_TOKENS),
-        vec![names::RESERVE_CLASS_MARKER.to_owned()],
-    ]
+pub fn team_stop_words() -> Vec<String> {
+    dominio::text_normalization::TEAM_STOP_WORDS
+        .iter()
+        .map(|word| (*word).to_owned())
+        .collect()
 }
 
 #[napi]
@@ -382,11 +379,6 @@ use dominio::team_category as category;
 use dominio::text as names;
 
 #[napi]
-pub fn protected_category_key(token: String) -> String {
-    category::protected_category_key(&token).to_owned()
-}
-
-#[napi]
 pub fn team_category_tokens(canon: String, digits_only: bool) -> Vec<String> {
     category::team_category_tokens(&canon, digits_only)
 }
@@ -394,11 +386,6 @@ pub fn team_category_tokens(canon: String, digits_only: bool) -> Vec<String> {
 #[napi]
 pub fn reserve_suffix_mismatch(ca: String, cb: String) -> bool {
     category::reserve_suffix_mismatch(&ca, &cb)
-}
-
-#[napi]
-pub fn protected_categories_mismatch(ca: String, cb: String) -> bool {
-    category::protected_categories_mismatch(&ca, &cb)
 }
 
 #[napi]
@@ -528,10 +515,9 @@ pub fn fixture_has_anchor_side(home_evidence: f64, away_evidence: f64) -> bool {
     names::fixture_has_anchor_side(home_evidence, away_evidence)
 }
 
-/// `[ANCHOR_SIDE_FLOOR, SAME_FIXTURE_MIN_SIMILARITY]`.
 #[napi]
-pub fn text_thresholds() -> Vec<f64> {
-    vec![names::ANCHOR_SIDE_FLOOR, names::SAME_FIXTURE_MIN_SIMILARITY]
+pub fn anchor_side_floor() -> f64 {
+    names::ANCHOR_SIDE_FLOOR
 }
 
 #[napi]
