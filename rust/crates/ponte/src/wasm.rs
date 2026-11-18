@@ -795,16 +795,6 @@ pub fn draw_vocabulary() -> JsValue {
     )
 }
 
-#[wasm_bindgen(js_name = drawNoBetPattern)]
-pub fn draw_no_bet_pattern(space: &str) -> String {
-    draw_vocabulary::draw_no_bet_pattern(space)
-}
-
-#[wasm_bindgen(js_name = doubleChancePattern)]
-pub fn double_chance_pattern(space: &str) -> String {
-    draw_vocabulary::double_chance_pattern(space)
-}
-
 #[wasm_bindgen(js_name = stripDrawNoBetFromSelection)]
 pub fn strip_draw_no_bet_from_selection(selecao: &str) -> JsValue {
     optional_string(draw_vocabulary::strip_draw_no_bet_from_selection(selecao))
@@ -1076,4 +1066,121 @@ pub fn match_double_chance_selection(selecao: &str, evento: &str) -> JsValue {
     sides::match_double_chance_selection(selecao, evento).map_or(JsValue::NULL, |(one, other)| {
         strings([one.as_str(), other.as_str()])
     })
+}
+
+use dominio::mercados::classify;
+
+/// `[[EXTRA_TIME_PATTERN, REGULATION_TIME_PATTERN], [escopos de outright,
+/// frases de vencedor, 1º tempo, 2º tempo, siglas do 1º, siglas do 2º]]`.
+#[wasm_bindgen(js_name = classifyData)]
+pub fn classify_data() -> JsValue {
+    pair_value(
+        strings([
+            classify::EXTRA_TIME_PATTERN,
+            classify::REGULATION_TIME_PATTERN,
+        ]),
+        JsValue::from(vec![
+            strings(classify::OUTRIGHT_SCOPE_NOUNS),
+            strings(classify::OUTRIGHT_WINNER_PHRASES),
+            strings(classify::HALF_PERIOD_PHRASES_FIRST),
+            strings(classify::HALF_PERIOD_PHRASES_SECOND),
+            strings(classify::HALF_PERIOD_ABBREVIATIONS_FIRST),
+            strings(classify::HALF_PERIOD_ABBREVIATIONS_SECOND),
+        ]),
+    )
+}
+
+#[wasm_bindgen(js_name = isEsports)]
+pub fn is_esports(esporte: Option<String>) -> bool {
+    classify::is_esports(esporte.as_deref())
+}
+
+#[wasm_bindgen(js_name = marketMapNumberOf)]
+pub fn market_map_number_of(mercado: &str, esporte: Option<String>) -> JsValue {
+    // `Option<u32>` vazio chegaria como `undefined`; o TS devolvia `null`.
+    classify::market_map_number_of(mercado, esporte.as_deref()).map_or(JsValue::NULL, JsValue::from)
+}
+
+#[wasm_bindgen(js_name = marketIncludesExtraTime)]
+pub fn market_includes_extra_time(mercado: &str) -> bool {
+    classify::market_includes_extra_time(mercado)
+}
+
+#[wasm_bindgen(js_name = declaresRegulationTime)]
+pub fn declares_regulation_time(text: &str) -> bool {
+    classify::declares_regulation_time(text)
+}
+
+#[wasm_bindgen(js_name = isBttsMarket)]
+pub fn is_btts_market(mercado: &str) -> bool {
+    classify::is_btts_market(mercado)
+}
+
+#[wasm_bindgen(js_name = marketNamesBothHalves)]
+pub fn market_names_both_halves(text: &str) -> bool {
+    classify::market_names_both_halves(text)
+}
+
+#[wasm_bindgen(js_name = isCombinedBttsMarket)]
+pub fn is_combined_btts_market(mercado: &str) -> bool {
+    classify::is_combined_btts_market(mercado)
+}
+
+#[wasm_bindgen(js_name = bttsSelectionSide)]
+pub fn btts_selection_side(selecao: &str) -> JsValue {
+    optional_str(classify::btts_selection_side(selecao).map(classify::BttsSide::as_str))
+}
+
+#[wasm_bindgen(js_name = isRaceToMarket)]
+pub fn is_race_to_market(mercado: &str, selecao: &str) -> bool {
+    classify::is_race_to_market(mercado, selecao)
+}
+
+#[wasm_bindgen(js_name = isThreeWayHandicapMarket)]
+pub fn is_three_way_handicap_market(mercado: &str) -> bool {
+    classify::is_three_way_handicap_market(mercado)
+}
+
+#[wasm_bindgen(js_name = isOutrightMarket)]
+pub fn is_outright_market(mercado: &str) -> bool {
+    classify::is_outright_market(mercado)
+}
+
+#[wasm_bindgen(js_name = isMethodOfVictoryMarket)]
+pub fn is_method_of_victory_market(mercado: &str) -> bool {
+    classify::is_method_of_victory_market(mercado)
+}
+
+#[wasm_bindgen(js_name = isDrawNoBetMarket)]
+pub fn is_draw_no_bet_market(mercado: &str) -> bool {
+    classify::is_draw_no_bet_market(mercado)
+}
+
+#[wasm_bindgen(js_name = isDoubleChanceMarket)]
+pub fn is_double_chance_market(mercado: &str) -> bool {
+    classify::is_double_chance_market(mercado)
+}
+
+#[wasm_bindgen(js_name = totalLabelSide)]
+pub fn total_label_side(mercado: &str, evento: &str) -> JsValue {
+    side_value(classify::total_label_side(mercado, evento))
+}
+
+#[wasm_bindgen(js_name = isTeamTotalMarket)]
+pub fn is_team_total_market(mercado: &str, selecao: &str, evento: Option<String>) -> bool {
+    classify::is_team_total_market(mercado, selecao, evento.as_deref())
+}
+
+#[wasm_bindgen(js_name = marketPeriodOf)]
+pub fn market_period_of(mercado: &str, esporte: Option<String>) -> String {
+    classify::market_period_of(mercado, esporte.as_deref())
+        .as_str()
+        .to_owned()
+}
+
+#[wasm_bindgen(js_name = marketKindOf)]
+pub fn market_kind_of(mercado: &str, selecao: &str, evento: Option<String>) -> String {
+    classify::market_kind_of(mercado, selecao, evento.as_deref())
+        .as_str()
+        .to_owned()
 }

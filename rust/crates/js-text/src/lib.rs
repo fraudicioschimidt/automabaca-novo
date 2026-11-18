@@ -26,6 +26,7 @@ export function jsTextLowerEach(text) {
   return out;
 }
 export function jsTextNfdWithoutCombiningMarks(text) { return text.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+export function jsTextWithoutDiacritics(text) { return text.normalize("NFD").replace(/\p{Diacritic}/gu, ""); }
 export function jsTextFoldForMatching(text) {
   return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
@@ -41,6 +42,8 @@ export function jsTextFoldForMatching(text) {
         pub fn lower_each(text: &str) -> String;
         #[wasm_bindgen(js_name = jsTextNfdWithoutCombiningMarks)]
         pub fn nfd_without_combining_marks(text: &str) -> String;
+        #[wasm_bindgen(js_name = jsTextWithoutDiacritics)]
+        pub fn without_diacritics(text: &str) -> String;
     }
 }
 
@@ -287,12 +290,14 @@ mod backend {
             .is_ok()
     }
 
-    pub fn fold_for_matching(text: &str) -> String {
-        let stripped: String = text
-            .nfd()
+    pub fn without_diacritics(text: &str) -> String {
+        text.nfd()
             .filter(|character| !is_diacritic(*character))
-            .collect();
-        stripped.to_lowercase()
+            .collect()
+    }
+
+    pub fn fold_for_matching(text: &str) -> String {
+        without_diacritics(text).to_lowercase()
     }
 
     pub fn to_upper_case(text: &str) -> String {
@@ -325,6 +330,12 @@ mod backend {
 /// `text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()`.
 pub fn fold_for_matching(text: &str) -> String {
     backend::fold_for_matching(text)
+}
+
+/// `text.normalize("NFD").replace(/\p{Diacritic}/gu, "")`: o texto sem acento,
+/// na caixa em que veio.
+pub fn without_diacritics(text: &str) -> String {
+    backend::without_diacritics(text)
 }
 
 /// `text.normalize("NFD").replace(/[\u0300-\u036f]/g, "")`: tira só as

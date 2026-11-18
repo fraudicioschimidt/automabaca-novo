@@ -145,8 +145,6 @@ declare const dominio: {
     nouns: string[], nounQualifiers: string[], connectors: string[],
     doubleChanceStandalone: string[], doubleChanceAbbreviations: string[], doubleChanceTerms: string[],
   ];
-  drawNoBetPattern(space: string): string;
-  doubleChancePattern(space: string): string;
   /** O time limpo, ou `null` quando a seleção não é DNB / Dupla Chance. */
   stripDrawNoBetFromSelection(selecao: string): string | null;
   stripDoubleChanceFromSelection(selecao: string): string | null;
@@ -171,6 +169,38 @@ declare const dominio: {
   scoreUnitTermsForSql(): string[];
   hasScoreUnitMismatch(mercado: string, selecao: string, esporte?: string): boolean;
   hasSportScoreUnitMismatch(mercado: string, selecao: string, esporte?: string): boolean;
+  /** Ver `src/domain/mercados/classify.ts`. */
+  classifyData(): [
+    patterns: [extraTime: string, regulationTime: string],
+    lists: [
+      outrightScopeNouns: string[], outrightWinnerPhrases: string[],
+      halfFirst: string[], halfSecond: string[], abbreviationsFirst: string[], abbreviationsSecond: string[],
+    ],
+  ];
+  isEsports(esporte?: string | null): boolean;
+  marketMapNumberOf(mercado: string, esporte?: string | null): number | null;
+  marketIncludesExtraTime(mercado: string): boolean;
+  declaresRegulationTime(text: string): boolean;
+  isBttsMarket(mercado: string): boolean;
+  marketNamesBothHalves(text: string): boolean;
+  isCombinedBttsMarket(mercado: string): boolean;
+  bttsSelectionSide(selecao: string): "yes" | "no" | null;
+  isRaceToMarket(mercado: string, selecao: string): boolean;
+  isThreeWayHandicapMarket(mercado: string): boolean;
+  isOutrightMarket(mercado: string): boolean;
+  isMethodOfVictoryMarket(mercado: string): boolean;
+  isDrawNoBetMarket(mercado: string): boolean;
+  isDoubleChanceMarket(mercado: string): boolean;
+  totalLabelSide(mercado: string, evento: string): "home" | "away" | null;
+  isTeamTotalMarket(mercado: string, selecao: string, evento?: string): boolean;
+  marketPeriodOf(mercado: string, esporte?: string | null): "FT" | "HT" | "SECOND_HALF" | "MAP" | "OTHER";
+  marketKindOf(
+    mercado: string,
+    selecao: string,
+    evento?: string,
+  ):
+    | "moneyline" | "total" | "spread" | "team_total" | "draw_no_bet" | "double_chance"
+    | "btts" | "correct_score" | "scorer" | "player_props" | "other";
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;

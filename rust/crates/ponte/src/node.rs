@@ -754,16 +754,6 @@ pub fn draw_vocabulary() -> Vec<Vec<String>> {
     .collect()
 }
 
-#[napi]
-pub fn draw_no_bet_pattern(space: String) -> String {
-    draw_vocabulary::draw_no_bet_pattern(&space)
-}
-
-#[napi]
-pub fn double_chance_pattern(space: String) -> String {
-    draw_vocabulary::double_chance_pattern(&space)
-}
-
 /// O time limpo, ou `null` quando a seleção não é DNB.
 #[napi]
 pub fn strip_draw_no_bet_from_selection(selecao: String) -> Option<String> {
@@ -1052,4 +1042,116 @@ pub fn match_draw_no_bet_selection(selecao: String, evento: String) -> Option<&'
 pub fn match_double_chance_selection(selecao: String, evento: String) -> Option<Vec<&'static str>> {
     sides::match_double_chance_selection(&selecao, &evento)
         .map(|(one, other)| vec![one.as_str(), other.as_str()])
+}
+
+use dominio::mercados::classify;
+
+/// `[EXTRA_TIME_PATTERN, REGULATION_TIME_PATTERN]` (fontes) e as listas:
+/// `[escopos de outright, frases de vencedor, 1º tempo, 2º tempo, siglas do 1º, siglas do 2º]`.
+#[napi]
+pub fn classify_data() -> (Vec<String>, Vec<Vec<String>>) {
+    (
+        owned(&[
+            classify::EXTRA_TIME_PATTERN,
+            classify::REGULATION_TIME_PATTERN,
+        ]),
+        vec![
+            owned(classify::OUTRIGHT_SCOPE_NOUNS),
+            owned(classify::OUTRIGHT_WINNER_PHRASES),
+            owned(classify::HALF_PERIOD_PHRASES_FIRST),
+            owned(classify::HALF_PERIOD_PHRASES_SECOND),
+            owned(classify::HALF_PERIOD_ABBREVIATIONS_FIRST),
+            owned(classify::HALF_PERIOD_ABBREVIATIONS_SECOND),
+        ],
+    )
+}
+
+#[napi]
+pub fn is_esports(esporte: Option<String>) -> bool {
+    classify::is_esports(esporte.as_deref())
+}
+
+#[napi]
+pub fn market_map_number_of(mercado: String, esporte: Option<String>) -> Option<u32> {
+    classify::market_map_number_of(&mercado, esporte.as_deref())
+}
+
+#[napi]
+pub fn market_includes_extra_time(mercado: String) -> bool {
+    classify::market_includes_extra_time(&mercado)
+}
+
+#[napi]
+pub fn declares_regulation_time(text: String) -> bool {
+    classify::declares_regulation_time(&text)
+}
+
+#[napi]
+pub fn is_btts_market(mercado: String) -> bool {
+    classify::is_btts_market(&mercado)
+}
+
+#[napi]
+pub fn market_names_both_halves(text: String) -> bool {
+    classify::market_names_both_halves(&text)
+}
+
+#[napi]
+pub fn is_combined_btts_market(mercado: String) -> bool {
+    classify::is_combined_btts_market(&mercado)
+}
+
+#[napi]
+pub fn btts_selection_side(selecao: String) -> Option<&'static str> {
+    classify::btts_selection_side(&selecao).map(classify::BttsSide::as_str)
+}
+
+#[napi]
+pub fn is_race_to_market(mercado: String, selecao: String) -> bool {
+    classify::is_race_to_market(&mercado, &selecao)
+}
+
+#[napi]
+pub fn is_three_way_handicap_market(mercado: String) -> bool {
+    classify::is_three_way_handicap_market(&mercado)
+}
+
+#[napi]
+pub fn is_outright_market(mercado: String) -> bool {
+    classify::is_outright_market(&mercado)
+}
+
+#[napi]
+pub fn is_method_of_victory_market(mercado: String) -> bool {
+    classify::is_method_of_victory_market(&mercado)
+}
+
+#[napi]
+pub fn is_draw_no_bet_market(mercado: String) -> bool {
+    classify::is_draw_no_bet_market(&mercado)
+}
+
+#[napi]
+pub fn is_double_chance_market(mercado: String) -> bool {
+    classify::is_double_chance_market(&mercado)
+}
+
+#[napi]
+pub fn total_label_side(mercado: String, evento: String) -> Option<&'static str> {
+    side_name(classify::total_label_side(&mercado, &evento))
+}
+
+#[napi]
+pub fn is_team_total_market(mercado: String, selecao: String, evento: Option<String>) -> bool {
+    classify::is_team_total_market(&mercado, &selecao, evento.as_deref())
+}
+
+#[napi]
+pub fn market_period_of(mercado: String, esporte: Option<String>) -> &'static str {
+    classify::market_period_of(&mercado, esporte.as_deref()).as_str()
+}
+
+#[napi]
+pub fn market_kind_of(mercado: String, selecao: String, evento: Option<String>) -> &'static str {
+    classify::market_kind_of(&mercado, &selecao, evento.as_deref()).as_str()
 }
