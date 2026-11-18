@@ -375,3 +375,267 @@ pub fn regex_split(
 ) -> Result<Vec<String>> {
     crate::regex_probe::split(&source, &flags, &text, limit).map_err(Error::from_reason)
 }
+
+// --- team-category.ts e text.ts ---
+
+use dominio::team_category as category;
+use dominio::text as names;
+
+#[napi]
+pub fn protected_category_key(token: String) -> String {
+    category::protected_category_key(&token).to_owned()
+}
+
+#[napi]
+pub fn team_category_tokens(canon: String, digits_only: bool) -> Vec<String> {
+    category::team_category_tokens(&canon, digits_only)
+}
+
+#[napi]
+pub fn reserve_suffix_mismatch(ca: String, cb: String) -> bool {
+    category::reserve_suffix_mismatch(&ca, &cb)
+}
+
+#[napi]
+pub fn protected_categories_mismatch(ca: String, cb: String) -> bool {
+    category::protected_categories_mismatch(&ca, &cb)
+}
+
+#[napi]
+pub fn has_protected_team_category_conflict(a: String, b: String) -> bool {
+    category::has_protected_team_category_conflict(&a, &b)
+}
+
+#[napi]
+pub fn team_identity_category_conflict(a: String, b: String) -> bool {
+    category::team_identity_category_conflict(&a, &b)
+}
+
+#[napi]
+pub fn bet_declares_category_fixture_lacks(canon_aposta: String, canon_fixture: String) -> bool {
+    category::bet_declares_category_fixture_lacks(&canon_aposta, &canon_fixture)
+}
+
+#[napi]
+pub fn category_tokens_from_league(league: String) -> Vec<String> {
+    category::category_tokens_from_league(&league)
+}
+
+#[napi]
+pub fn league_covers_bet_category(
+    canon_aposta: String,
+    canon_fixture: String,
+    league: Option<String>,
+) -> bool {
+    category::league_covers_bet_category(&canon_aposta, &canon_fixture, league.as_deref())
+}
+
+#[napi]
+pub fn oriented_team_pair_has_reserve_suffix_conflict(
+    provider_home: String,
+    provider_away: String,
+    local_home: String,
+    local_away: String,
+    swapped: bool,
+    league: Option<String>,
+) -> bool {
+    category::oriented_team_pair_has_reserve_suffix_conflict(&category::OrientedPair {
+        provider_home: &provider_home,
+        provider_away: &provider_away,
+        local_home: &local_home,
+        local_away: &local_away,
+        swapped,
+        league: league.as_deref(),
+    })
+}
+
+#[napi]
+pub fn strip_category_tokens(canon_name: String, tokens: Vec<String>) -> String {
+    category::strip_category_tokens(&canon_name, &tokens)
+}
+
+/// `[compatível, tokens cobertos]`.
+#[napi]
+pub fn are_categories_compatible(
+    bet_canon: String,
+    fixture_canon: String,
+    bet_league: Option<String>,
+    fixture_league: Option<String>,
+) -> (bool, Vec<String>) {
+    let result = category::are_categories_compatible(
+        &bet_canon,
+        &fixture_canon,
+        bet_league.as_deref(),
+        fixture_league.as_deref(),
+    );
+    (result.compatible, result.covered_tokens)
+}
+
+#[napi]
+pub fn team_category_conflict_in_context(
+    bet_name: String,
+    fixture_name: String,
+    bet_league: Option<String>,
+    fixture_league: Option<String>,
+) -> bool {
+    category::team_category_conflict_in_context(
+        &bet_name,
+        &fixture_name,
+        bet_league.as_deref(),
+        fixture_league.as_deref(),
+    )
+}
+
+#[napi]
+pub fn team_category_in_context(name: String, league: Option<String>) -> Vec<String> {
+    category::team_category_in_context(&name, league.as_deref())
+}
+
+#[napi]
+pub fn same_team_category(a: Vec<String>, b: Vec<String>) -> bool {
+    category::same_team_category(&a, &b)
+}
+
+#[napi]
+pub fn is_base_category_fixture(home: String, away: String, league: Option<String>) -> bool {
+    category::is_base_category_fixture(&home, &away, league.as_deref())
+}
+
+#[napi]
+pub fn team_similarity(a: String, b: String) -> f64 {
+    names::team_similarity(&a, &b)
+}
+
+#[napi]
+pub fn team_similarity_canon(ca: String, cb: String) -> f64 {
+    names::team_similarity_canon(&ca, &cb)
+}
+
+/// `[score, evidence]`.
+#[napi]
+pub fn team_side_similarity_canon(ca: String, cb: String) -> (f64, f64) {
+    let side = names::team_side_similarity_canon(&ca, &cb);
+    (side.score, side.evidence)
+}
+
+#[napi]
+pub fn team_name_evidence(a: String, b: String) -> f64 {
+    names::team_name_evidence(&a, &b)
+}
+
+#[napi]
+pub fn fixture_has_anchor_side(home_evidence: f64, away_evidence: f64) -> bool {
+    names::fixture_has_anchor_side(home_evidence, away_evidence)
+}
+
+/// `[ANCHOR_SIDE_FLOOR, SAME_FIXTURE_MIN_SIMILARITY]`.
+#[napi]
+pub fn text_thresholds() -> Vec<f64> {
+    vec![names::ANCHOR_SIDE_FLOOR, names::SAME_FIXTURE_MIN_SIMILARITY]
+}
+
+#[napi]
+pub fn best_search_word(text: String) -> String {
+    names::best_search_word(&text)
+}
+
+/// `[casa, fora]`; `null` quando não é um confronto.
+#[napi]
+pub fn split_evento_teams(evento: String) -> Option<(String, String)> {
+    names::split_evento_teams(&evento)
+}
+
+#[napi]
+pub fn fixture_has_placeholder_team(evento: String) -> bool {
+    names::fixture_has_placeholder_team(&evento)
+}
+
+#[napi]
+pub fn same_fixture_teams(evento_a: String, evento_b: String) -> bool {
+    names::same_fixture_teams(&evento_a, &evento_b)
+}
+
+#[napi]
+pub fn slugify(text: String) -> String {
+    names::slugify(&text)
+}
+
+fn match_numbers(result: names::MatchTeamsResult) -> Vec<f64> {
+    let flag = |value: bool| if value { 1.0 } else { 0.0 };
+    vec![
+        result.direct_home,
+        result.direct_away,
+        result.inverted_home,
+        result.inverted_away,
+        result.direct,
+        result.inverted,
+        flag(result.swapped),
+        result.score,
+        flag(result.compatible),
+        flag(result.anchored),
+        result.evidence_home,
+        result.evidence_away,
+    ]
+}
+
+/// Os 12 campos de `MatchTeamsResult`, na ordem do tipo (booleanos como 0/1).
+#[napi]
+pub fn match_teams_with_category_context(
+    bet_home: String,
+    bet_away: String,
+    fixture_home: String,
+    fixture_away: String,
+    bet_league: Option<String>,
+    fixture_league: Option<String>,
+    canonical: bool,
+) -> Vec<f64> {
+    let pair = names::CanonFixturePair {
+        bet_home: &bet_home,
+        bet_away: &bet_away,
+        fixture_home: &fixture_home,
+        fixture_away: &fixture_away,
+        bet_league: bet_league.as_deref(),
+        fixture_league: fixture_league.as_deref(),
+    };
+    match_numbers(if canonical {
+        names::match_canon_teams_with_category_context(&pair)
+    } else {
+        names::match_teams_with_category_context(&pair)
+    })
+}
+
+/// Os índices dos candidatos que ficam; os candidatos vêm em colunas.
+#[napi]
+#[allow(clippy::too_many_arguments)]
+pub fn refine_category_candidates(
+    bet_home: String,
+    bet_away: String,
+    bet_league: Option<String>,
+    bet_kickoff_ms: Option<f64>,
+    collapse_duplicate_listings: bool,
+    homes: Vec<String>,
+    aways: Vec<String>,
+    leagues: Vec<String>,
+    countries: Vec<String>,
+    kickoffs: Vec<f64>,
+    swapped: Vec<u32>,
+) -> Vec<u32> {
+    crate::refine_candidates(
+        &names::CategoryRefinement {
+            bet_home: &bet_home,
+            bet_away: &bet_away,
+            bet_league: bet_league.as_deref(),
+            bet_kickoff_ms,
+            collapse_duplicate_listings,
+        },
+        [homes, aways, leagues, countries],
+        &kickoffs,
+        &swapped,
+    )
+}
+
+/// `[evento, selecao]` marcados; `null` quando nada muda.
+#[napi]
+pub fn mark_soccer_reserve_teams(evento: String, selecao: String) -> Option<(String, String)> {
+    names::mark_soccer_reserve_teams(&evento, &selecao)
+}

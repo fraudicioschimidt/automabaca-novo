@@ -407,3 +407,273 @@ pub fn regex_split(
         .map(|pieces| pieces.into_iter().map(JsValue::from).collect())
         .map_err(|error| JsError::new(&error))
 }
+
+// --- team-category.ts e text.ts ---
+
+use dominio::team_category as category;
+use dominio::text as names;
+
+fn pair_value(a: impl Into<JsValue>, b: impl Into<JsValue>) -> JsValue {
+    JsValue::from(vec![a.into(), b.into()])
+}
+
+#[wasm_bindgen(js_name = protectedCategoryKey)]
+pub fn protected_category_key(token: &str) -> String {
+    category::protected_category_key(token).to_owned()
+}
+
+#[wasm_bindgen(js_name = teamCategoryTokens)]
+pub fn team_category_tokens(canon: &str, digits_only: bool) -> JsValue {
+    strings(category::team_category_tokens(canon, digits_only))
+}
+
+#[wasm_bindgen(js_name = reserveSuffixMismatch)]
+pub fn reserve_suffix_mismatch(ca: &str, cb: &str) -> bool {
+    category::reserve_suffix_mismatch(ca, cb)
+}
+
+#[wasm_bindgen(js_name = protectedCategoriesMismatch)]
+pub fn protected_categories_mismatch(ca: &str, cb: &str) -> bool {
+    category::protected_categories_mismatch(ca, cb)
+}
+
+#[wasm_bindgen(js_name = hasProtectedTeamCategoryConflict)]
+pub fn has_protected_team_category_conflict(a: &str, b: &str) -> bool {
+    category::has_protected_team_category_conflict(a, b)
+}
+
+#[wasm_bindgen(js_name = teamIdentityCategoryConflict)]
+pub fn team_identity_category_conflict(a: &str, b: &str) -> bool {
+    category::team_identity_category_conflict(a, b)
+}
+
+#[wasm_bindgen(js_name = betDeclaresCategoryFixtureLacks)]
+pub fn bet_declares_category_fixture_lacks(canon_aposta: &str, canon_fixture: &str) -> bool {
+    category::bet_declares_category_fixture_lacks(canon_aposta, canon_fixture)
+}
+
+#[wasm_bindgen(js_name = categoryTokensFromLeague)]
+pub fn category_tokens_from_league(league: &str) -> JsValue {
+    strings(category::category_tokens_from_league(league))
+}
+
+#[wasm_bindgen(js_name = leagueCoversBetCategory)]
+pub fn league_covers_bet_category(
+    canon_aposta: &str,
+    canon_fixture: &str,
+    league: Option<String>,
+) -> bool {
+    category::league_covers_bet_category(canon_aposta, canon_fixture, league.as_deref())
+}
+
+#[wasm_bindgen(js_name = orientedTeamPairHasReserveSuffixConflict)]
+pub fn oriented_team_pair_has_reserve_suffix_conflict(
+    provider_home: &str,
+    provider_away: &str,
+    local_home: &str,
+    local_away: &str,
+    swapped: bool,
+    league: Option<String>,
+) -> bool {
+    category::oriented_team_pair_has_reserve_suffix_conflict(&category::OrientedPair {
+        provider_home,
+        provider_away,
+        local_home,
+        local_away,
+        swapped,
+        league: league.as_deref(),
+    })
+}
+
+#[wasm_bindgen(js_name = stripCategoryTokens)]
+pub fn strip_category_tokens(canon_name: &str, tokens: Vec<String>) -> String {
+    category::strip_category_tokens(canon_name, &tokens)
+}
+
+#[wasm_bindgen(js_name = areCategoriesCompatible)]
+pub fn are_categories_compatible(
+    bet_canon: &str,
+    fixture_canon: &str,
+    bet_league: Option<String>,
+    fixture_league: Option<String>,
+) -> JsValue {
+    let result = category::are_categories_compatible(
+        bet_canon,
+        fixture_canon,
+        bet_league.as_deref(),
+        fixture_league.as_deref(),
+    );
+    pair_value(result.compatible, strings(result.covered_tokens))
+}
+
+#[wasm_bindgen(js_name = teamCategoryConflictInContext)]
+pub fn team_category_conflict_in_context(
+    bet_name: &str,
+    fixture_name: &str,
+    bet_league: Option<String>,
+    fixture_league: Option<String>,
+) -> bool {
+    category::team_category_conflict_in_context(
+        bet_name,
+        fixture_name,
+        bet_league.as_deref(),
+        fixture_league.as_deref(),
+    )
+}
+
+#[wasm_bindgen(js_name = teamCategoryInContext)]
+pub fn team_category_in_context(name: &str, league: Option<String>) -> JsValue {
+    strings(category::team_category_in_context(name, league.as_deref()))
+}
+
+#[wasm_bindgen(js_name = sameTeamCategory)]
+pub fn same_team_category(a: Vec<String>, b: Vec<String>) -> bool {
+    category::same_team_category(&a, &b)
+}
+
+#[wasm_bindgen(js_name = isBaseCategoryFixture)]
+pub fn is_base_category_fixture(home: &str, away: &str, league: Option<String>) -> bool {
+    category::is_base_category_fixture(home, away, league.as_deref())
+}
+
+#[wasm_bindgen(js_name = teamSimilarity)]
+pub fn team_similarity(a: &str, b: &str) -> f64 {
+    names::team_similarity(a, b)
+}
+
+#[wasm_bindgen(js_name = teamSimilarityCanon)]
+pub fn team_similarity_canon(ca: &str, cb: &str) -> f64 {
+    names::team_similarity_canon(ca, cb)
+}
+
+#[wasm_bindgen(js_name = teamSideSimilarityCanon)]
+pub fn team_side_similarity_canon(ca: &str, cb: &str) -> JsValue {
+    let side = names::team_side_similarity_canon(ca, cb);
+    pair_value(side.score, side.evidence)
+}
+
+#[wasm_bindgen(js_name = teamNameEvidence)]
+pub fn team_name_evidence(a: &str, b: &str) -> f64 {
+    names::team_name_evidence(a, b)
+}
+
+#[wasm_bindgen(js_name = fixtureHasAnchorSide)]
+pub fn fixture_has_anchor_side(home_evidence: f64, away_evidence: f64) -> bool {
+    names::fixture_has_anchor_side(home_evidence, away_evidence)
+}
+
+#[wasm_bindgen(js_name = textThresholds)]
+pub fn text_thresholds() -> Vec<JsValue> {
+    vec![
+        JsValue::from(names::ANCHOR_SIDE_FLOOR),
+        JsValue::from(names::SAME_FIXTURE_MIN_SIMILARITY),
+    ]
+}
+
+#[wasm_bindgen(js_name = bestSearchWord)]
+pub fn best_search_word(text: &str) -> String {
+    names::best_search_word(text)
+}
+
+#[wasm_bindgen(js_name = splitEventoTeams)]
+pub fn split_evento_teams(evento: &str) -> JsValue {
+    names::split_evento_teams(evento).map_or(JsValue::NULL, |(home, away)| pair_value(home, away))
+}
+
+#[wasm_bindgen(js_name = fixtureHasPlaceholderTeam)]
+pub fn fixture_has_placeholder_team(evento: &str) -> bool {
+    names::fixture_has_placeholder_team(evento)
+}
+
+#[wasm_bindgen(js_name = sameFixtureTeams)]
+pub fn same_fixture_teams(evento_a: &str, evento_b: &str) -> bool {
+    names::same_fixture_teams(evento_a, evento_b)
+}
+
+#[wasm_bindgen(js_name = slugify)]
+pub fn slugify(text: &str) -> String {
+    names::slugify(text)
+}
+
+#[wasm_bindgen(js_name = matchTeamsWithCategoryContext)]
+#[allow(clippy::too_many_arguments)]
+pub fn match_teams_with_category_context(
+    bet_home: &str,
+    bet_away: &str,
+    fixture_home: &str,
+    fixture_away: &str,
+    bet_league: Option<String>,
+    fixture_league: Option<String>,
+    canonical: bool,
+) -> Vec<JsValue> {
+    let pair = names::CanonFixturePair {
+        bet_home,
+        bet_away,
+        fixture_home,
+        fixture_away,
+        bet_league: bet_league.as_deref(),
+        fixture_league: fixture_league.as_deref(),
+    };
+    let result = if canonical {
+        names::match_canon_teams_with_category_context(&pair)
+    } else {
+        names::match_teams_with_category_context(&pair)
+    };
+    let flag = |value: bool| if value { 1.0 } else { 0.0 };
+    [
+        result.direct_home,
+        result.direct_away,
+        result.inverted_home,
+        result.inverted_away,
+        result.direct,
+        result.inverted,
+        flag(result.swapped),
+        result.score,
+        flag(result.compatible),
+        flag(result.anchored),
+        result.evidence_home,
+        result.evidence_away,
+    ]
+    .into_iter()
+    .map(JsValue::from)
+    .collect()
+}
+
+#[wasm_bindgen(js_name = refineCategoryCandidates)]
+#[allow(clippy::too_many_arguments)]
+pub fn refine_category_candidates(
+    bet_home: &str,
+    bet_away: &str,
+    bet_league: Option<String>,
+    bet_kickoff_ms: Option<f64>,
+    collapse_duplicate_listings: bool,
+    homes: Vec<String>,
+    aways: Vec<String>,
+    leagues: Vec<String>,
+    countries: Vec<String>,
+    kickoffs: Vec<f64>,
+    swapped: Vec<u32>,
+) -> Vec<JsValue> {
+    crate::refine_candidates(
+        &names::CategoryRefinement {
+            bet_home,
+            bet_away,
+            bet_league: bet_league.as_deref(),
+            bet_kickoff_ms,
+            collapse_duplicate_listings,
+        },
+        [homes, aways, leagues, countries],
+        &kickoffs,
+        &swapped,
+    )
+    .into_iter()
+    .map(JsValue::from)
+    .collect()
+}
+
+#[wasm_bindgen(js_name = markSoccerReserveTeams)]
+pub fn mark_soccer_reserve_teams(evento: &str, selecao: &str) -> JsValue {
+    names::mark_soccer_reserve_teams(evento, selecao).map_or(JsValue::NULL, |(evento, selecao)| {
+        pair_value(evento, selecao)
+    })
+}

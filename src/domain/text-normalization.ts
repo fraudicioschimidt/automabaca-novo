@@ -40,20 +40,10 @@ export function canonicalizeTeamName(s: string): string {
 /** Formas equivalentes do mesmo nome (português, sigla do estado, abreviação), já canonicalizadas. */
 export const TEAM_NAME_EQUIVALENTS: ReadonlyArray<readonly string[]> = dominio.teamNameEquivalents();
 
-// O `text.ts`, ainda em TypeScript, chama `teamNameVariants` dentro do laço de
-// comparação de nomes: a memória evita uma travessia da ponte por par.
-const VARIANT_CACHE_LIMIT = 10_000;
-const variantCache = new Map<string, readonly string[]>();
-
 /**
  * As outras formas de um nome já canonicalizado, pelas equivalências (vazia
  * quando nenhuma regra se aplica, que é o caso comum).
  */
 export function teamNameVariants(canon: string): readonly string[] {
-  const cached = variantCache.get(canon);
-  if (cached) return cached;
-  const result = dominio.teamNameVariants(canon);
-  if (variantCache.size >= VARIANT_CACHE_LIMIT) variantCache.clear();
-  variantCache.set(canon, result);
-  return result;
+  return dominio.teamNameVariants(canon);
 }
