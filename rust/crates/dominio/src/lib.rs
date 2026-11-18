@@ -3,6 +3,7 @@
 //! chama passa o instante e os dados, como no TypeScript.
 #![forbid(unsafe_code)]
 
+pub mod countries;
 pub mod cron;
 pub mod dates;
 pub mod decimal_input;
@@ -11,6 +12,7 @@ pub mod kelly;
 pub mod kickoff;
 pub mod mercados;
 pub mod money;
+pub mod national_teams;
 pub mod odds;
 pub mod sports;
 pub mod team_category;
@@ -22,6 +24,7 @@ pub mod text_normalization;
 pub fn regex_catalog() -> Vec<(String, String)> {
     kickoff::regexes();
     mercados::regexes();
+    national_teams::regexes();
     sports::regexes();
     team_category::regexes();
     text::regexes();

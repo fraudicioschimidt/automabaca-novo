@@ -162,6 +162,19 @@ declare const dominio: {
   llmSportDecision(
     sport: string | null | undefined, confidence: number | null | undefined, evidenceText: string | null | undefined,
   ): SportDecisionColumns;
+  /** Ver `src/domain/countries.ts` e `national-teams.ts`. As tabelas que o TS lê, na ordem dos objetos. */
+  countryTables(): [
+    nationalTeams: Array<[pt: string, en: string]>,
+    countries: Array<[name: string, country: string]>,
+    knownCountryKeys: string[],
+  ];
+  translateNationalTeamPtToEn(localName: string): string | null;
+  canonicalCountry(raw: string): string;
+  canonicalCompetition(raw: string, pais: string | null | undefined): string;
+  rewriteNationalTeamsInText(text: string, eventTeams: readonly string[] | null | undefined): string;
+  rewriteSelecaoWithMatchedTeams(
+    selecao: string, localHome: string, localAway: string, pinnacleHome: string, pinnacleAway: string,
+  ): string;
   /**
    * O regex do domínio cru, só para `tests/plataforma/js-regex.test.ts`
    * comparar os dois lados com o V8. `regexExec` devolve `[início, fim]` UTF-16

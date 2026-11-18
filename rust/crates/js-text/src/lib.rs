@@ -3,8 +3,8 @@
 //! `normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()`. O domínio
 //! em TypeScript usava as do V8 (ICU); portado, ele tem de dar o mesmo texto
 //! no servidor e no navegador. É uma operação só para o navegador cruzar para
-//! o host uma vez por texto. Mais o `toUpperCase()`, que o domínio usa para
-//! saber se um texto está todo em caixa alta.
+//! o host uma vez por texto. Mais o `toUpperCase()` e o `toLowerCase()`, e a
+//! dobra de caixa com que o `RegExp` com `iu` compara caracteres.
 //!
 //! - No navegador, as próprias funções do host, as mesmas que o TypeScript
 //!   usava ali, sem tabela do Unicode no binário.
@@ -19,6 +19,12 @@ mod backend {
 
     #[wasm_bindgen(inline_js = r#"
 export function jsTextToUpperCase(text) { return text.toUpperCase(); }
+export function jsTextToLowerCase(text) { return text.toLowerCase(); }
+export function jsTextLowerEach(text) {
+  let out = "";
+  for (const c of text) { const lower = c.toLowerCase(); out += [...lower].length === 1 ? lower : c; }
+  return out;
+}
 export function jsTextNfdWithoutCombiningMarks(text) { return text.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
 export function jsTextFoldForMatching(text) {
   return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
@@ -29,6 +35,10 @@ export function jsTextFoldForMatching(text) {
         pub fn fold_for_matching(text: &str) -> String;
         #[wasm_bindgen(js_name = jsTextToUpperCase)]
         pub fn to_upper_case(text: &str) -> String;
+        #[wasm_bindgen(js_name = jsTextToLowerCase)]
+        pub fn to_lower_case(text: &str) -> String;
+        #[wasm_bindgen(js_name = jsTextLowerEach)]
+        pub fn lower_each(text: &str) -> String;
         #[wasm_bindgen(js_name = jsTextNfdWithoutCombiningMarks)]
         pub fn nfd_without_combining_marks(text: &str) -> String;
     }
@@ -289,6 +299,22 @@ mod backend {
         text.to_uppercase()
     }
 
+    pub fn to_lower_case(text: &str) -> String {
+        text.to_lowercase()
+    }
+
+    pub fn lower_each(text: &str) -> String {
+        text.chars()
+            .map(|character| {
+                let mut lower = character.to_lowercase();
+                match (lower.next(), lower.next()) {
+                    (Some(single), None) => single,
+                    _ => character,
+                }
+            })
+            .collect()
+    }
+
     pub fn nfd_without_combining_marks(text: &str) -> String {
         text.nfd()
             .filter(|c| !('\u{300}'..='\u{36f}').contains(c))
@@ -312,6 +338,62 @@ pub fn to_upper_case(text: &str) -> String {
     backend::to_upper_case(text)
 }
 
+/// `text.toLowerCase()` (com o sigma final: `ΟΔΟΣ` vira `οδος`).
+pub fn to_lower_case(text: &str) -> String {
+    backend::to_lower_case(text)
+}
+
+/// Os caracteres que o `toLowerCase` não leva ao representante da dobra
+/// simples: o `/iu` iguala `ſ` a `s`, `ς` a `σ`, as variantes gregas e
+/// cirílicas antigas às letras comuns e duas ligaduras e duas letras
+/// politônicas sem relação de caixa (`ﬆ` e `ﬅ`, `ΐ` e `ΐ`). Tirada do V8
+/// sem supor que os pares se ligam por maiúscula ou minúscula, e conferida
+/// em cada ponto de código por `tests/plataforma/js-text.test.ts`.
+const FOLD_EXCEPTIONS: [(char, char); 25] = [
+    ('\u{00B5}', '\u{03BC}'),
+    ('\u{017F}', '\u{0073}'),
+    ('\u{0345}', '\u{03B9}'),
+    ('\u{03C2}', '\u{03C3}'),
+    ('\u{03D0}', '\u{03B2}'),
+    ('\u{03D1}', '\u{03B8}'),
+    ('\u{03D5}', '\u{03C6}'),
+    ('\u{03D6}', '\u{03C0}'),
+    ('\u{03F0}', '\u{03BA}'),
+    ('\u{03F1}', '\u{03C1}'),
+    ('\u{03F5}', '\u{03B5}'),
+    ('\u{1C80}', '\u{0432}'),
+    ('\u{1C81}', '\u{0434}'),
+    ('\u{1C82}', '\u{043E}'),
+    ('\u{1C83}', '\u{0441}'),
+    ('\u{1C84}', '\u{0442}'),
+    ('\u{1C85}', '\u{0442}'),
+    ('\u{1C86}', '\u{044A}'),
+    ('\u{1C87}', '\u{0463}'),
+    ('\u{1C88}', '\u{A64B}'),
+    ('\u{1E9B}', '\u{1E61}'),
+    ('\u{1FBE}', '\u{03B9}'),
+    ('\u{1FD3}', '\u{0390}'),
+    ('\u{1FE3}', '\u{03B0}'),
+    ('\u{FB06}', '\u{FB05}'),
+];
+
+/// O representante de cada caractere na comparação do `RegExp` com `iu` (a
+/// regra `Canonicalize` com `u`, a dobra simples do Unicode), um por ponto de
+/// código: dois caracteres casam sem caixa quando os representantes são
+/// iguais. É o `toLowerCase` de um caractere só (quando dá um caractere), mais
+/// as exceções acima. Para buscar um texto montado em tempo de execução, que
+/// não pode virar regex do catálogo.
+pub fn simple_case_fold(text: &str) -> Vec<char> {
+    text.chars()
+        .zip(backend::lower_each(text).chars())
+        .map(|(character, lower)| {
+            FOLD_EXCEPTIONS
+                .binary_search_by_key(&character, |(from, _)| *from)
+                .map_or(lower, |index| FOLD_EXCEPTIONS[index].1)
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -325,5 +407,11 @@ mod tests {
         assert_eq!(fold_for_matching("a^b`c·d"), "abcd");
         // O ponto do İ é diacrítico e sai; o sigma final vira ς.
         assert_eq!(fold_for_matching("İSTANBUL ΟΔΟΣ"), "istanbul οδος");
+        assert_eq!(to_lower_case("İSTANBUL ΟΔΟΣ"), "i\u{307}stanbul οδος");
+        assert_eq!(
+            simple_case_fold("SſsİΣςσﬆ").into_iter().collect::<String>(),
+            "sssİσσσﬅ"
+        );
+        assert!(FOLD_EXCEPTIONS.windows(2).all(|pair| pair[0].0 < pair[1].0));
     }
 }
