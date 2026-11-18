@@ -201,6 +201,21 @@ declare const dominio: {
   ):
     | "moneyline" | "total" | "spread" | "team_total" | "draw_no_bet" | "double_chance"
     | "btts" | "correct_score" | "scorer" | "player_props" | "other";
+  /** Ver `src/domain/mercados/compatibility.ts` e `finalize.ts`. */
+  compatibilityData(): [
+    finalMarketSports: [market: string, sports: string[]][],
+    regulationTimeMarkets: [moneyline: string, spread: string, total: string],
+    regulationTimeSports: string[],
+  ];
+  marketSportOf(esporte?: string | null): string;
+  restrictsToRegulationTime(text: string, esporte?: string | null): boolean;
+  regulationTimeBaseOf(mercado: string): string | null;
+  isRegulationTimeMarket(mercado: string): boolean;
+  isMercadoFinalForSport(mercado: string, esporte?: string | null): boolean;
+  finalizePinnacleMarket(mercado: string, esporte?: string): string;
+  regulationTimeMarket(mercado: string, selecao: string, evento: string, esporte: string | undefined, declared: boolean): string;
+  pinnacleizeMercado(mercado: string, esporte?: string): string;
+  keepDeclaredPeriod(original: string, coerced: string, esporte: string | undefined, selecao: string): string;
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;

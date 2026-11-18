@@ -20,8 +20,6 @@ export const MERCADOS_FINAIS = Object.freeze(
   Object.keys(MERCADO_CATALOG) as MercadoCatalogName[],
 );
 
-export type MercadoFinal = MercadoCatalogName;
-
 /** Tudo que `resolveMercadoStatic` aceita (entrada + final). */
 export const CANONICAL_MARKETS: readonly string[] = [...MERCADOS_INTERMEDIARIOS, ...MERCADOS_FINAIS];
 

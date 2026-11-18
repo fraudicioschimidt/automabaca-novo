@@ -1155,3 +1155,84 @@ pub fn market_period_of(mercado: String, esporte: Option<String>) -> &'static st
 pub fn market_kind_of(mercado: String, selecao: String, evento: Option<String>) -> &'static str {
     classify::market_kind_of(&mercado, &selecao, evento.as_deref()).as_str()
 }
+
+use dominio::mercados::{compatibility, finalize};
+
+/// Cada rótulo final com os esportes em que ele vale.
+type FinalMarketSports = Vec<(String, Vec<String>)>;
+
+/// `[[rótulo final, esportes][], [regulamentar: moneyline, spread, total], esportes com prorrogação]`.
+#[napi]
+pub fn compatibility_data() -> (FinalMarketSports, Vec<String>, Vec<String>) {
+    let sports = |list: &[compatibility::MarketSport]| {
+        list.iter().map(|sport| sport.as_str().to_owned()).collect()
+    };
+    (
+        compatibility::FINAL_MARKET_SPORTS
+            .iter()
+            .map(|(market, list)| ((*market).to_owned(), sports(list)))
+            .collect(),
+        owned(&[
+            compatibility::REGULATION_TIME_MONEYLINE,
+            compatibility::REGULATION_TIME_SPREAD,
+            compatibility::REGULATION_TIME_TOTAL,
+        ]),
+        sports(compatibility::REGULATION_TIME_SPORTS),
+    )
+}
+
+#[napi]
+pub fn market_sport_of(esporte: Option<String>) -> &'static str {
+    compatibility::market_sport_of(esporte.as_deref()).as_str()
+}
+
+#[napi]
+pub fn restricts_to_regulation_time(text: String, esporte: Option<String>) -> bool {
+    compatibility::restricts_to_regulation_time(&text, esporte.as_deref())
+}
+
+#[napi]
+pub fn regulation_time_base_of(mercado: String) -> Option<&'static str> {
+    compatibility::regulation_time_base_of(&mercado)
+}
+
+#[napi]
+pub fn is_regulation_time_market(mercado: String) -> bool {
+    compatibility::is_regulation_time_market(&mercado)
+}
+
+#[napi]
+pub fn is_mercado_final_for_sport(mercado: String, esporte: Option<String>) -> bool {
+    compatibility::is_mercado_final_for_sport(&mercado, esporte.as_deref())
+}
+
+#[napi]
+pub fn finalize_pinnacle_market(mercado: String, esporte: Option<String>) -> String {
+    finalize::finalize_pinnacle_market(&mercado, esporte.as_deref())
+}
+
+#[napi]
+pub fn regulation_time_market(
+    mercado: String,
+    selecao: String,
+    evento: String,
+    esporte: Option<String>,
+    declared: bool,
+) -> String {
+    finalize::regulation_time_market(&mercado, &selecao, &evento, esporte.as_deref(), declared)
+}
+
+#[napi]
+pub fn pinnacleize_mercado(mercado: String, esporte: Option<String>) -> String {
+    finalize::pinnacleize_mercado(&mercado, esporte.as_deref())
+}
+
+#[napi]
+pub fn keep_declared_period(
+    original: String,
+    coerced: String,
+    esporte: Option<String>,
+    selecao: String,
+) -> String {
+    finalize::keep_declared_period(&original, &coerced, esporte.as_deref(), &selecao)
+}
