@@ -893,3 +893,65 @@ pub fn llm_sport_decision(
         evidence_text.as_deref(),
     ))
 }
+
+// --- countries e national-teams ---
+
+use dominio::{countries, national_teams};
+
+fn pairs(table: &[(&str, &str)]) -> JsValue {
+    JsValue::from(
+        table
+            .iter()
+            .map(|(key, value)| pair_value(*key, *value))
+            .collect::<Vec<_>>(),
+    )
+}
+
+#[wasm_bindgen(js_name = countryTables)]
+pub fn country_tables() -> Vec<JsValue> {
+    vec![
+        pairs(countries::NATIONAL_TEAMS_PT_EN),
+        pairs(countries::CANONICAL_COUNTRY_MAP),
+        strings(countries::KNOWN_COUNTRY_KEYS.iter()),
+    ]
+}
+
+#[wasm_bindgen(js_name = translateNationalTeamPtToEn)]
+pub fn translate_national_team_pt_to_en(local_name: &str) -> JsValue {
+    optional_str(national_teams::translate_national_team_pt_to_en(local_name))
+}
+
+#[wasm_bindgen(js_name = canonicalCountry)]
+pub fn canonical_country(raw: &str) -> String {
+    national_teams::canonical_country(raw)
+}
+
+#[wasm_bindgen(js_name = canonicalCompetition)]
+pub fn canonical_competition(raw: &str, pais: Option<String>) -> String {
+    national_teams::canonical_competition(raw, pais.as_deref())
+}
+
+#[wasm_bindgen(js_name = rewriteNationalTeamsInText)]
+pub fn rewrite_national_teams_in_text(text: &str, event_teams: Option<Vec<String>>) -> String {
+    let teams: Option<Vec<&str>> = event_teams
+        .as_ref()
+        .map(|teams| teams.iter().map(String::as_str).collect());
+    national_teams::rewrite_national_teams_in_text(text, teams.as_deref())
+}
+
+#[wasm_bindgen(js_name = rewriteSelecaoWithMatchedTeams)]
+pub fn rewrite_selecao_with_matched_teams(
+    selecao: &str,
+    local_home: &str,
+    local_away: &str,
+    pinnacle_home: &str,
+    pinnacle_away: &str,
+) -> String {
+    national_teams::rewrite_selecao_with_matched_teams(
+        selecao,
+        local_home,
+        local_away,
+        pinnacle_home,
+        pinnacle_away,
+    )
+}

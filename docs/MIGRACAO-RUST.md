@@ -193,6 +193,25 @@ diretiva. Andamento:
   por post de 3 KB no servidor (o TS levava 0,3 ms) e 1,1 ms no navegador;
   roda uma vez por post capturado, não em laço contra o catálogo. Se aparecer
   no perfil do worker, os sinais de palavra viram código Rust.
+- seleções, países e competições (`countries` e `national-teams`): as
+  tabelas em Rust (a casca remonta as seleções e os países, que o TS ainda
+  lê; as competições ficam só no Rust), a tradução do país e da competição e
+  a troca do nome do time na seleção. Paridade com o TS antigo em 1,8 milhão
+  de comparações, nos dois lados, com as tabelas e a ordem do `Set`
+  conferidas. O TS montava um regex com o nome do país (`/i`) e com o nome
+  dos dois times (`/iu`) de cada aposta; virou código, com as duas regras de
+  caixa separadas: o prefixo do país pela `Canonicalize` sem `u` (o
+  `toUpperCase` de cada unidade UTF-16) e o nome do time pela dobra simples
+  do `/iu`. A dobra é o `toLowerCase` de um caractere mais 25 exceções
+  (`js-text`, `simple_case_fold`), tiradas do V8 sem supor que os pares se
+  ligam por maiúscula ou minúscula (ﬅ e ﬆ, ΐ e ΐ não se ligam) e conferidas
+  em cada par e em cada ponto de código por `tests/plataforma/js-text.test.ts`.
+  No servidor, a troca na seleção ficou 11× mais rápida que o TS (8 µs contra
+  94 µs) e 5× no navegador; o país e a competição, 1,5× no servidor e
+  empatados ou 2× mais lentos no navegador (3 a 5 µs). O WASM foi a 177 KB
+  com gzip (+12 KB). Os mapas do TS eram objetos comuns: "constructor" e
+  "__proto__" davam o protótipo (uma função ou um objeto no lugar do texto);
+  o Rust devolve o nome, como no `accentuate`.
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)
