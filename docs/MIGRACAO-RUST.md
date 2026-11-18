@@ -256,6 +256,22 @@ diretiva. Andamento:
   esportes. Num texto de 3 KB, 1,4 a 2× o TS (até 0,8 ms), sem crescer além
   do linear; no navegador, de empatado a 2× o TS. O WASM foi a 185 KB com
   gzip (+8,2 KB).
+- lado da aposta (`settlement/sides`): o lado pelo nome do time, pelos
+  rótulos ordinais ("Time 1") e pelos tokens, a moneyline, o Draw No Bet, a
+  Dupla Chance e a remoção do nome do time antes de ler a linha. É o
+  primeiro módulo de `settlement/` no Rust, porque o `mercados/classify`
+  depende dele. Antes, num PR à parte (#30), saíram os exports que só o
+  próprio arquivo usava e as regexes fixas montadas a cada chamada. O TS
+  montava uma regex por palavra do nome do time para tirá-lo da seleção;
+  virou busca literal, com o limite de palavra ASCII do `\b` sem `u` e as
+  travas do número do clube (não apaga o "+1" do handicap nem o "1.5" da
+  linha). Paridade com o TS em 2,2 milhões de comparações nos dois lados,
+  com clubes difíceis (Casa Pia, Schalke 04, América-MG × América-RJ,
+  Sub-20, Women) e 800 mil só na remoção do nome, com números colados em
+  sinal, ponto e vírgula. No servidor, empatado com o TS (18 µs contra 17 µs
+  no lado do time, 3 µs contra 6 µs na remoção do nome; 4 µs contra 1 µs na
+  Dupla Chance, pelo `regress`); no navegador, 1,75× o TS (30 µs). O WASM
+  foi a 198 KB com gzip (+12,8 KB).
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)

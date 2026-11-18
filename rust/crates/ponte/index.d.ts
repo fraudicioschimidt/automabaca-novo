@@ -6,6 +6,7 @@
 // o binário num `require`, e o ESM do Node só enxerga o default dele. Importe
 // sempre `import dominio from "@automabaca/dominio"`
 // (`tests/plataforma/architecture-boundaries.test.ts` recusa o resto).
+type DoubleChanceOutcome = "home" | "away" | "draw";
 /** `[sport, status, confidence, source, fontes, esportes, confianças, valores]` das evidências. */
 type SportDecisionColumns = [
   sport: string | null, status: string, confidence: number, source: string,
@@ -170,6 +171,21 @@ declare const dominio: {
   scoreUnitTermsForSql(): string[];
   hasScoreUnitMismatch(mercado: string, selecao: string, esporte?: string): boolean;
   hasSportScoreUnitMismatch(mercado: string, selecao: string, esporte?: string): boolean;
+  /** Ver `src/domain/settlement/sides.ts`. */
+  stripTeamNames(selecao: string, evento: string): string;
+  matchTeamSide(selecao: string, evento: string): "home" | "away" | null;
+  matchMoneylineSelection(selecao: string, evento: string, strict: boolean): "home" | "away" | "draw" | null;
+  moneylineSelectionAsksAnotherMarket(selecao: string, evento?: string): boolean;
+  resolveSideFromMarketAndSelection(
+    mercado: string,
+    selecao: string,
+    evento: string,
+  ): [side: "home" | "away" | null, contradicts: boolean];
+  matchDrawNoBetSelection(selecao: string, evento: string): "home" | "away" | null;
+  matchDoubleChanceSelection(
+    selecao: string,
+    evento: string,
+  ): [DoubleChanceOutcome, DoubleChanceOutcome] | null;
   /** Ver `src/domain/sports/`. */
   canonicalSport(value: string | null | undefined): string | null;
   esportesComUnidade(unidade: string): string[];
