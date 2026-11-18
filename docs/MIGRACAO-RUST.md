@@ -272,6 +272,46 @@ diretiva. Andamento:
   no lado do time, 3 µs contra 6 µs na remoção do nome; 4 µs contra 1 µs na
   Dupla Chance, pelo `regress`); no navegador, 1,75× o TS (30 µs). O WASM
   foi a 198 KB com gzip (+12,8 KB).
+- classificação do mercado (`mercados/classify`): o tipo, o período, o
+  número do mapa, o lado do BTTS e as famílias sem resolver por placar. A
+  limpeza veio antes, no #29. A casca remonta as listas que o espelho SQL lê
+  (escopos de outright, frases de meio-tempo) e as duas regexes de
+  prorrogação e tempo regulamentar, que o contrato da Pinnacle17 lê com `g`.
+  `drawNoBetPattern` e `doubleChancePattern` saíram da ponte: só o `sides` e
+  o `classify` os usavam, e agora os dois são Rust. O `js-text` ganhou o
+  `normalize("NFD")` sem `\p{Diacritic}` e sem mudar a caixa, que o "No"
+  maiúsculo do BTTS lê; como no TS, o índice do casamento no texto
+  minúsculo é lido no texto original, em unidades UTF-16. No `wasm-bindgen`,
+  `Option<u32>` vazio chega como `undefined`; o número do mapa devolve
+  `null`, como o TS.
+  - O primeiro porte, linha a linha, deixou o laço de coerção sobre os
+    aliases de produção (o teste que estourou a CI no #28) 2× mais lento que
+    o TS: `marketPeriodOf` levava 14 µs contra 3,6 µs, nos dois lados. No
+    navegador o custo era uma ida ao `RegExp` do host por regex; no
+    servidor, o `regress` percorrendo alternâncias grandes. Três mudanças,
+    todas exatas e conferidas pelo fuzz:
+    - o mercado é normalizado uma vez por chamada;
+    - regexes seguidas com o mesmo resultado viram uma união, exata para
+      `is_match`;
+    - cada regex grande só roda se a chave tem o literal que todas as
+      formas dela escrevem.
+  - As listas de frases (menções do 1º e do 2º tempo, regulamentar e
+    pênaltis, race to, placar exato) viraram busca num conjunto (`Phrases`).
+    Na chave, que só tem `[a-z0-9]` e espaço simples, `\b(?:frase|…)\b` casa
+    exatamente quando uma janela de palavras inteiras é uma das frases.
+  - Depois disso, o laço empata com o TS nos dois lados (2,67 s contra
+    2,62 s nos três esportes, em cinco rodadas alternadas), e
+    `marketPeriodOf` fica em 4 µs.
+  - Paridade com o TS em 7,5 milhões de comparações, nos dois lados:
+    - 4,3 milhões com os aliases de produção entre as entradas;
+    - 400 mil no lado do BTTS, com caracteres que mudam de tamanho na
+      minúscula (İ, ẞ, ǅ);
+    - 2,8 milhões montados com as 1.214 palavras das regexes e listas do
+      módulo antigo, para exercitar cada pré-filtro. O fuzz geral pegou um
+      erro de pré-filtro durante o trabalho: "totais" não contém "total".
+  - As regexes de dentro das funções ganharam nome próprio e entram no
+    catálogo comparado com o V8 por construção, não pelo ramo que rodou.
+  - O WASM foi a 216 KB com gzip (+17,8 KB).
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)

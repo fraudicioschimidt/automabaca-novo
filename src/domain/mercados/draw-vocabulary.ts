@@ -48,19 +48,6 @@ export const DOUBLE_CHANCE_VOCABULARY = Object.freeze({
 /** Termo da allowlist: todos os trechos precisam estar presentes no mercado. */
 export type MarketVocabularyTerm = { readonly all: readonly string[] };
 
-/**
- * Padrão de DNB. `space` é o separador entre palavras: " " para chaves de
- * mercado (já normalizadas em espaço simples) e `\s+` para texto de seleção.
- */
-export function drawNoBetPattern(space = " "): string {
-  return dominio.drawNoBetPattern(space);
-}
-
-/** Padrão de Dupla Chance, mesmo contrato de `space`. */
-export function doubleChancePattern(space = " "): string {
-  return dominio.doubleChancePattern(space);
-}
-
 /** Detecta e remove sufixos ou qualificadores DNB/Empate Anula da seleção. */
 export function stripDrawNoBetFromSelection(selecao: string): { isDnb: boolean; cleanTeam: string } {
   const cleanTeam = dominio.stripDrawNoBetFromSelection(selecao);

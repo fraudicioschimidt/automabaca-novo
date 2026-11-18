@@ -2,6 +2,7 @@
 
 pub mod accents;
 pub mod catalog;
+pub mod classify;
 pub mod draw_vocabulary;
 pub mod match_scope;
 pub mod stat_qualifier;
@@ -13,6 +14,7 @@ use js_regex::Regex;
 /// Os regexes do módulo, para o catálogo que o teste compara com o V8.
 pub(crate) fn regexes() -> Vec<&'static Regex> {
     let mut all = accents::regexes();
+    all.extend(classify::regexes());
     all.extend(draw_vocabulary::regexes());
     all.extend(stat_qualifier::regexes());
     all.extend(total_direction::regexes());

@@ -229,7 +229,12 @@ pub fn canonical_markets() -> impl Iterator<Item = &'static str> {
 
 /// Chave de lookup de alias: minúsculo, sem acento, só `[a-z0-9]` e espaço.
 pub fn normalize_mercado_key(text: &str) -> String {
-    let normalized = normalize_str(text);
+    mercado_key_of_normalized(&normalize_str(text))
+}
+
+/// A chave de um texto que já passou por `normalize_str`: quem tem os dois
+/// (o `classify`) normaliza uma vez só.
+pub fn mercado_key_of_normalized(normalized: &str) -> String {
     let mut key = String::with_capacity(normalized.len());
     let mut in_run = false;
     for c in normalized.chars() {
