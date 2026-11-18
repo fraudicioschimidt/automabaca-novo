@@ -175,6 +175,24 @@ diretiva. Andamento:
   lados. A Dupla Chance procura o sufixo no texto sem acento e corta o
   original naquele índice UTF-16, como o TS: o `js-text` ganhou o NFD sem
   as marcas U+0300–U+036F, conferido em cada ponto de código.
+- o registro de esportes e a detecção pelo texto (`sports/registry` e
+  `sports/detect`): o lookup do nome canônico, os sinais de emoji, texto e
+  competição, a liga compartilhada que cede à leitura do item e a decisão a
+  partir da IA. Os dados estão em `src/domain/sports/registry-data.json`,
+  com o nome canônico como chave (o TS tira dele o tipo `CanonicalSport`); o
+  `build.rs` confere a unidade do placar contra o enum fechado do Rust, com o
+  `match` exaustivo do que o placar faz com cada uma, e unidade nova não
+  compila, como no TS. Paridade com o TS antigo em 540 mil comparações, nos
+  dois lados, com a confiança da IA em NaN, ±Infinity e fora de 0 a 1. A
+  ponte devolve a decisão em colunas (cabeçalho e evidências), sem JSON.
+- o padrão de competições do futebol tinha `[\s\S]*` num lookbehind antes
+  do nome da liga, avaliado em cada posição do texto: no `regress`, 34 ms por
+  post de 3 KB, quadrático. O lookbehind passou para depois do nome, que tem
+  tamanho fixo: diz o mesmo (300 mil textos com os mesmos termos no V8) e só
+  é avaliado onde o nome casou, 0,4 ms. Com isso a detecção custa 3,1 ms
+  por post de 3 KB no servidor (o TS levava 0,3 ms) e 1,1 ms no navegador;
+  roda uma vez por post capturado, não em laço contra o catálogo. Se aparecer
+  no perfil do worker, os sinais de palavra viram código Rust.
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)

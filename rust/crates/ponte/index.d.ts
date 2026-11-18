@@ -6,6 +6,11 @@
 // o binário num `require`, e o ESM do Node só enxerga o default dele. Importe
 // sempre `import dominio from "@automabaca/dominio"`
 // (`tests/plataforma/architecture-boundaries.test.ts` recusa o resto).
+/** `[sport, status, confidence, source, fontes, esportes, confianças, valores]` das evidências. */
+type SportDecisionColumns = [
+  sport: string | null, status: string, confidence: number, source: string,
+  evidenceSources: string[], evidenceSports: string[], evidenceConfidences: number[], evidenceValues: string[],
+];
 declare const dominio: {
   /** Versão do crate, a de `rust/Cargo.toml`. */
   versao(): string;
@@ -147,6 +152,16 @@ declare const dominio: {
   /** Cada termo: os trechos que precisam estar todos no mercado. */
   drawNoBetSqlTerms(): string[][];
   doubleChanceSqlTerms(): string[][];
+  /** Ver `src/domain/sports/`. */
+  canonicalSport(value: string | null | undefined): string | null;
+  esportesComUnidade(unidade: string): string[];
+  termosDeUnidadeSemPlacar(): string[];
+  sportDetectionConstants(): [resolverVersion: number, autoConfirm: number, dissent: number, sharedSoccerLeague: string];
+  /** A decisão: o cabeçalho e as evidências em colunas. */
+  detectSportFromText(text: string, itemSport: string | null | undefined): SportDecisionColumns;
+  llmSportDecision(
+    sport: string | null | undefined, confidence: number | null | undefined, evidenceText: string | null | undefined,
+  ): SportDecisionColumns;
   /**
    * O regex do domínio cru, só para `tests/plataforma/js-regex.test.ts`
    * comparar os dois lados com o V8. `regexExec` devolve `[início, fim]` UTF-16

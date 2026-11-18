@@ -12,6 +12,7 @@ pub mod kickoff;
 pub mod mercados;
 pub mod money;
 pub mod odds;
+pub mod sports;
 pub mod team_category;
 pub mod text;
 pub mod text_normalization;
@@ -21,6 +22,7 @@ pub mod text_normalization;
 pub fn regex_catalog() -> Vec<(String, String)> {
     kickoff::regexes();
     mercados::regexes();
+    sports::regexes();
     team_category::regexes();
     text::regexes();
     js_regex::catalog()
