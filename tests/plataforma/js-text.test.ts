@@ -44,3 +44,24 @@ describe("normalizeStr: servidor e navegador dão o que o V8 dá", () => {
     }
   });
 });
+
+describe("corte da Dupla Chance: o texto sem acento tem o tamanho que o V8 dá", () => {
+  // `stripDoubleChanceFromSelection` acha o sufixo no texto em NFD sem as
+  // marcas U+0300–U+036F e corta o original naquele índice UTF-16: um ponto
+  // de código que decompõe diferente nos dois lados muda o corte.
+  it("em cada ponto de código", { timeout: 120_000 }, () => {
+    const divergentes: string[] = [];
+    for (let code = 0; code <= 0x10ffff; code++) {
+      if (code >= 0xd800 && code <= 0xdfff) continue;
+      const text = `${String.fromCodePoint(code)}x dc`;
+      const semAcento = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const esperado = text.slice(0, semAcento.length - " dc".length).trim().toWellFormed();
+      for (const [lado, dominio] of Object.entries({ servidor, navegador })) {
+        if (dominio.stripDoubleChanceFromSelection(text) !== esperado && divergentes.length < 20) {
+          divergentes.push(`${lado} U+${code.toString(16).toUpperCase()}`);
+        }
+      }
+    }
+    expect(divergentes).toEqual([]);
+  });
+});

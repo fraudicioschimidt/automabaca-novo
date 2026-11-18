@@ -126,6 +126,27 @@ declare const dominio: {
   totalDirectionOf(selection: string, allowBarePositiveLine: boolean): "over" | "under" | null;
   /** `[OVER_WORDS, UNDER_WORDS]`. */
   totalDirectionWords(): [over: string, under: string];
+  mercadosIntermediarios(): string[];
+  /** As traduções diretas PT/legado, na ordem do catálogo. */
+  mercadoTranslations(): Array<[from: string, to: string]>;
+  normalizeMercadoKey(text: string): string;
+  resolveMercadoCanonical(raw: string): string | null;
+  resolveMercadoStatic(raw: string): string | null;
+  isMercadoFinal(mercado: string): boolean;
+  /** As 8 listas de DRAW_NO_BET_VOCABULARY e as 3 de DOUBLE_CHANCE_VOCABULARY, na ordem dos campos. */
+  drawVocabulary(): [
+    standalone: string[], abbreviations: string[], verbs: string[], objects: string[], states: string[],
+    nouns: string[], nounQualifiers: string[], connectors: string[],
+    doubleChanceStandalone: string[], doubleChanceAbbreviations: string[], doubleChanceTerms: string[],
+  ];
+  drawNoBetPattern(space: string): string;
+  doubleChancePattern(space: string): string;
+  /** O time limpo, ou `null` quando a seleção não é DNB / Dupla Chance. */
+  stripDrawNoBetFromSelection(selecao: string): string | null;
+  stripDoubleChanceFromSelection(selecao: string): string | null;
+  /** Cada termo: os trechos que precisam estar todos no mercado. */
+  drawNoBetSqlTerms(): string[][];
+  doubleChanceSqlTerms(): string[][];
   /**
    * O regex do domínio cru, só para `tests/plataforma/js-regex.test.ts`
    * comparar os dois lados com o V8. `regexExec` devolve `[início, fim]` UTF-16

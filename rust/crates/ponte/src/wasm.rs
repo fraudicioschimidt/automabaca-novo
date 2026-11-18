@@ -725,3 +725,102 @@ pub fn total_direction_of(selection: &str, allow_bare_positive_line: bool) -> Js
         }),
     )
 }
+
+use dominio::mercados::{catalog, draw_vocabulary};
+
+fn optional_str(value: Option<&str>) -> JsValue {
+    value.map_or(JsValue::NULL, JsValue::from)
+}
+
+fn lists(items: impl IntoIterator<Item = Vec<String>>) -> JsValue {
+    JsValue::from(items.into_iter().map(strings).collect::<Vec<_>>())
+}
+
+#[wasm_bindgen(js_name = mercadosIntermediarios)]
+pub fn mercados_intermediarios() -> JsValue {
+    strings(catalog::MERCADOS_INTERMEDIARIOS)
+}
+
+#[wasm_bindgen(js_name = mercadoTranslations)]
+pub fn mercado_translations() -> JsValue {
+    JsValue::from(
+        catalog::MERCADO_TRANSLATIONS
+            .iter()
+            .map(|(from, to)| pair_value(*from, *to))
+            .collect::<Vec<_>>(),
+    )
+}
+
+#[wasm_bindgen(js_name = normalizeMercadoKey)]
+pub fn normalize_mercado_key(text: &str) -> String {
+    catalog::normalize_mercado_key(text)
+}
+
+#[wasm_bindgen(js_name = resolveMercadoCanonical)]
+pub fn resolve_mercado_canonical(raw: &str) -> JsValue {
+    optional_str(catalog::resolve_mercado_canonical(raw))
+}
+
+#[wasm_bindgen(js_name = resolveMercadoStatic)]
+pub fn resolve_mercado_static(raw: &str) -> JsValue {
+    optional_str(catalog::resolve_mercado_static(raw))
+}
+
+#[wasm_bindgen(js_name = isMercadoFinal)]
+pub fn is_mercado_final(mercado: &str) -> bool {
+    catalog::is_mercado_final(mercado)
+}
+
+#[wasm_bindgen(js_name = drawVocabulary)]
+pub fn draw_vocabulary() -> JsValue {
+    let dnb = &draw_vocabulary::DRAW_NO_BET_VOCABULARY;
+    let dc = &draw_vocabulary::DOUBLE_CHANCE_VOCABULARY;
+    JsValue::from(
+        [
+            dnb.standalone,
+            dnb.abbreviations,
+            dnb.verbs,
+            dnb.objects,
+            dnb.states,
+            dnb.nouns,
+            dnb.noun_qualifiers,
+            dnb.connectors,
+            dc.standalone,
+            dc.abbreviations,
+            dc.terms,
+        ]
+        .into_iter()
+        .map(strings)
+        .collect::<Vec<_>>(),
+    )
+}
+
+#[wasm_bindgen(js_name = drawNoBetPattern)]
+pub fn draw_no_bet_pattern(space: &str) -> String {
+    draw_vocabulary::draw_no_bet_pattern(space)
+}
+
+#[wasm_bindgen(js_name = doubleChancePattern)]
+pub fn double_chance_pattern(space: &str) -> String {
+    draw_vocabulary::double_chance_pattern(space)
+}
+
+#[wasm_bindgen(js_name = stripDrawNoBetFromSelection)]
+pub fn strip_draw_no_bet_from_selection(selecao: &str) -> JsValue {
+    optional_string(draw_vocabulary::strip_draw_no_bet_from_selection(selecao))
+}
+
+#[wasm_bindgen(js_name = stripDoubleChanceFromSelection)]
+pub fn strip_double_chance_from_selection(selecao: &str) -> JsValue {
+    optional_string(draw_vocabulary::strip_double_chance_from_selection(selecao))
+}
+
+#[wasm_bindgen(js_name = drawNoBetSqlTerms)]
+pub fn draw_no_bet_sql_terms() -> JsValue {
+    lists(draw_vocabulary::draw_no_bet_sql_terms())
+}
+
+#[wasm_bindgen(js_name = doubleChanceSqlTerms)]
+pub fn double_chance_sql_terms() -> JsValue {
+    lists(draw_vocabulary::double_chance_sql_terms())
+}
