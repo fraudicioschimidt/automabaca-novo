@@ -205,12 +205,19 @@ function resolveOneLeg(
   // placar da perna, e o time ("Mogi O89,5") separa o total do time do total
   // do jogo. Sem os dois, a perna seria paga pelo placar final somado.
   const selecao = expandAbbreviatedDirection(leg.selecao);
-  const doPeriodo = scoreForPeriod({ mercado: leg.mercado, selecao, esporte: bet.esporte }, params);
+  return resolveTermFromScore({ mercado: leg.mercado, selecao, evento: leg.evento }, bet, params);
+}
+
+/** O termo (a aposta ou uma perna) pelo placar do período que ele declara. */
+function resolveTermFromScore(
+  termo: { mercado: string; selecao: string; evento: string },
+  bet: EligibleBet,
+  params: Parameters<typeof scoreForPeriod>[1] & { odds: number; stake: number },
+): ScoreResolution {
+  const doPeriodo = scoreForPeriod({ mercado: termo.mercado, selecao: termo.selecao, esporte: bet.esporte }, params);
   if (!doPeriodo) return { ok: false, reason: "wrong_period" };
   return resolveResultFromScore({
-    mercado: leg.mercado,
-    selecao,
-    evento: leg.evento,
+    ...termo,
     esporte: bet.esporte,
     homeScore: doPeriodo.score.home,
     awayScore: doPeriodo.score.away,
@@ -405,23 +412,5 @@ export function resolveTicketFromScore(
     }
     return settledAs(folded.status, params);
   }
-  const doPeriodo = scoreForPeriod(
-    { mercado: bet.mercado, selecao: bet.selecao, esporte: bet.esporte },
-    params,
-  );
-  if (!doPeriodo) return { ok: false, reason: "wrong_period" };
-  return resolveResultFromScore({
-    mercado: bet.mercado,
-    selecao: bet.selecao,
-    evento: bet.evento,
-    esporte: bet.esporte,
-    homeScore: doPeriodo.score.home,
-    awayScore: doPeriodo.score.away,
-    scorePeriod: doPeriodo.period,
-    liveScoreHome: bet.liveScoreHome,
-    liveScoreAway: bet.liveScoreAway,
-    liveTextAtCapture: bet.liveTextAtCapture,
-    odds: params.odds,
-    stake: params.stake,
-  });
+  return resolveTermFromScore({ mercado: bet.mercado, selecao: bet.selecao, evento: bet.evento }, bet, params);
 }

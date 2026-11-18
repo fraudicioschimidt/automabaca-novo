@@ -34,6 +34,27 @@ PRs pequenos, com a CI verde e o publicador automático de sempre.
    contra a versão nova de cada tela antes de ela substituir a antiga.
 6. **Rust estável, versão fixada.** `rust-toolchain.toml`, `cargo fmt`,
    `cargo clippy -D warnings` e `cargo test` na CI, como o lint e os tipos hoje.
+7. **Limpar sem misturar com a migração** (decisão do dono de 18/11/2026). O
+   PR que porta um módulo continua com paridade estrita. Antes dele, um PR em
+   TypeScript tira o que não serve (código morto, export sem uso, duplicação
+   que não muda resultado), provado pelos testes e pelo código atual, para não
+   portar o que vai sair. O que mudaria o resultado de alguma aposta (unificar
+   vocabulário que diverge, fechar caso que liquida pelo motivo errado) não
+   entra em PR nenhum sem o sim do dono: fica na lista abaixo, com o efeito
+   descrito, e vira um PR pequeno por item depois de aprovado.
+
+### Limpezas que mudam comportamento (esperando o dono)
+
+Cada item diz o que muda e onde foi visto. Nenhum está aplicado.
+
+- **Vocabulário de estatística em três lugares.** As palavras de cartão,
+  escanteio e gol aparecem no `NON_SCORE_STAT_TERMS`
+  (`mercados/stat-qualifier`), no `TEAM_TOTAL_NAMED_UNIT_RE`
+  (`mercados/classify`) e na lista própria de `settlement/over-under-subject`,
+  e as listas não são iguais (o `classify` só reconhece escanteio e cartão
+  como unidade nomeada do total do time; chutes e faltas, não). Pode ser de
+  propósito. Antes de propor, levanto quais rótulos caem numa lista e não na
+  outra e o efeito em apostas reais.
 
 ## Fases
 
