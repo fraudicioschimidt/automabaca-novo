@@ -824,3 +824,72 @@ pub fn draw_no_bet_sql_terms() -> JsValue {
 pub fn double_chance_sql_terms() -> JsValue {
     lists(draw_vocabulary::double_chance_sql_terms())
 }
+
+// --- sports/ ---
+
+use dominio::sports::{detect, registry};
+
+fn decision_columns(decision: detect::Decision) -> JsValue {
+    let evidence = &decision.evidence;
+    JsValue::from(vec![
+        decision.sport.map_or(JsValue::NULL, JsValue::from),
+        JsValue::from(decision.status.as_str()),
+        JsValue::from(decision.confidence),
+        JsValue::from(decision.source.as_str()),
+        strings(evidence.iter().map(|item| item.source.as_str())),
+        strings(evidence.iter().map(|item| item.sport)),
+        JsValue::from(
+            evidence
+                .iter()
+                .map(|item| JsValue::from(item.confidence))
+                .collect::<Vec<_>>(),
+        ),
+        strings(evidence.iter().map(|item| item.value.as_str())),
+    ])
+}
+
+#[wasm_bindgen(js_name = canonicalSport)]
+pub fn canonical_sport(value: Option<String>) -> JsValue {
+    optional_str(registry::canonical_sport(value.as_deref().unwrap_or("")))
+}
+
+#[wasm_bindgen(js_name = esportesComUnidade)]
+pub fn esportes_com_unidade(unidade: &str) -> JsValue {
+    strings(
+        registry::UnidadeDoPlacar::parse(unidade)
+            .map_or_else(Vec::new, registry::esportes_com_unidade),
+    )
+}
+
+#[wasm_bindgen(js_name = termosDeUnidadeSemPlacar)]
+pub fn termos_de_unidade_sem_placar() -> JsValue {
+    strings(registry::termos_de_unidade_sem_placar())
+}
+
+#[wasm_bindgen(js_name = sportDetectionConstants)]
+pub fn sport_detection_constants() -> JsValue {
+    JsValue::from(vec![
+        JsValue::from(detect::SPORT_RESOLVER_VERSION),
+        JsValue::from(detect::SPORT_AUTO_CONFIRM_MIN_CONFIDENCE),
+        JsValue::from(detect::SPORT_DISSENT_MIN_CONFIDENCE),
+        JsValue::from(detect::SHARED_SOCCER_LEAGUE),
+    ])
+}
+
+#[wasm_bindgen(js_name = detectSportFromText)]
+pub fn detect_sport_from_text(text: &str, item_sport: Option<String>) -> JsValue {
+    decision_columns(detect::detect_sport_from_text(text, item_sport.as_deref()))
+}
+
+#[wasm_bindgen(js_name = llmSportDecision)]
+pub fn llm_sport_decision(
+    sport: Option<String>,
+    confidence: Option<f64>,
+    evidence_text: Option<String>,
+) -> JsValue {
+    decision_columns(detect::llm_sport_decision(
+        sport.as_deref(),
+        confidence,
+        evidence_text.as_deref(),
+    ))
+}

@@ -4,7 +4,7 @@
 
 use crate::js;
 use crate::text_normalization::normalize_str;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
 
 /// Um alias do mercado e, quando o rótulo é de uma casa só, a casa.
@@ -260,6 +260,9 @@ static TRANSLATION_BY_KEY: LazyLock<HashMap<String, &'static str>> = LazyLock::n
     )
 });
 
+static FINAIS_POR_CHAVE: LazyLock<HashSet<String>> =
+    LazyLock::new(|| mercados_finais().map(normalize_mercado_key).collect());
+
 /// Resolve apenas nomes canônicos, sem aliases nem traduções.
 pub fn resolve_mercado_canonical(raw: &str) -> Option<&'static str> {
     let key = normalize_mercado_key(raw);
@@ -280,8 +283,7 @@ pub fn resolve_mercado_static(raw: &str) -> Option<&'static str> {
 
 /// O mercado gravado está no vocabulário canônico Pinnacle?
 pub fn is_mercado_final(mercado: &str) -> bool {
-    let key = normalize_mercado_key(mercado);
-    mercados_finais().any(|market| normalize_mercado_key(market) == key)
+    FINAIS_POR_CHAVE.contains(&normalize_mercado_key(mercado))
 }
 
 #[cfg(test)]

@@ -785,3 +785,80 @@ pub fn draw_no_bet_sql_terms() -> Vec<Vec<String>> {
 pub fn double_chance_sql_terms() -> Vec<Vec<String>> {
     draw_vocabulary::double_chance_sql_terms()
 }
+
+// --- sports/ ---
+
+use dominio::sports::{detect, registry};
+
+/// `[sport, status, confidence, source, ...evidência em colunas]`.
+type DecisionColumns = (
+    Option<String>,
+    String,
+    f64,
+    String,
+    Vec<String>,
+    Vec<String>,
+    Vec<f64>,
+    Vec<String>,
+);
+
+fn decision_columns(decision: detect::Decision) -> DecisionColumns {
+    let evidence = &decision.evidence;
+    (
+        decision.sport.map(str::to_owned),
+        decision.status.as_str().to_owned(),
+        decision.confidence,
+        decision.source.as_str().to_owned(),
+        evidence
+            .iter()
+            .map(|item| item.source.as_str().to_owned())
+            .collect(),
+        evidence.iter().map(|item| item.sport.to_owned()).collect(),
+        evidence.iter().map(|item| item.confidence).collect(),
+        evidence.iter().map(|item| item.value.clone()).collect(),
+    )
+}
+
+#[napi]
+pub fn canonical_sport(value: Option<String>) -> Option<String> {
+    registry::canonical_sport(value.as_deref().unwrap_or("")).map(str::to_owned)
+}
+
+#[napi]
+pub fn esportes_com_unidade(unidade: String) -> Vec<String> {
+    registry::UnidadeDoPlacar::parse(&unidade).map_or_else(Vec::new, registry::esportes_com_unidade)
+}
+
+#[napi]
+pub fn termos_de_unidade_sem_placar() -> Vec<String> {
+    owned(&registry::termos_de_unidade_sem_placar())
+}
+
+/// `[SPORT_RESOLVER_VERSION, AUTO_CONFIRM, DISSENT, SHARED_SOCCER_LEAGUE]`.
+#[napi]
+pub fn sport_detection_constants() -> (u32, f64, f64, String) {
+    (
+        detect::SPORT_RESOLVER_VERSION,
+        detect::SPORT_AUTO_CONFIRM_MIN_CONFIDENCE,
+        detect::SPORT_DISSENT_MIN_CONFIDENCE,
+        detect::SHARED_SOCCER_LEAGUE.to_owned(),
+    )
+}
+
+#[napi]
+pub fn detect_sport_from_text(text: String, item_sport: Option<String>) -> DecisionColumns {
+    decision_columns(detect::detect_sport_from_text(&text, item_sport.as_deref()))
+}
+
+#[napi]
+pub fn llm_sport_decision(
+    sport: Option<String>,
+    confidence: Option<f64>,
+    evidence_text: Option<String>,
+) -> DecisionColumns {
+    decision_columns(detect::llm_sport_decision(
+        sport.as_deref(),
+        confidence,
+        evidence_text.as_deref(),
+    ))
+}

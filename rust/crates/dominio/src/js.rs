@@ -9,6 +9,32 @@ pub fn is_whitespace(c: char) -> bool {
     (c.is_whitespace() && c != '\u{85}') || c == '\u{FEFF}'
 }
 
+/// `Math.max(a, b)`: NaN se propaga (o `f64::max` o descarta) e +0 vence -0.
+pub fn max(a: f64, b: f64) -> f64 {
+    if a.is_nan() || b.is_nan() {
+        f64::NAN
+    } else if a == b {
+        if a.is_sign_positive() { a } else { b }
+    } else if a > b {
+        a
+    } else {
+        b
+    }
+}
+
+/// `Math.min(a, b)`: NaN se propaga e -0 vence +0.
+pub fn min(a: f64, b: f64) -> f64 {
+    if a.is_nan() || b.is_nan() {
+        f64::NAN
+    } else if a == b {
+        if a.is_sign_negative() { a } else { b }
+    } else if a < b {
+        a
+    } else {
+        b
+    }
+}
+
 /// `String.prototype.trim()`.
 pub fn trim(text: &str) -> &str {
     text.trim_matches(is_whitespace)
