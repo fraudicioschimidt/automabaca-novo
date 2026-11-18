@@ -4,6 +4,7 @@ import {
   listedButDidNotPlay,
   participationUnproven,
   temPolaridadeNegativa,
+  type GoalscorerRefusal,
   type JogadorDaPartida,
 } from "./goalscorer-matching";
 import {
@@ -23,13 +24,7 @@ import {
  * decidir primeiro e último gol. Este resolvedor junta as duas fontes.
  */
 export type PeriodGoalscorerRefusal =
-  | "selecao_sem_jogador"
-  | "sem_jogadores"
-  | "jogador_nao_encontrado"
-  | "jogador_ambiguo"
-  | "gol_contra_envolvido"
-  | "polaridade_negativa"
-  | "participacao_nao_comprovada"
+  | GoalscorerRefusal
   | "quantidade_de_gols_desconhecida"
   | "qualificador_sem_contrato"
   | "periodo_nao_reconhecido"

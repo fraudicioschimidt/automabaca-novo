@@ -14,8 +14,10 @@ const ignoredDirectories = new Set([
   "test-results",
 ]);
 
-// Worktrees de agente são checkouts de outra branch; têm o próprio gate.
-const ignoredPaths = new Set([".claude/worktrees"]);
+// Worktrees de agente são checkouts de outra branch; têm o próprio gate. O
+// `rust/target` é o build do Cargo (gigabytes depois do `build:ponte`), não
+// código; por caminho, porque `target` noutro lugar pode ser.
+const ignoredPaths = new Set([".claude/worktrees", "rust/target"]);
 
 const recursiveDeleteAllowlist = new Set([
   "scripts/lib/safe-fs.mjs",
