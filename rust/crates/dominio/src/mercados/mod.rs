@@ -3,7 +3,9 @@
 pub mod accents;
 pub mod catalog;
 pub mod classify;
+pub mod compatibility;
 pub mod draw_vocabulary;
+pub mod finalize;
 pub mod match_scope;
 pub mod stat_qualifier;
 pub mod total_direction;
@@ -15,6 +17,7 @@ use js_regex::Regex;
 pub(crate) fn regexes() -> Vec<&'static Regex> {
     let mut all = accents::regexes();
     all.extend(classify::regexes());
+    all.extend(compatibility::regexes());
     all.extend(draw_vocabulary::regexes());
     all.extend(stat_qualifier::regexes());
     all.extend(total_direction::regexes());

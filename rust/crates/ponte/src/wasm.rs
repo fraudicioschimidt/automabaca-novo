@@ -1184,3 +1184,85 @@ pub fn market_kind_of(mercado: &str, selecao: &str, evento: Option<String>) -> S
         .as_str()
         .to_owned()
 }
+
+use dominio::mercados::{compatibility, finalize};
+
+fn sport_names(list: &[compatibility::MarketSport]) -> JsValue {
+    strings(list.iter().map(|sport| sport.as_str()))
+}
+
+/// `[[rótulo final, esportes][], [regulamentar: moneyline, spread, total], esportes com prorrogação]`.
+#[wasm_bindgen(js_name = compatibilityData)]
+pub fn compatibility_data() -> Vec<JsValue> {
+    let finals: Vec<JsValue> = compatibility::FINAL_MARKET_SPORTS
+        .iter()
+        .map(|(market, list)| pair_value(*market, sport_names(list)))
+        .collect();
+    vec![
+        JsValue::from(finals),
+        strings([
+            compatibility::REGULATION_TIME_MONEYLINE,
+            compatibility::REGULATION_TIME_SPREAD,
+            compatibility::REGULATION_TIME_TOTAL,
+        ]),
+        sport_names(compatibility::REGULATION_TIME_SPORTS),
+    ]
+}
+
+#[wasm_bindgen(js_name = marketSportOf)]
+pub fn market_sport_of(esporte: Option<String>) -> String {
+    compatibility::market_sport_of(esporte.as_deref())
+        .as_str()
+        .to_owned()
+}
+
+#[wasm_bindgen(js_name = restrictsToRegulationTime)]
+pub fn restricts_to_regulation_time(text: &str, esporte: Option<String>) -> bool {
+    compatibility::restricts_to_regulation_time(text, esporte.as_deref())
+}
+
+#[wasm_bindgen(js_name = regulationTimeBaseOf)]
+pub fn regulation_time_base_of(mercado: &str) -> JsValue {
+    optional_str(compatibility::regulation_time_base_of(mercado))
+}
+
+#[wasm_bindgen(js_name = isRegulationTimeMarket)]
+pub fn is_regulation_time_market(mercado: &str) -> bool {
+    compatibility::is_regulation_time_market(mercado)
+}
+
+#[wasm_bindgen(js_name = isMercadoFinalForSport)]
+pub fn is_mercado_final_for_sport(mercado: &str, esporte: Option<String>) -> bool {
+    compatibility::is_mercado_final_for_sport(mercado, esporte.as_deref())
+}
+
+#[wasm_bindgen(js_name = finalizePinnacleMarket)]
+pub fn finalize_pinnacle_market(mercado: &str, esporte: Option<String>) -> String {
+    finalize::finalize_pinnacle_market(mercado, esporte.as_deref())
+}
+
+#[wasm_bindgen(js_name = regulationTimeMarket)]
+pub fn regulation_time_market(
+    mercado: &str,
+    selecao: &str,
+    evento: &str,
+    esporte: Option<String>,
+    declared: bool,
+) -> String {
+    finalize::regulation_time_market(mercado, selecao, evento, esporte.as_deref(), declared)
+}
+
+#[wasm_bindgen(js_name = pinnacleizeMercado)]
+pub fn pinnacleize_mercado(mercado: &str, esporte: Option<String>) -> String {
+    finalize::pinnacleize_mercado(mercado, esporte.as_deref())
+}
+
+#[wasm_bindgen(js_name = keepDeclaredPeriod)]
+pub fn keep_declared_period(
+    original: &str,
+    coerced: &str,
+    esporte: Option<String>,
+    selecao: &str,
+) -> String {
+    finalize::keep_declared_period(original, coerced, esporte.as_deref(), selecao)
+}

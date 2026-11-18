@@ -322,6 +322,20 @@ diretiva. Andamento:
   - As regexes de dentro das funções ganharam nome próprio e entram no
     catálogo comparado com o V8 por construção, não pelo ramo que rodou.
   - O WASM foi a 216 KB com gzip (+17,8 KB).
+- compatibilidade e rótulo final (`mercados/compatibility` e
+  `mercados/finalize`): a matriz esporte × rótulo final da Pinnacle, o
+  esporte da taxonomia de mercados, o tempo regulamentar e a finalização
+  por esporte. A limpeza veio antes, no #33. A casca remonta a matriz, que o
+  teste da taxonomia confere, e os esportes com prorrogação, que a
+  normalização lê; o tipo `MercadoFinal` saiu do catálogo, sem uso. As
+  tabelas do TS eram objetos comuns: "constructor" pegava a função herdada
+  do protótipo, `isRegulationTimeMarket("constructor")` dava verdadeiro e a
+  finalização quebrava; no Rust as tabelas são lidas por igualdade e o texto
+  volta como veio. Paridade com o TS em 1,18 milhão de comparações nos dois
+  lados, com os aliases de produção, os rótulos finais e os nomes e aliases
+  do registro de esportes. O laço de coerção sobre os aliases fica parelho
+  com o TS (2,73 s contra 2,65 s, em rodadas alternadas, dentro do ruído).
+  O WASM foi a 221 KB com gzip (+4,9 KB).
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)
