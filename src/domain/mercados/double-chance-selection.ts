@@ -5,6 +5,9 @@ import { restrictsToRegulationTime } from "./compatibility";
 import { stripDoubleChanceFromSelection } from "./draw-vocabulary";
 import { hasNonScoreStatQualifier, hasScoreUnitMismatch } from "./stat-qualifier";
 
+/** Linha de handicap na seleção ("Time +1", "Time -0.5"). */
+const HANDICAP_LINE = /\+\s*\d|(?:^|\s)[−–-]\s*\d/;
+
 /**
  * Resolve a abreviação enquanto o evento ainda contém o nome da mensagem.
  * O token X2/1X/12 atravessa aliases sem perder lado nem a cobertura do empate.
@@ -20,7 +23,7 @@ export function canonicalDoubleChanceSelection(input: {
     restrictsToRegulationTime(text, input.esporte))) return null;
   const teams = splitEventoTeams(input.evento);
   const kind = marketKindOf(input.mercado);
-  const original = normalizeStr(input.selecao).trim();
+  const original = normalizeStr(input.selecao);
   const isTeamName = teams && [teams.home, teams.away].some(team => normalizeStr(team) === original);
   // "DC United" e "Washington DC" podem ser nomes inteiros, não rótulos.
   const marker = isTeamName
@@ -36,9 +39,9 @@ export function canonicalDoubleChanceSelection(input: {
   if (marketPeriodOf(input.selecao) !== "FT") return null;
   const mercado = kind === "double_chance" ? input.mercado : "Double Chance";
   const selection = marker.cleanTeam;
-  const compact = normalizeStr(selection).trim();
+  const compact = normalizeStr(selection);
   const literalTeam = teams && [teams.home, teams.away].some(team => normalizeStr(team) === compact);
-  if (/\+\s*\d|(?:^|\s)[−–-]\s*\d/.test(selection) && !literalTeam && !/^[12x]\s*\+\s*[12x]$/.test(compact)) {
+  if (HANDICAP_LINE.test(selection) && !literalTeam && !/^[12x]\s*\+\s*[12x]$/.test(compact)) {
     return { mercado, selecao: input.selecao };
   }
   const covered = matchDoubleChanceSelection(selection, input.evento);
@@ -59,7 +62,7 @@ export function canonicalDoubleChanceSelection(input: {
     const namesOnly = selectedTokens.length > 0 && selectedTokens.every(token => teamTokens.has(token)) &&
       !selectedTokens.every(token => otherTokens.has(token));
     const sideOnly = /^(?:1|2|home|away|casa|fora|mandante|visitante)$/.test(compact);
-    const hasLine = /\+\s*\d|(?:^|\s)[−–-]\s*\d/.test(selection) && compact !== normalizeStr(team);
+    const hasLine = HANDICAP_LINE.test(selection) && compact !== normalizeStr(team);
     if (!hasLine && (namesOnly || sideOnly)) return { mercado, selecao: side === "home" ? "1X" : "X2" };
   }
   // Ambiguidade permanece visível; não remover o marcador que explica a tip.
