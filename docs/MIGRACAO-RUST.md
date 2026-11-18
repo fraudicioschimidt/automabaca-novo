@@ -336,6 +336,15 @@ diretiva. Andamento:
   do registro de esportes. O laço de coerção sobre os aliases fica parelho
   com o TS (2,73 s contra 2,65 s, em rodadas alternadas, dentro do ruído).
   O WASM foi a 221 KB com gzip (+4,9 KB).
+- Dupla Chance canônica e equivalência sharp
+  (`mercados/double-chance-selection` e `mercados/sharp-equivalent`): o
+  1X/X2/12 resolvido com o evento da mensagem e a tradução de DNB e Dupla
+  Chance para o handicap asiático que os feeds cotam. A limpeza veio antes,
+  no #35. O TS distinguia o esporte `undefined` (compatível) do `null`
+  (desconhecido), e a ponte lê os dois como ausentes: a casca troca o `null`
+  por texto vazio, que o Rust lê como esporte desconhecido, como o TS.
+  Paridade com o TS em 800 mil comparações nos dois lados e 240 mil pelas
+  cascas, com o `null`. O WASM foi a 223 KB com gzip (+2,2 KB).
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)

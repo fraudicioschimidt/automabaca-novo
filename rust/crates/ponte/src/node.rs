@@ -1236,3 +1236,36 @@ pub fn keep_declared_period(
 ) -> String {
     finalize::keep_declared_period(&original, &coerced, esporte.as_deref(), &selecao)
 }
+
+use dominio::mercados::{double_chance_selection, sharp_equivalent};
+
+/// `[mercado, selecao]` canônicos, ou `null` quando não é Dupla Chance.
+#[napi]
+pub fn canonical_double_chance_selection(
+    evento: String,
+    mercado: String,
+    selecao: String,
+    esporte: String,
+) -> Option<Vec<String>> {
+    double_chance_selection::canonical_double_chance_selection(
+        &evento, &mercado, &selecao, &esporte,
+    )
+    .map(|(mercado, selecao)| vec![mercado, selecao])
+}
+
+#[napi]
+pub fn supports_sharp_equivalence(esporte: Option<String>) -> bool {
+    sharp_equivalent::supports_sharp_equivalence(esporte.as_deref())
+}
+
+/// `[mercado, selecao, nota]`, ou `null` sem equivalente.
+#[napi]
+pub fn sharp_equivalent_bet(
+    mercado: String,
+    selecao: String,
+    evento: String,
+    esporte: Option<String>,
+) -> Option<Vec<String>> {
+    sharp_equivalent::sharp_equivalent_bet(&mercado, &selecao, &evento, esporte.as_deref())
+        .map(|bet| vec![bet.mercado.to_owned(), bet.selecao, bet.nota.to_owned()])
+}

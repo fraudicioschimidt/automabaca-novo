@@ -216,6 +216,15 @@ declare const dominio: {
   regulationTimeMarket(mercado: string, selecao: string, evento: string, esporte: string | undefined, declared: boolean): string;
   pinnacleizeMercado(mercado: string, esporte?: string): string;
   keepDeclaredPeriod(original: string, coerced: string, esporte: string | undefined, selecao: string): string;
+  /** Ver `src/domain/mercados/double-chance-selection.ts` e `sharp-equivalent.ts`. */
+  canonicalDoubleChanceSelection(evento: string, mercado: string, selecao: string, esporte: string): [mercado: string, selecao: string] | null;
+  supportsSharpEquivalence(esporte?: string): boolean;
+  sharpEquivalentBet(
+    mercado: string,
+    selecao: string,
+    evento: string,
+    esporte?: string,
+  ): [mercado: string, selecao: string, nota: "dnb→ah_0.0" | "dc→ah_+0.5"] | null;
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;
