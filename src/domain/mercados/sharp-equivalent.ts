@@ -7,7 +7,7 @@ import { splitEventoTeams } from "@/src/domain/text";
 import { marketIncludesExtraTime, marketKindOf, marketPeriodOf } from "./classify";
 import { restrictsToRegulationTime } from "./compatibility";
 
-export type SharpEquivalentBet = {
+type SharpEquivalentBet = {
   mercado: string;
   selecao: string;
   nota: "dnb→ah_0.0" | "dc→ah_+0.5";
