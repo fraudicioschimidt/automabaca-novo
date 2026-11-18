@@ -11,42 +11,41 @@ import {
 } from "@/src/domain/mercados/draw-vocabulary";
 import { SIDE_SCOPE_NOUNS } from "@/src/domain/mercados/match-scope";
 
-/**
- * Lado apostado (casa/fora): tokens explícitos, depois nome do time com MARGEM
- * mínima de similaridade. Empate técnico é ambíguo e devolve null — nunca chuta.
- */
-
-export const HOME_TOKENS = /\b(home|casa|mandante)\b/;
-export const AWAY_TOKENS = /\b(away|fora|visitante)\b/;
-export const DRAW_TOKENS = /\b(draw|empate|tie)\b/;
+const HOME_TOKENS = /\b(home|casa|mandante)\b/;
+const AWAY_TOKENS = /\b(away|fora|visitante)\b/;
+const DRAW_TOKENS = /\b(draw|empate|tie)\b/;
 
 const DC_CONNECTIVE_WORDS = ["ou", "or", "e", "y", "and"] as const;
 const DC_CONNECTIVE_SYMBOLS = String.raw`\/|\+|&`;
-export const DRAW_ALTERNATIVE = new RegExp(
+const DRAW_ALTERNATIVE = new RegExp(
   String.raw`(?:\b(?:${DC_CONNECTIVE_WORDS.join("|")})\b|${DC_CONNECTIVE_SYMBOLS})`,
 );
-export const DC_SPLIT = new RegExp(
+const DC_SPLIT = new RegExp(
   String.raw`\s*(?:\b(?:${DC_CONNECTIVE_WORDS.join("|")})\b|${DC_CONNECTIVE_SYMBOLS}|\s+-\s+|,)\s*`,
   "i",
 );
-export const DRAW_NEGATED = /\b(?:no|nao|not|sem|against|contra|anti)\s+(?:draw|empate|tie)\b/;
+const DRAW_NEGATED = /\b(?:no|nao|not|sem|against|contra|anti)\s+(?:draw|empate|tie)\b/;
 
 const DNB_LABEL = drawNoBetPattern(String.raw`\s+`);
-export const DNB_ANY = new RegExp(String.raw`\b${DNB_LABEL}\b`);
-export const DNB_PREFIX = new RegExp(String.raw`^\s*${DNB_LABEL}\s*[:\-]?\s*`);
-export const DNB_SUFFIX = new RegExp(
+const DNB_ANY = new RegExp(String.raw`\b${DNB_LABEL}\b`);
+const DNB_PREFIX = new RegExp(String.raw`^\s*${DNB_LABEL}\s*[:\-]?\s*`);
+const DNB_SUFFIX = new RegExp(
   String.raw`\s*(?:\(\s*${DNB_LABEL}\s*\)|-\s*${DNB_LABEL}|${DNB_LABEL})\s*$`,
 );
-export const DOUBLE_CHANCE_LABEL = doubleChancePattern(String.raw`\s+`);
+const DOUBLE_CHANCE_LABEL = doubleChancePattern(String.raw`\s+`);
+const DOUBLE_CHANCE_PREFIX = new RegExp(String.raw`^${DOUBLE_CHANCE_LABEL}\s*[:\-]?\s*`);
+const DOUBLE_CHANCE_SUFFIX = new RegExp(
+  String.raw`\s*(?:\(\s*${DOUBLE_CHANCE_LABEL}\s*\)|-\s*${DOUBLE_CHANCE_LABEL}|${DOUBLE_CHANCE_LABEL})\s*$`,
+);
 
-export const SIDE_SCOPE = SIDE_SCOPE_NOUNS.join("|");
+const SIDE_SCOPE = SIDE_SCOPE_NOUNS.join("|");
 const HOME_LABEL_SRC = String.raw`(?:time|equipe|clube|team|club)\s*1|primeiro\s+time|primeira\s+equipe|primeiro\s+clube|1[oaºª]\s*(?:time|equipe|clube)|first\s+(?:team|club)|1st\s+(?:team|club)|local\s+team|(?:vencedor|ganhador)(?:\s+d[oa]\s+(?:${SIDE_SCOPE}))?\s*1|(?:match|event)?\s*winner\s*1`;
 const AWAY_LABEL_SRC = String.raw`(?:time|equipe|clube|team|club)\s*2|segundo\s+time|segunda\s+equipe|segundo\s+clube|2[oaºª]\s*(?:time|equipe|clube)|second\s+(?:team|club)|2nd\s+(?:team|club)|visitor\s+team|visiting\s+team|(?:vencedor|ganhador)(?:\s+d[oa]\s+(?:${SIDE_SCOPE}))?\s*2|(?:match|event)?\s*winner\s*2`;
-export const HOME_LABEL = new RegExp(`^(?:${HOME_LABEL_SRC})$`);
-export const AWAY_LABEL = new RegExp(`^(?:${AWAY_LABEL_SRC})$`);
+const HOME_LABEL = new RegExp(`^(?:${HOME_LABEL_SRC})$`);
+const AWAY_LABEL = new RegExp(`^(?:${AWAY_LABEL_SRC})$`);
 
 const ANNOTATION_INNER = String.raw`(?:[+\-]?\s*\d+(?:[.,]\d+)?|${HOME_LABEL_SRC}|${AWAY_LABEL_SRC})`;
-export const PARENTHETICAL_ANNOTATION = new RegExp(
+const PARENTHETICAL_ANNOTATION = new RegExp(
   String.raw`\s*(?:\(\s*${ANNOTATION_INNER}\s*\)|\[\s*${ANNOTATION_INNER}\s*\])\s*$`,
 );
 
@@ -119,21 +118,24 @@ const BRAZILIAN_STATE_BY_ADJECTIVE = new Map(
  * global porque `canonicalNorm` é identidade persistida e mudar "Operário-PR"
  * para outra chave duplicaria clubes já conhecidos no banco.
  */
+/** "-MG"/" RJ" no fim do nome do clube; o grupo é a sigla do estado. */
+const BRAZILIAN_STATE_SUFFIX = /(?:-|\s)(MG|PR|RJ|RS|BA|SP|CE|GO)$/i;
+
 function expandBrazilianClubSuffix(team: string): string {
-  return team.replace(/(?:-|\s)(MG|PR|RJ|RS|BA|SP|CE|GO)$/i, (_match, state: string) => (
+  return team.replace(BRAZILIAN_STATE_SUFFIX, (_match, state: string) => (
     ` ${BRAZILIAN_STATE_SUFFIXES[state.toUpperCase()] ?? state}`
   ));
 }
 
 function brazilianStateIdentity(team: string): string | null {
-  const suffix = team.match(/(?:-|\s)(MG|PR|RJ|RS|BA|SP|CE|GO)$/i)?.[1];
+  const suffix = team.match(BRAZILIAN_STATE_SUFFIX)?.[1];
   if (suffix) return suffix.toUpperCase();
   const lastToken = normalizeStr(team).split(/\s+/).filter(Boolean).at(-1);
   return lastToken ? BRAZILIAN_STATE_BY_ADJECTIVE.get(lastToken) ?? null : null;
 }
 
 function stripBrazilianClubSuffix(team: string): string {
-  return team.replace(/(?:-|\s)(?:MG|PR|RJ|RS|BA|SP|CE|GO)$/i, "").trim();
+  return team.replace(BRAZILIAN_STATE_SUFFIX, "").trim();
 }
 
 function teamSideSimilarity(selection: string, team: string): number {
@@ -156,6 +158,10 @@ function teamSideSimilarity(selection: string, team: string): number {
   );
 }
 
+/**
+ * Lado apostado (casa/fora): tokens explícitos, depois nome do time com MARGEM
+ * mínima de similaridade. Empate técnico é ambíguo e devolve null — nunca chuta.
+ */
 export function matchTeamSide(
   selecao: string,
   evento: string,
@@ -298,6 +304,27 @@ export function matchTeamSide(
 }
 
 /**
+ * Tolera apenas rótulos conhecidos e o sufixo FT. Não procura qualquer dígito
+ * solto: números de nomes continuam ambíguos. O escopo dos rótulos PT vem do
+ * MESMO dado dos rótulos de lado (`SIDE_SCOPE_NOUNS`).
+ *
+ * Os rótulos se dividem por uma propriedade, não por idioma: "jogo N" e
+ * "game N" JÁ significam unidade parcial no resto do sistema
+ * (`marketPeriodOf` devolve OTHER, `marketMapNumberOf` só os aceita como mapa
+ * em eSports), então "Vencedor do Jogo 1" é indistinguível de "vencedor do
+ * mapa 1" e resolver `home` liquidaria a aposta pelo placar da partida
+ * inteira. Esses rótulos EXIGEM separador explícito: em
+ * "Game Winner - 1" o traço é a procedência de que o número é o LADO; sem
+ * ele, falha fechado e vai para settlement manual. `partida`/`evento`/`luta`
+ * e `match`/`event` não são unidades numeradas e seguem sem exigir separador.
+ */
+const MONEYLINE_PLAIN_LABELS = String.raw`resultado final|resultado do jogo|resultado da partida|(?:vencedor|ganhador)(?: d[oa] (?:${SIDE_SCOPE}))?|(?:event|match)\s+winner|money\s*line`;
+const MONEYLINE_UNIT_LABELS = String.raw`(?:vencedor|ganhador) d[oa] jogo|game\s+winner`;
+const LABELED_MONEYLINE_SIDE = new RegExp(
+  String.raw`^(?:(?:${MONEYLINE_PLAIN_LABELS})\s*[:\-]?\s*|(?:${MONEYLINE_UNIT_LABELS})\s*[:\-]\s*)?([12x])(?:\s*(?:\((?:ft|full time|tr|tempo regulamentar|regulamentar)\)|-\s*(?:ft|full time|tr|tempo regulamentar|regulamentar)))?$`,
+);
+
+/**
  * Seleção de moneyline em uma única fonte para settlement e providers.
  * Feeds 1X2 usam os tokens compactos 1/X/2; nomes de time continuam tendo
  * prioridade sobre "draw"/"empate" para não confundir clubes com esses termos.
@@ -312,26 +339,7 @@ export function matchMoneylineSelection(
   if (compact === "1") return "home";
   if (compact === "2") return "away";
 
-  // Tolera apenas rótulos conhecidos e o sufixo FT. Não procura qualquer dígito
-  // solto: números de nomes continuam ambíguos. O escopo dos rótulos PT vem do
-  // MESMO dado dos rótulos de lado (`SIDE_SCOPE_NOUNS`).
-  //
-  // Os rótulos se dividem por uma propriedade, não por idioma: "jogo N" e
-  // "game N" JÁ significam unidade parcial no resto do sistema
-  // (`marketPeriodOf` devolve OTHER, `marketMapNumberOf` só os aceita como mapa
-  // em eSports), então "Vencedor do Jogo 1" é indistinguível de "vencedor do
-  // mapa 1" e resolver `home` liquidaria a aposta pelo placar da partida
-  // inteira. Esses rótulos EXIGEM separador explícito: em
-  // "Game Winner - 1" o traço é a procedência de que o número é o LADO; sem
-  // ele, falha fechado e vai para settlement manual. `partida`/`evento`/`luta`
-  // e `match`/`event` não são unidades numeradas e seguem sem exigir separador.
-  const plainLabels = String.raw`resultado final|resultado do jogo|resultado da partida|(?:vencedor|ganhador)(?: d[oa] (?:${SIDE_SCOPE}))?|(?:event|match)\s+winner|money\s*line`;
-  const unitLabels = String.raw`(?:vencedor|ganhador) d[oa] jogo|game\s+winner`;
-  const labeled = compact.match(
-    new RegExp(
-      String.raw`^(?:(?:${plainLabels})\s*[:\-]?\s*|(?:${unitLabels})\s*[:\-]\s*)?([12x])(?:\s*(?:\((?:ft|full time|tr|tempo regulamentar|regulamentar)\)|-\s*(?:ft|full time|tr|tempo regulamentar|regulamentar)))?$`,
-    ),
-  );
+  const labeled = compact.match(LABELED_MONEYLINE_SIDE);
   if (labeled?.[1] === "1") return "home";
   if (labeled?.[1] === "2") return "away";
   if (labeled?.[1] === "x") return "draw";
@@ -537,13 +545,8 @@ export function matchDoubleChanceSelection(
   const normalized = normalizeStr(selecao)
     .replace(/\s+/g, " ")
     .trim()
-    .replace(new RegExp(String.raw`^${DOUBLE_CHANCE_LABEL}\s*[:\-]?\s*`), "")
-    .replace(
-      new RegExp(
-        String.raw`\s*(?:\(\s*${DOUBLE_CHANCE_LABEL}\s*\)|-\s*${DOUBLE_CHANCE_LABEL}|${DOUBLE_CHANCE_LABEL})\s*$`,
-      ),
-      "",
-    )
+    .replace(DOUBLE_CHANCE_PREFIX, "")
+    .replace(DOUBLE_CHANCE_SUFFIX, "")
     .trim();
   const compact = normalized.replace(/[^a-z0-9]/g, "");
   if (compact === "1x" || compact === "x1") return ["home", "draw"];
