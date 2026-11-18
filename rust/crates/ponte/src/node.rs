@@ -998,3 +998,58 @@ pub fn rewrite_selecao_with_matched_teams(
         &pinnacle_away,
     )
 }
+
+// --- settlement/ ---
+
+use dominio::settlement::sides::{self, Outcome, Side};
+
+fn side_name(side: Option<Side>) -> Option<&'static str> {
+    side.map(Side::as_str)
+}
+
+#[napi]
+pub fn strip_team_names(selecao: String, evento: String) -> String {
+    sides::strip_team_names(&selecao, &evento)
+}
+
+#[napi]
+pub fn match_team_side(selecao: String, evento: String) -> Option<&'static str> {
+    side_name(sides::match_team_side(&selecao, &evento))
+}
+
+#[napi]
+pub fn match_moneyline_selection(
+    selecao: String,
+    evento: String,
+    strict: bool,
+) -> Option<&'static str> {
+    sides::match_moneyline_selection(&selecao, &evento, strict).map(Outcome::as_str)
+}
+
+#[napi]
+pub fn moneyline_selection_asks_another_market(selecao: String, evento: Option<String>) -> bool {
+    sides::moneyline_selection_asks_another_market(&selecao, evento.as_deref())
+}
+
+/// `[side, contradicts]`.
+#[napi]
+pub fn resolve_side_from_market_and_selection(
+    mercado: String,
+    selecao: String,
+    evento: String,
+) -> (Option<&'static str>, bool) {
+    let (side, contradicts) =
+        sides::resolve_side_from_market_and_selection(&mercado, &selecao, &evento);
+    (side_name(side), contradicts)
+}
+
+#[napi]
+pub fn match_draw_no_bet_selection(selecao: String, evento: String) -> Option<&'static str> {
+    side_name(sides::match_draw_no_bet_selection(&selecao, &evento))
+}
+
+#[napi]
+pub fn match_double_chance_selection(selecao: String, evento: String) -> Option<Vec<&'static str>> {
+    sides::match_double_chance_selection(&selecao, &evento)
+        .map(|(one, other)| vec![one.as_str(), other.as_str()])
+}

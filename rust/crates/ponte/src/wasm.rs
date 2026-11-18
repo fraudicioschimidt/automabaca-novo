@@ -1025,3 +1025,55 @@ pub fn rewrite_selecao_with_matched_teams(
         pinnacle_away,
     )
 }
+
+// --- settlement/ ---
+
+use dominio::settlement::sides::{self, Outcome, Side};
+
+fn side_value(side: Option<Side>) -> JsValue {
+    optional_str(side.map(Side::as_str))
+}
+
+#[wasm_bindgen(js_name = stripTeamNames)]
+pub fn strip_team_names(selecao: &str, evento: &str) -> String {
+    sides::strip_team_names(selecao, evento)
+}
+
+#[wasm_bindgen(js_name = matchTeamSide)]
+pub fn match_team_side(selecao: &str, evento: &str) -> JsValue {
+    side_value(sides::match_team_side(selecao, evento))
+}
+
+#[wasm_bindgen(js_name = matchMoneylineSelection)]
+pub fn match_moneyline_selection(selecao: &str, evento: &str, strict: bool) -> JsValue {
+    optional_str(sides::match_moneyline_selection(selecao, evento, strict).map(Outcome::as_str))
+}
+
+#[wasm_bindgen(js_name = moneylineSelectionAsksAnotherMarket)]
+pub fn moneyline_selection_asks_another_market(selecao: &str, evento: Option<String>) -> bool {
+    sides::moneyline_selection_asks_another_market(selecao, evento.as_deref())
+}
+
+/// `[side, contradicts]`.
+#[wasm_bindgen(js_name = resolveSideFromMarketAndSelection)]
+pub fn resolve_side_from_market_and_selection(
+    mercado: &str,
+    selecao: &str,
+    evento: &str,
+) -> JsValue {
+    let (side, contradicts) =
+        sides::resolve_side_from_market_and_selection(mercado, selecao, evento);
+    pair_value(side_value(side), contradicts)
+}
+
+#[wasm_bindgen(js_name = matchDrawNoBetSelection)]
+pub fn match_draw_no_bet_selection(selecao: &str, evento: &str) -> JsValue {
+    side_value(sides::match_draw_no_bet_selection(selecao, evento))
+}
+
+#[wasm_bindgen(js_name = matchDoubleChanceSelection)]
+pub fn match_double_chance_selection(selecao: &str, evento: &str) -> JsValue {
+    sides::match_double_chance_selection(selecao, evento).map_or(JsValue::NULL, |(one, other)| {
+        strings([one.as_str(), other.as_str()])
+    })
+}

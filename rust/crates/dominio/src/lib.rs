@@ -14,6 +14,7 @@ pub mod mercados;
 pub mod money;
 pub mod national_teams;
 pub mod odds;
+pub mod settlement;
 pub mod sports;
 pub mod team_category;
 pub mod text;
@@ -25,6 +26,7 @@ pub fn regex_catalog() -> Vec<(String, String)> {
     kickoff::regexes();
     mercados::regexes();
     national_teams::regexes();
+    settlement::regexes();
     sports::regexes();
     team_category::regexes();
     text::regexes();
