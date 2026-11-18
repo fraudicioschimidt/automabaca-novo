@@ -1,11 +1,9 @@
-import {
-  matchDrawNoBetSelection,
-  matchDoubleChanceSelection,
-} from "@/src/domain/settlement/sides";
-import { canonicalSport } from "@/src/domain/sports/registry";
-import { splitEventoTeams } from "@/src/domain/text";
-import { marketIncludesExtraTime, marketKindOf, marketPeriodOf } from "./classify";
-import { restrictsToRegulationTime } from "./compatibility";
+/**
+ * O mercado equivalente que os feeds cotam quando o original não existe neles
+ * (DNB → AH 0.0, Dupla Chance 1X/X2 → AH +0.5). A regra mora em Rust
+ * (`rust/crates/dominio/src/mercados/sharp_equivalent.rs`).
+ */
+import dominio from "@automabaca/dominio";
 
 type SharpEquivalentBet = {
   mercado: string;
@@ -13,18 +11,17 @@ type SharpEquivalentBet = {
   nota: "dnb→ah_0.0" | "dc→ah_+0.5";
 };
 
-/** Sem esporte confirmado ou com regras distintas de retirada, não há equivalência comprovada. */
-export function supportsSharpEquivalence(esporte?: string): boolean {
-  const sport = canonicalSport(esporte);
-  return esporte === undefined || (sport !== null && sport !== "Tennis" && sport !== "Table Tennis");
+/**
+ * Esporte não informado conta como compatível; `null` vindo do banco não (o
+ * Rust lê o vazio como esporte desconhecido, como o TS lia o `null`).
+ */
+function sport(esporte: string | undefined): string | undefined {
+  return esporte === undefined ? undefined : (esporte ?? "");
 }
 
-function dcSide(selecao: string, evento: string): "home" | "away" | null {
-  const covers = matchDoubleChanceSelection(selecao, evento);
-  if (!covers) return null;
-  if (covers.includes("home") && covers.includes("draw")) return "home";
-  if (covers.includes("away") && covers.includes("draw")) return "away";
-  return null; // 12/casa+fora não tem equivalente AH de lado único.
+/** Sem esporte confirmado ou com regras distintas de retirada, não há equivalência comprovada. */
+export function supportsSharpEquivalence(esporte?: string): boolean {
+  return dominio.supportsSharpEquivalence(sport(esporte));
 }
 
 /**
@@ -37,35 +34,8 @@ export function sharpEquivalentBet(params: {
   evento: string;
   esporte?: string;
 }): SharpEquivalentBet | null {
-  if (!supportsSharpEquivalence(params.esporte)) return null;
-  const kind = marketKindOf(params.mercado, params.selecao, params.evento);
-  // Mercado e seleção são duas superfícies da mesma evidência. Traduzir um
-  // DNB parcial para AH 0.0 FT fabricaria uma linha que não foi apostada.
-  if (
-    marketPeriodOf(params.mercado) !== "FT" ||
-    marketPeriodOf(params.selecao) !== "FT" ||
-    [params.mercado, params.selecao].some(text => restrictsToRegulationTime(text, params.esporte))
-  ) return null;
-  const market = [params.mercado, params.selecao].some(marketIncludesExtraTime)
-    ? "Asian Handicap – Including Overtime" : "Asian Handicap";
-  const teams = splitEventoTeams(params.evento);
-  if (!teams) return null;
-
-  if (kind === "draw_no_bet") {
-    const side = matchDrawNoBetSelection(params.selecao, params.evento);
-    if (!side) return null;
-    const team = side === "home" ? teams.home : teams.away;
-    return { mercado: market, selecao: `${team} 0.0`, nota: "dnb→ah_0.0" };
-  }
-
-  if (kind === "double_chance") {
-    const side = dcSide(params.selecao, params.evento);
-    if (!side) return null;
-    const team = side === "home" ? teams.home : teams.away;
-    return { mercado: market, selecao: `${team} +0.5`, nota: "dc→ah_+0.5" };
-  }
-
-  return null;
+  const bet = dominio.sharpEquivalentBet(params.mercado, params.selecao, params.evento, sport(params.esporte));
+  return bet && { mercado: bet[0], selecao: bet[1], nota: bet[2] };
 }
 
 /** Aposta efetiva para PRECIFICAÇÃO: original, ou o equivalente AH. */
@@ -75,6 +45,5 @@ export function effectiveSharpBet(params: {
   evento: string;
   esporte?: string;
 }): { mercado: string; selecao: string } {
-  const eq = sharpEquivalentBet(params);
-  return eq ?? { mercado: params.mercado, selecao: params.selecao };
+  return sharpEquivalentBet(params) ?? { mercado: params.mercado, selecao: params.selecao };
 }

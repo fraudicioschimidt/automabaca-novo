@@ -1266,3 +1266,38 @@ pub fn keep_declared_period(
 ) -> String {
     finalize::keep_declared_period(original, coerced, esporte.as_deref(), selecao)
 }
+
+use dominio::mercados::{double_chance_selection, sharp_equivalent};
+
+/// `[mercado, selecao]` canônicos, ou `null` quando não é Dupla Chance.
+#[wasm_bindgen(js_name = canonicalDoubleChanceSelection)]
+pub fn canonical_double_chance_selection(
+    evento: &str,
+    mercado: &str,
+    selecao: &str,
+    esporte: &str,
+) -> JsValue {
+    double_chance_selection::canonical_double_chance_selection(evento, mercado, selecao, esporte)
+        .map_or(JsValue::NULL, |(mercado, selecao)| {
+            strings([mercado, selecao])
+        })
+}
+
+#[wasm_bindgen(js_name = supportsSharpEquivalence)]
+pub fn supports_sharp_equivalence(esporte: Option<String>) -> bool {
+    sharp_equivalent::supports_sharp_equivalence(esporte.as_deref())
+}
+
+/// `[mercado, selecao, nota]`, ou `null` sem equivalente.
+#[wasm_bindgen(js_name = sharpEquivalentBet)]
+pub fn sharp_equivalent_bet(
+    mercado: &str,
+    selecao: &str,
+    evento: &str,
+    esporte: Option<String>,
+) -> JsValue {
+    sharp_equivalent::sharp_equivalent_bet(mercado, selecao, evento, esporte.as_deref())
+        .map_or(JsValue::NULL, |bet| {
+            strings([bet.mercado, &bet.selecao, bet.nota])
+        })
+}
