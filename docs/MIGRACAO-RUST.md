@@ -350,6 +350,19 @@ diretiva. Andamento:
   por texto vazio, que o Rust lê como esporte desconhecido, como o TS.
   Paridade com o TS em 800 mil comparações nos dois lados e 240 mil pelas
   cascas, com o `null`. O WASM foi a 223 KB com gzip (+2,2 KB).
+- linhas de handicap e total em quartos (`settlement/lines`): a leitura da
+  linha na seleção (split, sinal solto, zero com sinal, "mais"/"menos"), o
+  meio-tempo numerado que não é linha e o status pelo ajuste em quartos. A
+  limpeza veio antes, no #37. A regex que o TS montava por aposta, com as
+  duas pernas como literais, virou uma busca no texto. A primeira versão
+  ficou 2,2× mais lenta que o TS por chamada; normalizar o texto uma vez e
+  pular cada troca de regex quando falta o caractere que toda forma dela
+  exige (filtro exato) levou a 5,2 µs no servidor e 4,8 µs no navegador,
+  contra 3,9 µs do TS. A linha é lida uma vez por aposta, não por linha do
+  catálogo, e o laço de coerção sobre os aliases fica parelho (7,6 s contra
+  7,8 s do TS, em rodadas alternadas). Paridade com o TS em 2,4 milhões de
+  comparações nos dois lados e 600 mil só com pernas de split. O WASM foi a
+  228 KB com gzip (+5,9 KB).
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)
