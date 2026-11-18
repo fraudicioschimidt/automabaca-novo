@@ -221,18 +221,20 @@ diretiva. Andamento:
   a cada chamada. Paridade com o TS antigo em 1,6 milhão de comparações, nos
   dois lados, com as listas e os termos SQL iguais e na mesma ordem, e
   geradores dirigidos ao qualificador desconhecido e aos quatro rótulos de
-  "ambas recebem cartões". A alternância de ~200 termos é lenta no
-  `regress`: no servidor, 9 µs contra 1 µs do TS em
-  `hasNonScoreStatQualifier` e 4 µs contra 0,6 µs em
-  `selecaoDeclaraLinhaDeEstatistica` (1 a 5 µs nas outras, perto do TS), e
-  1,4 a 2× o TS num texto de 3 KB (até 0,8 ms), sem crescer além do linear;
-  no navegador, de empatado a 2× o TS. Os chamadores recebem o mercado de
-  uma aposta (registro, coerção, classificação, roteamento de providers) ou
-  percorrem as apostas pendentes de um ciclo (IA-Judge, settlement parado em
-  Operações), na casa das centenas; nenhum compara contra o catálogo de
-  mercados (o laço do catálogo da Pinnacle17 não chama estas regras). Se
-  aparecer no perfil do worker, o casamento de termo por palavra vira código
-  Rust. O WASM foi a 184 KB com gzip (+6,8 KB).
+  "ambas recebem cartões", e nas 174 mil chamadas reais do teste de
+  coerção sobre os aliases de produção. A alternância de ~200 termos era
+  lenta no `regress` (9 µs contra 1 µs do TS por mercado), e o teste da
+  coerção sobre os aliases (174 mil chamadas) passou dos 15 s na CI: é
+  caminho quente. Três mudanças, todas exatas: as alternativas agrupadas pela
+  primeira letra (só para `is_match`, em que a ordem não muda se alguma
+  casa), e pré-filtros de texto que as regexes exigem (um dígito ou palavra
+  de direção na linha da seleção; "both teams", "ambas" ou "ambos" nos
+  rótulos de cartões dos dois times). No servidor ficou 3,4 µs contra 1 µs
+  do TS em `hasNonScoreStatQualifier` e empatado nas outras (0,6 a 5 µs);
+  nas chamadas reais do teste, 198 ms contra 122 ms do TS, nos três
+  esportes. Num texto de 3 KB, 1,4 a 2× o TS (até 0,8 ms), sem crescer além
+  do linear; no navegador, de empatado a 2× o TS. O WASM foi a 185 KB com
+  gzip (+8,2 KB).
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)

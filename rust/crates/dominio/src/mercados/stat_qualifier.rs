@@ -67,11 +67,74 @@ fn compiled(source: &str, flags: &str) -> Regex {
         .unwrap_or_else(|error| panic!("regex inválida /{source}/{flags}: {error}"))
 }
 
+/// As alternativas de `NON_SCORE_STAT_TERMS` agrupadas pela primeira letra:
+/// `cartao|cards?|cantos?` vira `c(?:artao|ards?|antos?)`. O `regress` tenta
+/// cada alternativa em cada posição do texto, e as ~200 custavam 9 µs por
+/// aposta (8× o V8), o que estourava o laço de coerção sobre os aliases de
+/// produção. Agrupadas, cada posição testa uma letra por grupo. Só serve a
+/// `is_match`: a ordem das alternativas muda qual casa primeiro, nunca se
+/// alguma casa.
+static GROUPED_TERMS: LazyLock<String> =
+    LazyLock::new(|| group_by_first_char(NON_SCORE_STAT_TERMS));
+
+/// As alternativas do nível de fora de `alternation`, separadas pelos `|`
+/// fora de grupo e de classe.
+fn top_level_alternatives(alternation: &str) -> Vec<&str> {
+    let mut parts = Vec::new();
+    let (mut depth, mut in_class, mut escaped, mut start) = (0usize, false, false, 0);
+    for (at, c) in alternation.char_indices() {
+        match c {
+            _ if escaped => escaped = false,
+            '\\' => escaped = true,
+            '[' => in_class = true,
+            ']' => in_class = false,
+            '(' if !in_class => depth += 1,
+            ')' if !in_class => depth -= 1,
+            '|' if !in_class && depth == 0 => {
+                parts.push(&alternation[start..at]);
+                start = at + 1;
+            }
+            _ => {}
+        }
+    }
+    parts.push(&alternation[start..]);
+    parts
+}
+
+fn group_by_first_char(alternation: &str) -> String {
+    let mut groups: Vec<(Option<char>, Vec<&str>)> = Vec::new();
+    for alternative in top_level_alternatives(alternation) {
+        let mut chars = alternative.chars();
+        let first = chars.next();
+        let next = chars.next();
+        // A letra só sai do termo quando é literal e não leva quantificador.
+        let key = first
+            .filter(|c| c.is_ascii_alphanumeric())
+            .filter(|_| !matches!(next, Some('?' | '*' | '+' | '{')));
+        let rest = key.map_or(alternative, |c| &alternative[c.len_utf8()..]);
+        match groups.iter_mut().find(|(k, _)| *k == key && key.is_some()) {
+            Some((_, rests)) => rests.push(rest),
+            None => groups.push((key, vec![rest])),
+        }
+    }
+    groups
+        .into_iter()
+        .map(|(key, rests)| match key {
+            Some(c) => format!("{c}(?:{})", rests.join("|")),
+            None => rests.join("|"),
+        })
+        .collect::<Vec<_>>()
+        .join("|")
+}
+
 static NON_SCORE_STAT: LazyLock<Regex> =
-    LazyLock::new(|| compiled(&format!(r"\b(?:{NON_SCORE_STAT_TERMS})\b"), ""));
+    LazyLock::new(|| compiled(&format!(r"\b(?:{})\b", *GROUPED_TERMS), ""));
 static LINE_THEN_STAT: LazyLock<Regex> = LazyLock::new(|| {
     compiled(
-        &format!(r"\d+(?:[.,]\d+)?{CONECTOR_DE_LINHA}(?:{NON_SCORE_STAT_TERMS})\b"),
+        &format!(
+            r"\d+(?:[.,]\d+)?{CONECTOR_DE_LINHA}(?:{})\b",
+            *GROUPED_TERMS
+        ),
         "",
     )
 });
@@ -80,7 +143,10 @@ static LINE_THEN_STAT: LazyLock<Regex> = LazyLock::new(|| {
 /// aces. Handicap estatístico de verdade nomeia a estatística no MERCADO.
 static STAT_THEN_LINE: LazyLock<Regex> = LazyLock::new(|| {
     compiled(
-        &format!(r"\b(?:{NON_SCORE_STAT_TERMS})\s*(?:over|under|mais|menos|acima|abaixo|\d)"),
+        &format!(
+            r"\b(?:{})\s*(?:over|under|mais|menos|acima|abaixo|\d)",
+            *GROUPED_TERMS
+        ),
         "",
     )
 });
@@ -109,8 +175,16 @@ fn both_teams_cards() -> &'static Regex {
 }
 
 /// A linha exige que CADA time alcance o mínimo de cartões, não o total do jogo.
+///
+/// Os quatro rótulos começam por "both teams", "ambas" ou "ambos": sem uma
+/// dessas palavras o texto não casa, e a regex (lenta no `regress` em legenda
+/// longa) nem roda.
 pub fn is_both_teams_cards_text(text: &str) -> bool {
-    both_teams_cards().is_match(&normalize_str(text))
+    let normalized = normalize_str(text);
+    ["both teams", "ambas", "ambos"]
+        .iter()
+        .any(|subject| normalized.contains(subject))
+        && both_teams_cards().is_match(&normalized)
 }
 
 /// A seleção DECLARA uma linha de estatística, não apenas contém uma palavra
@@ -118,7 +192,14 @@ pub fn is_both_teams_cards_text(text: &str) -> bool {
 /// Vegas Aces" no moneyline, para a coerção de mercado e para o settlement.
 pub fn selecao_declara_linha_de_estatistica(selecao: &str) -> bool {
     let selection = normalize_str(selecao);
-    LINE_THEN_STAT.is_match(&selection) || STAT_THEN_LINE.is_match(&selection)
+    // As duas formas pedem um número ou uma palavra de direção: sem eles
+    // ("Flamengo"), as regexes nem rodam.
+    let has_digit = selection.bytes().any(|byte| byte.is_ascii_digit());
+    let has_direction = ["over", "under", "mais", "menos", "acima", "abaixo"]
+        .iter()
+        .any(|word| selection.contains(word));
+    (has_digit && LINE_THEN_STAT.is_match(&selection))
+        || ((has_digit || has_direction) && STAT_THEN_LINE.is_match(&selection))
 }
 
 /// Mercados de estatística (cartões, escanteios, props…) nunca resolvem por placar.
@@ -420,6 +501,24 @@ mod tests {
         assert!(has_unknown_score_qualifier("Total de Xyzzy"));
         assert!(!has_unknown_score_qualifier("Total de Gols FT"));
         assert!(!has_unknown_score_qualifier("Total de Escanteios"));
+    }
+
+    #[test]
+    fn termos_agrupados_pela_primeira_letra() {
+        assert_eq!(
+            group_by_first_char(r"(?:a|b)x|cards?|s?x|cantos?|3[\s-]*p|d"),
+            r"(?:a|b)x|c(?:ards?|antos?)|s?x|3(?:[\s-]*p)|d(?:)"
+        );
+        // Cada alternativa do vocabulário está num grupo, e só uma vez.
+        let alternatives = top_level_alternatives(NON_SCORE_STAT_TERMS).len();
+        let grouped: usize = top_level_alternatives(&GROUPED_TERMS)
+            .iter()
+            .map(|group| match group.find("(?:") {
+                Some(1) => top_level_alternatives(&group[4..group.len() - 1]).len(),
+                _ => 1,
+            })
+            .sum();
+        assert_eq!(grouped, alternatives);
     }
 
     #[test]
