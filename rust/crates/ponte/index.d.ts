@@ -66,9 +66,54 @@ declare const dominio: {
   canonicalizeTeamName(text: string): string;
   isProtectedToken(token: string): boolean;
   teamNameVariants(canon: string): string[];
-  /** `[palavras de parada, tokens da classe reserva, [marcador da classe reserva]]`. */
-  teamNameVocabulary(): [string[], string[], [string]];
+  teamStopWords(): string[];
   teamNameEquivalents(): string[][];
+  /** Ver `src/domain/team-category.ts`. Ligas nulas valem como ausentes. */
+  teamCategoryTokens(canon: string, digitsOnly: boolean): string[];
+  reserveSuffixMismatch(ca: string, cb: string): boolean;
+  hasProtectedTeamCategoryConflict(a: string, b: string): boolean;
+  teamIdentityCategoryConflict(a: string, b: string): boolean;
+  betDeclaresCategoryFixtureLacks(canonAposta: string, canonFixture: string): boolean;
+  categoryTokensFromLeague(league: string): string[];
+  leagueCoversBetCategory(canonAposta: string, canonFixture: string, league: string | null | undefined): boolean;
+  orientedTeamPairHasReserveSuffixConflict(
+    providerHome: string, providerAway: string, localHome: string, localAway: string,
+    swapped: boolean, league: string | null | undefined,
+  ): boolean;
+  stripCategoryTokens(canonName: string, tokens: string[]): string;
+  areCategoriesCompatible(
+    betCanon: string, fixtureCanon: string, betLeague: string | null | undefined, fixtureLeague: string | null | undefined,
+  ): [compatible: boolean, coveredTokens: string[]];
+  teamCategoryConflictInContext(
+    betName: string, fixtureName: string, betLeague: string | null | undefined, fixtureLeague: string | null | undefined,
+  ): boolean;
+  teamCategoryInContext(name: string, league: string | null | undefined): string[];
+  sameTeamCategory(a: string[], b: string[]): boolean;
+  isBaseCategoryFixture(home: string, away: string, league: string | null | undefined): boolean;
+  /** Ver `src/domain/text.ts`. */
+  teamSimilarity(a: string, b: string): number;
+  teamSimilarityCanon(ca: string, cb: string): number;
+  teamSideSimilarityCanon(ca: string, cb: string): [score: number, evidence: number];
+  teamNameEvidence(a: string, b: string): number;
+  fixtureHasAnchorSide(homeEvidence: number, awayEvidence: number): boolean;
+  anchorSideFloor(): number;
+  bestSearchWord(text: string): string;
+  splitEventoTeams(evento: string): [home: string, away: string] | null;
+  fixtureHasPlaceholderTeam(evento: string): boolean;
+  sameFixtureTeams(eventoA: string, eventoB: string): boolean;
+  slugify(text: string): string;
+  /** Os 12 campos de `MatchTeamsResult`, na ordem do tipo (booleanos como 0/1). */
+  matchTeamsWithCategoryContext(
+    betHome: string, betAway: string, fixtureHome: string, fixtureAway: string,
+    betLeague: string | null | undefined, fixtureLeague: string | null | undefined, canonical: boolean,
+  ): number[];
+  /** Os candidatos em colunas (liga e país vazios = ausentes); devolve os índices que ficam. */
+  refineCategoryCandidates(
+    betHome: string, betAway: string, betLeague: string | null | undefined, betKickoffMs: number | null | undefined,
+    collapseDuplicateListings: boolean, homes: string[], aways: string[], leagues: string[], countries: string[],
+    kickoffs: number[], swapped: number[],
+  ): number[];
+  markSoccerReserveTeams(evento: string, selecao: string): [evento: string, selecao: string] | null;
   /**
    * O regex do domínio cru, só para `tests/plataforma/js-regex.test.ts`
    * comparar os dois lados com o V8. `regexExec` devolve `[início, fim]` UTF-16

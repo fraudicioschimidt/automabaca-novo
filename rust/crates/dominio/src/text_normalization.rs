@@ -243,7 +243,7 @@ fn replace_runs(text: &str, separator: impl Fn(char) -> bool) -> String {
 }
 
 /// `replace(/\s+/g, " ").trim()`.
-fn collapse_whitespace(text: &str) -> String {
+pub(crate) fn collapse_whitespace(text: &str) -> String {
     js::trim(&replace_runs(text, js::is_whitespace)).to_owned()
 }
 

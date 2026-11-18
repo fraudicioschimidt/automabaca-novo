@@ -3,7 +3,8 @@
 //! `normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()`. O domínio
 //! em TypeScript usava as do V8 (ICU); portado, ele tem de dar o mesmo texto
 //! no servidor e no navegador. É uma operação só para o navegador cruzar para
-//! o host uma vez por texto.
+//! o host uma vez por texto. Mais o `toUpperCase()`, que o domínio usa para
+//! saber se um texto está todo em caixa alta.
 //!
 //! - No navegador, as próprias funções do host, as mesmas que o TypeScript
 //!   usava ali, sem tabela do Unicode no binário.
@@ -17,6 +18,7 @@ mod backend {
     use wasm_bindgen::prelude::wasm_bindgen;
 
     #[wasm_bindgen(inline_js = r#"
+export function jsTextToUpperCase(text) { return text.toUpperCase(); }
 export function jsTextFoldForMatching(text) {
   return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
@@ -24,6 +26,8 @@ export function jsTextFoldForMatching(text) {
     extern "C" {
         #[wasm_bindgen(js_name = jsTextFoldForMatching)]
         pub fn fold_for_matching(text: &str) -> String;
+        #[wasm_bindgen(js_name = jsTextToUpperCase)]
+        pub fn to_upper_case(text: &str) -> String;
     }
 }
 
@@ -277,11 +281,20 @@ mod backend {
             .collect();
         stripped.to_lowercase()
     }
+
+    pub fn to_upper_case(text: &str) -> String {
+        text.to_uppercase()
+    }
 }
 
 /// `text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()`.
 pub fn fold_for_matching(text: &str) -> String {
     backend::fold_for_matching(text)
+}
+
+/// `text.toUpperCase()` (com as expansões do Unicode: `ß` vira `SS`).
+pub fn to_upper_case(text: &str) -> String {
+    backend::to_upper_case(text)
 }
 
 #[cfg(test)]
