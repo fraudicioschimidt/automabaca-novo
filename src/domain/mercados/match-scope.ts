@@ -5,35 +5,23 @@
  * Quatro bordas usam a lista — `classify.marketKindOf`,
  * `settlement/markets.classifyScoreMarket`, os rótulos de lado e o prefixo de
  * seleção de moneyline em `settlement/sides` — e com listas próprias divergiam
- * em silêncio ("Para Ganhar o Confronto" sem kind, "Vencedor da Luta 1" sem
- * lado). Por isso é DADO exportado, não N regexes "iguais" (portão:
- * `tests/liquidacao/score-resolvable-mercado-where.test.ts`).
+ * em silêncio. Por isso é DADO exportado, não N regexes "iguais". A lista mora
+ * em Rust (`rust/crates/dominio/src/mercados/match_scope.rs`).
  */
+import dominio from "@automabaca/dominio";
+
+const [matchScopeNouns, sideScopeNouns] = dominio.scopeNouns();
 
 /**
  * Escopo no MERCADO. `serie` fica de fora: no nome do mercado "Vencedor da
  * Série" é escopo de campeonato e pertence a `OUTRIGHT_SCOPE_NOUNS`.
  */
-export const MATCH_SCOPE_NOUNS = [
-  "partida", "jogo", "confronto", "encontro", "duelo", "combate", "evento",
-  "luta", "match",
-] as const;
+export const MATCH_SCOPE_NOUNS: readonly string[] = matchScopeNouns;
 
 /**
  * Escopo na SELEÇÃO, onde o substantivo é seguido do NÚMERO do lado
- * ("Vencedor da Luta 1"). Difere do mercado em dois pontos, e cada um tem uma
- * razão:
- *
- * - `jogo` sai: "jogo N"/"game N" já significa UNIDADE no resto do sistema
- *   (`marketPeriodOf` devolve OTHER, `marketMapNumberOf` só aceita como mapa em
- *   eSports). Aceitar a mesma string como LADO faria uma aposta no jogo 1
- *   liquidar pelo placar da partida inteira (portão:
- *   `tests/liquidacao/score-resolution-sides.test.ts`).
- * - `serie` entra: o evento aqui é cabeça-a-cabeça ("FURIA vs MIBR"), então a
- *   série É a partida. O sentido de campeonato é barrado antes, no mercado, por
- *   `isOutrightMarket`.
+ * ("Vencedor da Luta 1"): sem `jogo` ("jogo N" é unidade no resto do sistema)
+ * e com `serie` (no cabeça-a-cabeça a série é a partida; o sentido de
+ * campeonato é barrado antes, no mercado, por `isOutrightMarket`).
  */
-export const SIDE_SCOPE_NOUNS = [
-  "partida", "confronto", "encontro", "duelo", "combate", "evento", "luta",
-  "serie",
-] as const;
+export const SIDE_SCOPE_NOUNS: readonly string[] = sideScopeNouns;

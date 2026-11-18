@@ -114,6 +114,18 @@ declare const dominio: {
     kickoffs: number[], swapped: number[],
   ): number[];
   markSoccerReserveTeams(evento: string, selecao: string): [evento: string, selecao: string] | null;
+  /** Ver `src/domain/mercados/`. */
+  accentuate(term: string): string;
+  accentVariants(term: string): string[];
+  /** `[MATCH_SCOPE_NOUNS, SIDE_SCOPE_NOUNS]`. */
+  scopeNouns(): [string[], string[]];
+  trailingTeamCandidate(trailing: string): string | null;
+  trailingTeamCandidateOfSelection(selecao: string): string | null;
+  separateCompactStatUnit(text: string): string;
+  expandAbbreviatedDirection(selection: string): string;
+  totalDirectionOf(selection: string, allowBarePositiveLine: boolean): "over" | "under" | null;
+  /** `[OVER_WORDS, UNDER_WORDS]`. */
+  totalDirectionWords(): [over: string, under: string];
   /**
    * O regex do domínio cru, só para `tests/plataforma/js-regex.test.ts`
    * comparar os dois lados com o V8. `regexExec` devolve `[início, fim]` UTF-16

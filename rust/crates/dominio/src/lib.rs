@@ -9,6 +9,7 @@ pub mod decimal_input;
 pub mod js;
 pub mod kelly;
 pub mod kickoff;
+pub mod mercados;
 pub mod money;
 pub mod odds;
 pub mod team_category;
@@ -19,6 +20,7 @@ pub mod text_normalization;
 /// lados da ponte com o V8. Cada módulo com regex compila as suas aqui.
 pub fn regex_catalog() -> Vec<(String, String)> {
     kickoff::regexes();
+    mercados::regexes();
     team_category::regexes();
     text::regexes();
     js_regex::catalog()

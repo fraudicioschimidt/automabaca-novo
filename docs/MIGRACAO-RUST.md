@@ -159,6 +159,17 @@ WebAssembly. Os navegadores mínimos (Chrome e Edge 97, Firefox 102, Safari
   `markSoccerReserveTeams` montava um regex com os nomes de cada aposta, o
   que encheria o catálogo sem limite: virou código Rust.
 
+- a base de `mercados/` sem catálogo: `accents`, `match-scope`,
+  `trailing-side` e `total-direction`. Paridade com o TS antigo em 1,4
+  milhão de comparações, nos dois lados. O `accentuate` do TS lia o mapa
+  num objeto comum, e `accentuate("constructor")` devolvia o texto da função
+  `Object` do protótipo; o Rust devolve a palavra, e só listas fixas chegam ali.
+- tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
+  -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
+  casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)
+  e a soma de dinheiro 17%; fica o `"s"`. O `.wasm` é baixado uma vez por
+  release e fica em cache.
+
 Três regras de método saíram desses módulos:
 
 - **Funções de `Math` que o IEEE não fixa** (`pow`, trigonometria) passam pelo
@@ -187,6 +198,11 @@ Três regras de método saíram desses módulos:
   navegador com o V8 em cada padrão do catálogo do domínio. Onde o JS deixaria
   meia unidade UTF-16 solta (troca sem `u` que parte um emoji), o Rust põe
   U+FFFD, como o `toWellFormed()`: cada chamada assim é lida ao portar.
+- **Dado compartilhado com o TypeScript mora no Rust** (17/11/2026), e a
+  casca o lê pela ponte uma vez (vocabulário de nomes, `MATCH_SCOPE_NOUNS`,
+  `OVER_WORDS`), para não haver duas cópias. O catálogo de mercados, de que o
+  TS tira um tipo literal (`MercadoCatalogName`) e que o seed grava, vai para
+  um JSON ao lado do módulo, que o TS importa e o Rust lê na compilação.
 - **Borda do JavaScript fica na casca.** O que é conversão de valor JS, e não
   regra, continua em TypeScript: `toNumber` (Decimal do Prisma, strings),
   `canonical-json` (protótipos, buracos de array, `Date`, `BigInt`) e os

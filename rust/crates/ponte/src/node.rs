@@ -625,3 +625,67 @@ pub fn refine_category_candidates(
 pub fn mark_soccer_reserve_teams(evento: String, selecao: String) -> Option<(String, String)> {
     names::mark_soccer_reserve_teams(&evento, &selecao)
 }
+
+// --- mercados/ ---
+
+use dominio::mercados::{accents, match_scope, total_direction, trailing_side};
+
+#[napi]
+pub fn accentuate(term: String) -> String {
+    accents::accentuate(&term)
+}
+
+#[napi]
+pub fn accent_variants(term: String) -> Vec<String> {
+    accents::accent_variants(&term)
+}
+
+/// `[MATCH_SCOPE_NOUNS, SIDE_SCOPE_NOUNS]`.
+#[napi]
+pub fn scope_nouns() -> Vec<Vec<String>> {
+    let list = |nouns: &[&str]| nouns.iter().map(|noun| (*noun).to_owned()).collect();
+    vec![
+        list(&match_scope::MATCH_SCOPE_NOUNS),
+        list(&match_scope::SIDE_SCOPE_NOUNS),
+    ]
+}
+
+#[napi]
+pub fn trailing_team_candidate(trailing: String) -> Option<String> {
+    trailing_side::trailing_team_candidate(&trailing)
+}
+
+#[napi]
+pub fn trailing_team_candidate_of_selection(selecao: String) -> Option<String> {
+    trailing_side::trailing_team_candidate_of_selection(&selecao)
+}
+
+#[napi]
+pub fn separate_compact_stat_unit(text: String) -> String {
+    total_direction::separate_compact_stat_unit(&text)
+}
+
+#[napi]
+pub fn expand_abbreviated_direction(selection: String) -> String {
+    total_direction::expand_abbreviated_direction(&selection)
+}
+
+/// `[OVER_WORDS, UNDER_WORDS]`: as palavras de direção como alternância de regex.
+#[napi]
+pub fn total_direction_words() -> Vec<String> {
+    vec![
+        total_direction::OVER_WORDS.to_owned(),
+        total_direction::UNDER_WORDS.to_owned(),
+    ]
+}
+
+/// `"over"`, `"under"` ou `null`.
+#[napi]
+pub fn total_direction_of(selection: String, allow_bare_positive_line: bool) -> Option<String> {
+    total_direction::total_direction_of(&selection, allow_bare_positive_line).map(|direction| {
+        match direction {
+            total_direction::TotalDirection::Over => "over".to_owned(),
+            total_direction::TotalDirection::Under => "under".to_owned(),
+        }
+    })
+}
