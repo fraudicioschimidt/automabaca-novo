@@ -28,8 +28,10 @@ const SELECTIONS = [
 
 describe("normalizeBetFields — a coerção nunca muda o período do mercado", () => {
   // Cada alias é normalizado uma vez; a coerção e a estatística da legenda
-  // rodam sobre os rótulos distintos que saem daí.
-  it.each(["Soccer", "Basketball", "Unknown"])("vale para todos os aliases de produção (%s)", async (esporte) => {
+  // rodam sobre os rótulos distintos que saem daí. São ~15 mil chamadas por
+  // esporte (1 s numa máquina livre): o limite é o de um teste de varredura,
+  // como os do `js-text`, porque este confere o período, não a velocidade.
+  it.each(["Soccer", "Basketball", "Unknown"])("vale para todos os aliases de produção (%s)", { timeout: 60_000 }, async (esporte) => {
     const violations: string[] = [];
     const labels = new Map<string, ReturnType<typeof marketPeriodOf>>();
     for (const [destino, alias] of PRODUCTION_MARKET_ALIASES) {

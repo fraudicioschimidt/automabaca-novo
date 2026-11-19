@@ -28,8 +28,6 @@ export type ScoreMarketKind =
   | "draw_no_bet"
   | "double_chance";
 
-export { hasNonScoreStatQualifier, hasScoreUnitMismatch, hasUnknownScoreQualifier };
-
 type MarketFamily = "total" | "btts" | "result" | "handicap";
 
 const FAMILY_VOCABULARY: Readonly<Record<MarketFamily, RegExp>> = {
@@ -38,6 +36,15 @@ const FAMILY_VOCABULARY: Readonly<Record<MarketFamily, RegExp>> = {
   result: /\b(?:vence\w*|vitoria|ganha\w*|wins?|winner|empat\w+|draw|money\s*line|ml|dnb|resultado|1x2)\b/,
   handicap: /\b(?:handicap|hcp|ah|spread)\b|(?:^|[\s([])[+-]\d/,
 };
+
+/**
+ * Rótulo de resultado (moneyline). O escopo do "para vencer/ganhar" vem de
+ * `match-scope.ts`, o mesmo do filtro SQL: se divergissem, "Para Ganhar o
+ * Confronto" sairia do IA-Judge sem log.
+ */
+const RESULT_MARKET = new RegExp(
+  String.raw`\b(resultado\s*final|resultado\s*do\s*jogo|resultado|vencedor|ganhador|para\s+(?:vencer|ganhar)\s+(?:[ao]\s+)?(?:${MATCH_SCOPE_NOUNS.join("|")})|quem\s+(?:vencera|vence|ganhara|ganha)|money\s*line|match\s*winner|full\s*time\s*result|1x2|winner|ml)\b`,
+);
 
 /** O que a seleção de cada mercado pode trazer sem pedir uma segunda condição. */
 const OWN_FAMILIES: Readonly<Record<ScoreMarketKind, readonly MarketFamily[]>> = {
@@ -192,13 +199,8 @@ function classifySingleMarket(
   }
 
   const compact = mercadoN.replace(/[^a-z0-9]/g, "");
-  // O escopo do "para vencer/ganhar" vem de `match-scope.ts`, o mesmo do filtro
-  // SQL: se divergissem, "Para Ganhar o Confronto" sairia do IA-Judge sem log.
-  const matchScope = MATCH_SCOPE_NOUNS.join("|");
   if (
-    new RegExp(
-      String.raw`\b(resultado\s*final|resultado\s*do\s*jogo|resultado|vencedor|ganhador|para\s+(?:vencer|ganhar)\s+(?:[ao]\s+)?(?:${matchScope})|quem\s+(?:vencera|vence|ganhara|ganha)|money\s*line|match\s*winner|full\s*time\s*result|1x2|winner|ml)\b`,
-    ).test(mercadoN) ||
+    RESULT_MARKET.test(mercadoN) ||
     /^(?:para\s+ganhar)$/.test(mercadoN) ||
     compact === "1x2" ||
     compact === "ml"

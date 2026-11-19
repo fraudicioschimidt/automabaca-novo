@@ -13,13 +13,8 @@ import {
 } from "@/src/domain/live-score-at-tip";
 import { extractSignedNumbers, parseLineQuarters, statusFromAdjustedQuarters, withoutNumberedHalf } from "./lines";
 import { isBasketballFirstHalf, supportsBasketballFirstHalf } from "./basketball-half";
-import {
-  classifyScoreMarket,
-  declaredScorePeriod,
-  hasNonScoreStatQualifier,
-  hasScoreUnitMismatch,
-  hasUnknownScoreQualifier,
-} from "./markets";
+import { classifyScoreMarket, declaredScorePeriod } from "./markets";
+import { hasNonScoreStatQualifier, hasScoreUnitMismatch, hasUnknownScoreQualifier } from "@/src/domain/mercados/stat-qualifier";
 import {
   matchDoubleChanceSelection,
   matchDrawNoBetSelection,
