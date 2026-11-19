@@ -180,7 +180,6 @@ declare const dominio: {
   marketIncludesExtraTime(mercado: string): boolean;
   declaresRegulationTime(text: string): boolean;
   isBttsMarket(mercado: string): boolean;
-  marketNamesBothHalves(text: string): boolean;
   isCombinedBttsMarket(mercado: string): boolean;
   bttsSelectionSide(selecao: string): "yes" | "no" | null;
   isRaceToMarket(mercado: string, selecao: string): boolean;
@@ -260,6 +259,13 @@ declare const dominio: {
   ): "handicap" | "total" | "team_total" | "btts" | "moneyline" | "draw_no_bet" | "double_chance" | null;
   isScoreResolvableMarket(mercado: string, selecao: string, esporte?: string, evento?: string): boolean;
   declaredScorePeriod(mercado: string, selecao: string, esporte?: string): "FT" | "HT" | "SECOND_HALF" | "MAP" | "OTHER";
+  /** Ver `src/domain/settlement/goalscorer.ts`. */
+  ehMercadoArtilheiro(mercado: string, selecao?: string): boolean;
+  ehMercadoArtilheiroPorTempo(mercado: string, selecao?: string): boolean;
+  hasUnsupportedGoalQualifier(mercado: string, selecao: string): boolean;
+  orderedGoalscorerMarketOrder(mercado: string, selecao?: string): "first" | "last" | null;
+  minutoBase(raw: string): number | null;
+  requiredPlayerGoals(mercado: string, selecao: string): number | null;
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;

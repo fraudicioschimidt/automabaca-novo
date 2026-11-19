@@ -1101,11 +1101,6 @@ pub fn is_btts_market(mercado: &str) -> bool {
     classify::is_btts_market(mercado)
 }
 
-#[wasm_bindgen(js_name = marketNamesBothHalves)]
-pub fn market_names_both_halves(text: &str) -> bool {
-    classify::market_names_both_halves(text)
-}
-
 #[wasm_bindgen(js_name = isCombinedBttsMarket)]
 pub fn is_combined_btts_market(mercado: &str) -> bool {
     classify::is_combined_btts_market(mercado)
@@ -1476,4 +1471,39 @@ pub fn declared_score_period(mercado: &str, selecao: &str, esporte: Option<Strin
     markets::declared_score_period(mercado, selecao, esporte.as_deref())
         .as_str()
         .to_owned()
+}
+
+use dominio::settlement::goalscorer;
+
+#[wasm_bindgen(js_name = ehMercadoArtilheiro)]
+pub fn eh_mercado_artilheiro(mercado: &str, selecao: Option<String>) -> bool {
+    goalscorer::eh_mercado_artilheiro(mercado, selecao.as_deref())
+}
+
+#[wasm_bindgen(js_name = ehMercadoArtilheiroPorTempo)]
+pub fn eh_mercado_artilheiro_por_tempo(mercado: &str, selecao: Option<String>) -> bool {
+    goalscorer::eh_mercado_artilheiro_por_tempo(mercado, selecao.as_deref())
+}
+
+#[wasm_bindgen(js_name = hasUnsupportedGoalQualifier)]
+pub fn has_unsupported_goal_qualifier(mercado: &str, selecao: &str) -> bool {
+    goalscorer::has_unsupported_goal_qualifier(mercado, selecao)
+}
+
+#[wasm_bindgen(js_name = orderedGoalscorerMarketOrder)]
+pub fn ordered_goalscorer_market_order(mercado: &str, selecao: Option<String>) -> JsValue {
+    optional_str(
+        goalscorer::ordered_goalscorer_market_order(mercado, selecao.as_deref())
+            .map(|order| order.as_str()),
+    )
+}
+
+#[wasm_bindgen(js_name = minutoBase)]
+pub fn minuto_base(raw: &str) -> JsValue {
+    optional_number(goalscorer::minuto_base(raw))
+}
+
+#[wasm_bindgen(js_name = requiredPlayerGoals)]
+pub fn required_player_goals(mercado: &str, selecao: &str) -> JsValue {
+    optional_number(goalscorer::required_player_goals(mercado, selecao))
 }

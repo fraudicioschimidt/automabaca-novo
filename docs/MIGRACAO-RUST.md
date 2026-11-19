@@ -419,6 +419,22 @@ diretiva. Andamento:
   servidor fica em 28,4 µs contra 30,9 µs do TS e o navegador em 35,2 µs;
   o laço de coerção sobre os aliases fica parelho (10,5 s contra 10,4 s).
   O WASM foi a 253 KB com gzip (+4,4 KB).
+- regras de texto do artilheiro (`settlement/goalscorer`): qual mercado é
+  gol de jogador (anytime, por tempo, primeiro/último), o qualificador que a
+  lista de jogadores não responde (cabeça, pênalti, nos dois tempos,
+  combinado), o minuto base e quantos gols a aposta pede. A limpeza veio
+  antes, no #47, que tirou o `export *` de `goalscorer-matching`. Os dois
+  resolvedores (`resolveGoalscorer`, `resolveOrderedGoalscorer`) ficam na
+  casca por ora, compondo essas regras com a lista de jogadores; vão num PR
+  próprio, com a ponte dos campos do jogador. `ehMercadoArtilheiro` está no
+  caminho quente dos aliases: cada regex só roda quando o texto tem o
+  radical dela ("goalscorer", "anytime", "to score", "+", "hat"/"brace"/
+  "bis"; "score"/"marcar" para gol de time). `marketNamesBothHalves` saiu
+  da casca e da ponte: só estas regras a liam. Paridade com o TS em 1,2
+  milhão de comparações nos dois lados. Por chamada, `ehMercadoArtilheiro`
+  fica em 8,7 µs no servidor contra 9,1 µs do TS e 12,4 µs no navegador; o
+  laço de coerção sobre os aliases fica parelho (10,4 s contra 10,5 s). O
+  WASM foi a 260 KB com gzip (+6,9 KB).
 
 O teste dos aliases de produção (`tests/apostas/normalize-fields.test.ts`)
 ganhou o limite de um teste de varredura (60 s, no #45): na CI o caso
