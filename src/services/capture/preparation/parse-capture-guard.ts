@@ -29,7 +29,8 @@ import {
 } from "@/src/domain/mercados/classify";
 import { normalizeMercadoKey, resolveMercadoStatic } from "@/src/domain/mercados/catalog";
 import { isCombinedSelection } from "@/src/domain/mercados/selecao";
-import { selecaoPareceHandicap, selecaoPareceTotal, stripSelectionOdds } from "@/src/domain/mercados/selection-shape";
+import { selecaoPareceHandicap, stripSelectionOdds } from "@/src/domain/mercados/selection-shape";
+import { looksLikeTotalSelection } from "@/src/domain/mercados/total-direction";
 import { oddsDivergeWidely } from "@/src/domain/odds-compare";
 import type { CapturePolicy } from "@/src/generated/prisma/enums";
 import { mentionsLiveEntryNearBet, resolveLiveScoreAtTip, stripKickoffFromSelection } from "@/src/domain/live-score-at-tip";
@@ -176,7 +177,7 @@ const SELECTION_PERIOD = new RegExp(String.raw`\b(?:${[
  */
 function hasSimpleScoreSelection(bet: ParsedBetPost): boolean {
   const selecao = stripSelectionOdds(bet.selecao);
-  if (selecaoPareceTotal(selecao)) {
+  if (looksLikeTotalSelection(selecao)) {
     const withoutPeriod = normalizeStr(selecao).replace(/[^a-z0-9]+/g, " ").replace(SELECTION_PERIOD, " ");
     return !lineSubjectIsNotEventTeam(withoutPeriod, bet.evento);
   }

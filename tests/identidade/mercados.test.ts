@@ -4,8 +4,7 @@ import { CANONICAL_MARKETS, normalizeMercadoKey, resolveMercadoStatic } from "@/
 import { coerceMercadoPelaSelecao } from "@/src/domain/mercados/coerce";
 import { pinnacleizeMercado } from "@/src/domain/mercados/finalize";
 import { pinnacleizeSelecao } from "@/src/domain/mercados/selecao";
-import { selecaoPareceTotal } from "@/src/domain/mercados/selection-shape";
-import { expandAbbreviatedDirection, totalDirectionOf } from "@/src/domain/mercados/total-direction";
+import { expandAbbreviatedDirection, looksLikeTotalSelection, totalDirectionOf } from "@/src/domain/mercados/total-direction";
 
 describe("resolveMercadoStatic / pinnacleizeMercado", () => {
   it("traduz PT legado para o canônico Pinnacle", () => {
@@ -744,13 +743,13 @@ describe("coerceMercadoPelaSelecao (coerência mercado×seleção)", () => {
     );
   });
 
-  it("selecaoPareceTotal reconhece abreviações e palavras, e rejeita nomes", () => {
-    expect(selecaoPareceTotal("U 4.5")).toBe(true);
-    expect(selecaoPareceTotal("Over 2.5")).toBe(true);
-    expect(selecaoPareceTotal("Acima de 2.5")).toBe(true);
-    expect(selecaoPareceTotal("+2.5 gols")).toBe(true);
-    expect(selecaoPareceTotal("Boca Juniors")).toBe(false);
-    expect(selecaoPareceTotal("Sporting U23")).toBe(false);
+  it("looksLikeTotalSelection reconhece abreviações e palavras, e rejeita nomes", () => {
+    expect(looksLikeTotalSelection("U 4.5")).toBe(true);
+    expect(looksLikeTotalSelection("Over 2.5")).toBe(true);
+    expect(looksLikeTotalSelection("Acima de 2.5")).toBe(true);
+    expect(looksLikeTotalSelection("+2.5 gols")).toBe(true);
+    expect(looksLikeTotalSelection("Boca Juniors")).toBe(false);
+    expect(looksLikeTotalSelection("Sporting U23")).toBe(false);
   });
 });
 

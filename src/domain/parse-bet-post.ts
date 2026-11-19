@@ -13,9 +13,9 @@ import {
   declaresEuropeanHandicap,
   selecaoNomeiaTimeDoTotal,
   selecaoPareceHandicap,
-  selecaoPareceTotal,
   stripSelectionOdds,
 } from "@/src/domain/mercados/selection-shape";
+import { looksLikeTotalSelection } from "@/src/domain/mercados/total-direction";
 import { matchDoubleChanceSelection, matchMoneylineSelection, matchTeamSide } from "@/src/domain/settlement/sides";
 import { inferPinnacleStatMarket } from "@/src/domain/mercados/stat-unit";
 import { isCombinedSelection } from "@/src/domain/mercados/selecao";
@@ -500,7 +500,7 @@ function inferMercadoFromSelecao(selecao: string, evento: string): string | null
   }
 
   // Fonte única da detecção de O/U (inclui abreviações "U 4.5"/"O 2.25").
-  if (selecaoPareceTotal(selecao)) {
+  if (looksLikeTotalSelection(selecao)) {
     const market = inferPinnacleStatMarket("Total", selecao);
     // "Flamengo over 1.5 gols" é total DO TIME: como total do jogo, um 1x1
     // pagaria a aposta.

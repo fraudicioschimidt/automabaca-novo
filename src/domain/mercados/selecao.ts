@@ -15,8 +15,8 @@ import { UNKNOWN_LINE_SEPARATOR, parseLineQuarters } from "@/src/domain/settleme
 import { bttsSelectionSide, declaresRegulationTime, isThreeWayHandicapMarket, marketIncludesExtraTime, marketKindOf, marketPeriodOf } from "./classify";
 import { restrictsToRegulationTime } from "./compatibility";
 import { trailingTeamCandidate } from "./trailing-side";
-import { expandAbbreviatedDirection, separateCompactStatUnit } from "./total-direction";
-import { selecaoNomeiaTimeDoTotal, selecaoPareceHandicap, selecaoPareceTotal, stripSelectionOdds } from "./selection-shape";
+import { expandAbbreviatedDirection, looksLikeTotalSelection, separateCompactStatUnit } from "./total-direction";
+import { selecaoNomeiaTimeDoTotal, selecaoPareceHandicap, stripSelectionOdds } from "./selection-shape";
 
 const TOTAL_MARKET_SELECTION_PREFIX =
   /^\s*(?:(?:total(?:\s+de)?(?:\s+(?:gols?|goals?|pontos?|points?|runs?|corridas?|games?|jogos?|sets?|kills?|abates?))?)|(?:linha\s+de\s+(?:gols?|goals?|pontos?|points?|runs?|corridas?|escanteios?|cantos?|corners?|cart(?:[oõ]es?|oes|eos)|cards?|kills?|abates?))|gols?|goals?|pontos?|points?|runs?|corridas?|games?|jogos?|sets?|kills?|abates?)\s*[:–—-]\s*(?=(?:mais|menos|acima|abaixo|over|under|ov|un|o|u)\b)/i;
@@ -41,7 +41,7 @@ export function isCombinedSelection(rawSelecao: string, evento: string): boolean
   const isCondition = (part: string) => {
     const text = normalizeStr(part);
     if (CONDITION_WORDS.test(text)) return true;
-    if (selecaoPareceTotal(part)) return LEADING_DIRECTION.test(text) || selecaoNomeiaTimeDoTotal(part, evento);
+    if (looksLikeTotalSelection(part)) return LEADING_DIRECTION.test(text) || selecaoNomeiaTimeDoTotal(part, evento);
     return selecaoPareceHandicap(part) && matchTeamSide(part, evento) !== null;
   };
   const isSide = (part: string) =>

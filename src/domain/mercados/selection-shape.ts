@@ -18,11 +18,6 @@ export function isEsportsPlayerSelection(selecao: string, evento: string): boole
     && !/\b(?:total|totais|kills?|deaths?|abates?|mortes?|time|team|mapa?|jogador|player)\b/i.test(subject));
 }
 
-/** A seleção tem cara de Total (Over/Under com linha)? */
-export function selecaoPareceTotal(selecao: string): boolean {
-  return looksLikeTotalSelection(selecao);
-}
-
 /**
  * A linha de um total como a liquidação a lê: o "1" de "1T Over 110.5" é o
  * período. Quando a liquidação não lê a linha ("U3.5", "O2.5"), vale o
@@ -38,7 +33,7 @@ export function selectionTotalLine(selecao: string, evento: string): number | nu
 /** Time/lado seguido de linha; `+2.5` nu continua ambíguo. */
 export function selecaoPareceHandicap(selecao: string): boolean {
   selecao = stripSelectionOdds(selecao);
-  if (selecaoPareceTotal(selecao)) return false;
+  if (looksLikeTotalSelection(selecao)) return false;
   const normalized = normalizeStr(selecao).replace(/\s+/g, " ").trim();
   // Sem sinal, só a forma DECIMAL é inequívoca o bastante: "Flamengo 0.5"
   // é linha, enquanto inteiros podem pertencer ao nome/categoria do time.

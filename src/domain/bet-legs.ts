@@ -3,7 +3,8 @@ import { isMethodOfVictoryMarket, isOutrightMarket, isRaceToMarket, isThreeWayHa
 import { keepDeclaredPeriod } from "@/src/domain/mercados/finalize";
 import { hasNonScoreStatQualifier, hasScoreUnitMismatch, hasUnknownScoreQualifier } from "@/src/domain/mercados/stat-qualifier";
 import { inferPinnacleStatMarket } from "@/src/domain/mercados/stat-unit";
-import { selecaoNomeiaTimeDoTotal, selecaoPareceTotal } from "@/src/domain/mercados/selection-shape";
+import { selecaoNomeiaTimeDoTotal } from "@/src/domain/mercados/selection-shape";
+import { looksLikeTotalSelection } from "@/src/domain/mercados/total-direction";
 import { normalizeStr, splitEventoTeams } from "@/src/domain/text";
 
 /** Uma perna liquidável: um jogo × um mercado × uma seleção. */
@@ -165,13 +166,13 @@ function selectionBelongsToFixture(selecao: string, evento: string): boolean {
   const blob = normalizeStr(selecao);
   return normalizeStr(teams.home).split(" ").some((token) => token.length > 2 && blob.includes(token))
     || normalizeStr(teams.away).split(" ").some((token) => token.length > 2 && blob.includes(token))
-    || selecaoPareceTotal(selecao)
+    || looksLikeTotalSelection(selecao)
     || ML_TOKEN.test(selecao);
 }
 
 function toLeg(evento: string, selecaoRaw: string): BetLeg {
   const selecao = selecaoRaw.trim();
-  if (selecaoPareceTotal(selecao) || /(?:^|\s)(?:o|ov|u|un)\s*\.?\s*\d/i.test(selecao)) {
+  if (looksLikeTotalSelection(selecao) || /(?:^|\s)(?:o|ov|u|un)\s*\.?\s*\d/i.test(selecao)) {
     return {
       evento,
       // O time nomeado ("Mogi O89,5") faz do total o total DO TIME, como na

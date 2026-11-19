@@ -1,4 +1,5 @@
 import { canonicalizeAsianHandicapSelecao } from "@/src/domain/asian-handicap-line";
+import { looksLikeTotalSelection } from "@/src/domain/mercados/total-direction";
 import type { BetLegsTicket } from "@/src/domain/bet-legs";
 import { stripLiveScoreAtTip } from "@/src/domain/live-score-at-tip";
 import { matchTeamSide } from "@/src/domain/settlement/sides";
@@ -8,7 +9,6 @@ import { coerceMercadoPelaSelecao } from "@/src/domain/mercados/coerce";
 import { marketSportOf, REGULATION_TIME_SPORTS, regulationTimeBaseOf } from "@/src/domain/mercados/compatibility";
 import { regulationTimeMarket } from "@/src/domain/mercados/finalize";
 import { moneylineSelectionUnreadable, pinnacleizeSelecao } from "@/src/domain/mercados/selecao";
-import { selecaoPareceTotal } from "@/src/domain/mercados/selection-shape";
 import { normalizeMercado, type MercadoCatalogClient } from "@/src/services/mercados/normalize";
 
 export type NormalizeBetFieldsInput = {
@@ -84,7 +84,7 @@ function selectionWithTeamStatSide(params: {
  */
 function selectionWithMarketTeam(params: { rawMarket: string; selection: string; evento: string }): string {
   const { selection, evento } = params;
-  if (!selecaoPareceTotal(selection) || matchTeamSide(selection, evento)) return selection;
+  if (!looksLikeTotalSelection(selection) || matchTeamSide(selection, evento)) return selection;
   const side = matchTeamSide(params.rawMarket, evento);
   const teams = splitEventoTeams(evento);
   if (!side || !teams) return selection;
