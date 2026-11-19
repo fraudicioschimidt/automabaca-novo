@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { JogadorDaPartida } from "@/src/domain/settlement/goalscorer";
+import type { JogadorDaPartida } from "@/src/domain/settlement/goalscorer-matching";
 import {
   PLAYER_PROP_KEYS,
   type PlayerPropKey,

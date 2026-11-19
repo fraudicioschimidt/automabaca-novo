@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  GOALSCORER_MIN_SIMILARIDADE,
-  tokensDaSelecao,
   requiredPlayerGoals,
   resolveGoalscorer,
   resolveOrderedGoalscorer,
@@ -9,10 +7,14 @@ import {
   ehMercadoArtilheiroPorTempo,
   hasUnsupportedGoalQualifier,
   orderedGoalscorerMarketOrder,
+} from "@/src/domain/settlement/goalscorer";
+import {
+  GOALSCORER_MIN_SIMILARIDADE,
+  tokensDaSelecao,
   similaridadeDeTokens,
   tokensDoNome,
   type JogadorDaPartida,
-} from "@/src/domain/settlement/goalscorer";
+} from "@/src/domain/settlement/goalscorer-matching";
 import { resolvePeriodGoalscorer } from "@/src/domain/settlement/goalscorer-period";
 
 const similaridadeDeNome = (a: string, b: string): number =>

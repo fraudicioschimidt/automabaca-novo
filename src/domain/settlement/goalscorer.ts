@@ -10,7 +10,6 @@ import {
   type JogadorNomeado,
   type PlayerNameMatch,
 } from "@/src/domain/settlement/goalscorer-matching";
-export * from "@/src/domain/settlement/goalscorer-matching";
 
 const ARTILHEIRO_COM_ORDEM =
   /\b(?:first|last|1st|primeiro|ultimo|2nd|second|segundo)\b/;
@@ -301,6 +300,10 @@ export function resolveOrderedGoalscorer(params: {
 }
 
 const GOALS_WORD = String.raw`(?:\s*(?:gols?|goals?))?`;
+// Globais só com `replace`, que recomeça do início do texto a cada chamada.
+const N_OR_MORE = new RegExp(String.raw`(?<![\d.,])(\d{1,2})\s*(?:ou|or)\s*(?:mais|more)\b${GOALS_WORD}`, "g");
+const AT_LEAST_N = new RegExp(String.raw`\b(?:pelo menos|no minimo|at least)\s*(\d{1,2})\b${GOALS_WORD}`, "g");
+const N_PLUS = new RegExp(String.raw`(?<![\d.,])(\d{1,2})\s*\+${GOALS_WORD}`, "g");
 
 /**
  * Quantos gols do jogador a aposta pede, lidos do mercado e da seleção: "2+",
@@ -327,9 +330,9 @@ export function requiredPlayerGoals(mercado: string, selecao: string): number | 
   };
   take(/\bhat\s*-?\s*tricks?\b|\bhattricks?\b/g, () => 3);
   take(/\b(?:brace|bis)\b/g, () => 2);
-  take(new RegExp(String.raw`(?<![\d.,])(\d{1,2})\s*(?:ou|or)\s*(?:mais|more)\b${GOALS_WORD}`, "g"), (m) => Number(m[1]));
-  take(new RegExp(String.raw`\b(?:pelo menos|no minimo|at least)\s*(\d{1,2})\b${GOALS_WORD}`, "g"), (m) => Number(m[1]));
-  take(new RegExp(String.raw`(?<![\d.,])(\d{1,2})\s*\+${GOALS_WORD}`, "g"), (m) => Number(m[1]));
+  take(N_OR_MORE, (m) => Number(m[1]));
+  take(AT_LEAST_N, (m) => Number(m[1]));
+  take(N_PLUS, (m) => Number(m[1]));
   take(/(?<![\d.,])(\d{1,2})\s*(?:gols?|goals?)\b/g, (m) => Number(m[1]));
   if (/\d/.test(text)) return null;
   if (/\b(?:over|under|mais de|menos de|acima de|abaixo de|exatamente|exactly|dois|duas|tres|quatro|two|three|four|poker|doblete|triplete)\b/.test(text)) {
