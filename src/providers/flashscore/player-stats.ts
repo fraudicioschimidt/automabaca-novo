@@ -1,9 +1,9 @@
 import { z } from "zod";
-import type { JogadorDaPartida } from "@/src/domain/settlement/goalscorer-matching";
 import {
   PLAYER_PROP_KEYS,
+  type JogadorDaPartida,
   type PlayerPropKey,
-} from "@/src/domain/settlement/player-prop-classify";
+} from "@/src/domain/settlement/goalscorer-matching";
 
 /**
  * `/matches/match/player-stats` — ~100 chaves por jogador, cada uma em

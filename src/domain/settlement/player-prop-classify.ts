@@ -1,23 +1,11 @@
 import { ehMercadoArtilheiro } from "@/src/domain/settlement/goalscorer";
-import { tokensDaSelecao } from "@/src/domain/settlement/goalscorer-matching";
+import { tokensDaSelecao, type PlayerPropKey, type PlayerPropStats } from "@/src/domain/settlement/goalscorer-matching";
 import { prefixoAntesDaLinha } from "@/src/domain/settlement/over-under-subject";
 import { matchTeamSide } from "@/src/domain/settlement/sides";
 import { marketPeriodOf } from "@/src/domain/mercados/classify";
 import { isBothTeamsCardsText } from "@/src/domain/mercados/stat-qualifier";
 import { canonicalSport } from "@/src/domain/sports/registry";
 import { normalizeStr } from "@/src/domain/text";
-
-/**
- * Chaves do FlashScore `player-stats` que a Fase 1 (futebol) sabe ler.
- * Ausência da chave ≠ 0: falha fechado, não inventa zero.
- */
-import {
-  PLAYER_PROP_KEYS,
-  type PlayerPropKey,
-  type PlayerPropStats,
-} from "./goalscorer-matching";
-
-export { PLAYER_PROP_KEYS, type PlayerPropKey, type PlayerPropStats };
 
 export type PlayerPropFamily =
   | "fouls_suffered"
@@ -260,82 +248,37 @@ export function classificarPropDeJogador(params: {
   };
 }
 
+/**
+ * A chave do FlashScore `player-stats` de cada família. Ausência da chave ≠ 0:
+ * falha fechado, não inventa zero. `cards_any` não tem chave única: a casa pode
+ * contar amarelo, vermelho direto e segundo amarelo de formas distintas, e sem
+ * contrato por casa a prop genérica permanece manual.
+ */
+const CHAVE_DA_FAMILIA: Readonly<Record<Exclude<PlayerPropFamily, "cards_any">, PlayerPropKey>> = {
+  fouls_suffered: "FOULS_SUFFERED",
+  fouls_committed: "FOULS_COMMITTED",
+  passes_total: "PASSES_TOTAL",
+  passes_completed: "PASSES_ACCURATE",
+  shots_total: "SHOTS_TOTAL",
+  shots_on_target: "SHOTS_ON_TARGET",
+  tackles_total: "TACKLES_TOTAL",
+  tackles_won: "TACKLES_WON",
+  assists: "ASSISTS_GOAL",
+  interceptions: "INTERCEPTIONS",
+  key_passes: "KEY_PASSES",
+  offsides: "OFFSIDES",
+  saves_total: "SAVES_TOTAL",
+  cards_yellow: "CARDS_YELLOW",
+  cards_red: "CARDS_RED",
+};
+
 export function valorDaProp(
   family: PlayerPropFamily,
   stats: PlayerPropStats,
 ): number | undefined {
-  switch (family) {
-    case "fouls_suffered":
-      return stats["FOULS_SUFFERED"];
-    case "fouls_committed":
-      return stats["FOULS_COMMITTED"];
-    case "passes_total":
-      return stats["PASSES_TOTAL"];
-    case "passes_completed":
-      return stats["PASSES_ACCURATE"];
-    case "shots_total":
-      return stats["SHOTS_TOTAL"];
-    case "shots_on_target":
-      return stats["SHOTS_ON_TARGET"];
-    case "tackles_total":
-      return stats["TACKLES_TOTAL"];
-    case "tackles_won":
-      return stats["TACKLES_WON"];
-    case "assists":
-      return stats["ASSISTS_GOAL"];
-    case "interceptions":
-      return stats["INTERCEPTIONS"];
-    case "key_passes":
-      return stats["KEY_PASSES"];
-    case "offsides":
-      return stats["OFFSIDES"];
-    case "saves_total":
-      return stats["SAVES_TOTAL"];
-    case "cards_yellow":
-      return stats["CARDS_YELLOW"];
-    case "cards_red":
-      return stats["CARDS_RED"];
-    case "cards_any": {
-      // A casa pode contar amarelo, vermelho direto e segundo amarelo de formas
-      // distintas. Sem contrato por casa, a prop genérica permanece manual.
-      return undefined;
-    }
-  }
+  return family === "cards_any" ? undefined : stats[CHAVE_DA_FAMILIA[family]];
 }
 
 export function chaveDaProp(family: PlayerPropFamily): string {
-  switch (family) {
-    case "fouls_suffered":
-      return "FOULS_SUFFERED";
-    case "fouls_committed":
-      return "FOULS_COMMITTED";
-    case "passes_total":
-      return "PASSES_TOTAL";
-    case "passes_completed":
-      return "PASSES_ACCURATE";
-    case "shots_total":
-      return "SHOTS_TOTAL";
-    case "shots_on_target":
-      return "SHOTS_ON_TARGET";
-    case "tackles_total":
-      return "TACKLES_TOTAL";
-    case "tackles_won":
-      return "TACKLES_WON";
-    case "assists":
-      return "ASSISTS_GOAL";
-    case "interceptions":
-      return "INTERCEPTIONS";
-    case "key_passes":
-      return "KEY_PASSES";
-    case "offsides":
-      return "OFFSIDES";
-    case "saves_total":
-      return "SAVES_TOTAL";
-    case "cards_yellow":
-      return "CARDS_YELLOW";
-    case "cards_red":
-      return "CARDS_RED";
-    case "cards_any":
-      return "CARDS_YELLOW|CARDS_RED|CARDS_YELLOW_SECOND";
-  }
+  return family === "cards_any" ? "CARDS_YELLOW|CARDS_RED|CARDS_YELLOW_SECOND" : CHAVE_DA_FAMILIA[family];
 }
