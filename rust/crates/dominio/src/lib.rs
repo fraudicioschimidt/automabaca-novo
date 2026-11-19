@@ -3,6 +3,7 @@
 //! chama passa o instante e os dados, como no TypeScript.
 #![forbid(unsafe_code)]
 
+pub mod bookmaker;
 pub mod countries;
 pub mod cron;
 pub mod dates;

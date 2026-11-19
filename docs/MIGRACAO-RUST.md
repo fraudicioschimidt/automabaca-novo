@@ -363,6 +363,19 @@ diretiva. Andamento:
   7,8 s do TS, em rodadas alternadas). Paridade com o TS em 2,4 milhões de
   comparações nos dois lados e 600 mil só com pernas de split. O WASM foi a
   228 KB com gzip (+5,9 KB).
+- casa de apostas e nome do jogador (`bookmaker` e
+  `settlement/goalscorer-matching`): a grafia canônica da casa e o casamento
+  do nome do jogador da seleção com a lista da partida (artilheiro e props
+  de jogador). A limpeza veio antes, no #39. A casca troca a lista de
+  jogadores por duas listas de nomes e devolve o jogador pelo índice, com o
+  tipo genérico do TS intacto; as regras de participação recebem da casca o
+  que era conversão de valor JS (`=== undefined`, `=== true`, `=== 0` e o
+  `null` que o `<= 0` lê como zero). A tabela de casas do TS era um objeto
+  comum: "constructor" devolvia a função herdada do protótipo; no Rust a
+  tabela é lida por igualdade e o texto volta como veio. Paridade com o TS
+  em 2,3 milhões de comparações, com os dois lados da ponte. O casamento
+  numa lista de 36 jogadores caiu de ~130 µs para ~60 µs e a casa, de 1,7
+  µs para 0,8 µs. O WASM foi a 237 KB com gzip (+8,7 KB).
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)

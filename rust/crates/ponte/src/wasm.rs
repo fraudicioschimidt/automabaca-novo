@@ -1343,3 +1343,86 @@ pub fn parse_line_quarters(selecao: &str, allow_negative: bool) -> JsValue {
 pub fn status_from_adjusted_quarters(adjusted: f64) -> String {
     lines::status_from_adjusted_quarters(adjusted).to_owned()
 }
+
+use dominio::bookmaker;
+use dominio::settlement::goalscorer_matching as scorer;
+
+fn numbers(items: impl IntoIterator<Item = f64>) -> JsValue {
+    JsValue::from(items.into_iter().map(JsValue::from).collect::<Vec<_>>())
+}
+
+#[wasm_bindgen(js_name = isKnownBookmakerKey)]
+pub fn is_known_bookmaker_key(key: &str) -> bool {
+    bookmaker::is_known_bookmaker_key(key)
+}
+
+#[wasm_bindgen(js_name = canonicalizeBookmakerName)]
+pub fn canonicalize_bookmaker_name(value: &str) -> String {
+    bookmaker::canonicalize_bookmaker_name(value)
+}
+
+/// `[similaridade mínima, vantagem mínima]`.
+#[wasm_bindgen(js_name = goalscorerThresholds)]
+pub fn goalscorer_thresholds() -> JsValue {
+    numbers([
+        scorer::GOALSCORER_MIN_SIMILARIDADE,
+        scorer::GOALSCORER_MIN_VANTAGEM,
+    ])
+}
+
+#[wasm_bindgen(js_name = tokensDoNome)]
+pub fn tokens_do_nome(nome: &str) -> JsValue {
+    strings(scorer::tokens_do_nome(nome))
+}
+
+#[wasm_bindgen(js_name = similaridadeDeTokens)]
+pub fn similaridade_de_tokens(ta: Vec<String>, tb: Vec<String>) -> f64 {
+    scorer::similaridade_de_tokens(&ta, &tb)
+}
+
+#[wasm_bindgen(js_name = tokensDaSelecao)]
+pub fn tokens_da_selecao(selecao: &str) -> JsValue {
+    strings(scorer::tokens_da_selecao(selecao))
+}
+
+#[wasm_bindgen(js_name = temPolaridadeNegativa)]
+pub fn tem_polaridade_negativa(textos: Vec<String>) -> bool {
+    scorer::tem_polaridade_negativa(&textos)
+}
+
+#[wasm_bindgen(js_name = playerMatchRefusals)]
+pub fn player_match_refusals() -> JsValue {
+    strings(
+        scorer::PLAYER_MATCH_REFUSALS
+            .iter()
+            .map(|reason| reason.as_str()),
+    )
+}
+
+/// `nomesCurtos[i]` vazio é o jogador sem abreviado.
+#[wasm_bindgen(js_name = encontrarJogadorNaPartida)]
+pub fn encontrar_jogador_na_partida(
+    selecao: &str,
+    nomes: Vec<String>,
+    nomes_curtos: Vec<String>,
+) -> JsValue {
+    let jogadores: Vec<scorer::NamedPlayer> = nomes
+        .iter()
+        .enumerate()
+        .map(|(i, nome)| scorer::NamedPlayer {
+            nome,
+            nome_curto: nomes_curtos.get(i).map(String::as_str),
+        })
+        .collect();
+    numbers(scorer::encontrar_jogador_na_partida(selecao, &jogadores).encoded())
+}
+
+#[wasm_bindgen(js_name = participationUnproven)]
+pub fn participation_unproven(minutos_publicados: bool, participou: bool, sem_gols: bool) -> bool {
+    scorer::participation_unproven(minutos_publicados, participou, sem_gols)
+}
+
+#[wasm_bindgen(js_name = listedButDidNotPlay)]
+pub fn listed_but_did_not_play(minutos: Option<f64>, participou: bool, sem_gols: bool) -> bool {
+    scorer::listed_but_did_not_play(minutos, participou, sem_gols)
+}

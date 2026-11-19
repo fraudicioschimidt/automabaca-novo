@@ -1301,3 +1301,81 @@ pub fn parse_line_quarters(selecao: String, allow_negative: bool) -> Option<f64>
 pub fn status_from_adjusted_quarters(adjusted: f64) -> &'static str {
     lines::status_from_adjusted_quarters(adjusted)
 }
+
+use dominio::bookmaker;
+use dominio::settlement::goalscorer_matching as scorer;
+
+#[napi]
+pub fn is_known_bookmaker_key(key: String) -> bool {
+    bookmaker::is_known_bookmaker_key(&key)
+}
+
+#[napi]
+pub fn canonicalize_bookmaker_name(value: String) -> String {
+    bookmaker::canonicalize_bookmaker_name(&value)
+}
+
+/// `[similaridade mínima, vantagem mínima]`.
+#[napi]
+pub fn goalscorer_thresholds() -> Vec<f64> {
+    vec![
+        scorer::GOALSCORER_MIN_SIMILARIDADE,
+        scorer::GOALSCORER_MIN_VANTAGEM,
+    ]
+}
+
+#[napi]
+pub fn tokens_do_nome(nome: String) -> Vec<String> {
+    scorer::tokens_do_nome(&nome)
+}
+
+#[napi]
+pub fn similaridade_de_tokens(ta: Vec<String>, tb: Vec<String>) -> f64 {
+    scorer::similaridade_de_tokens(&ta, &tb)
+}
+
+#[napi]
+pub fn tokens_da_selecao(selecao: String) -> Vec<String> {
+    scorer::tokens_da_selecao(&selecao)
+}
+
+#[napi]
+pub fn tem_polaridade_negativa(textos: Vec<String>) -> bool {
+    scorer::tem_polaridade_negativa(&textos)
+}
+
+#[napi]
+pub fn player_match_refusals() -> Vec<&'static str> {
+    scorer::PLAYER_MATCH_REFUSALS
+        .iter()
+        .map(|reason| reason.as_str())
+        .collect()
+}
+
+/// `nomesCurtos[i]` vazio é o jogador sem abreviado.
+#[napi]
+pub fn encontrar_jogador_na_partida(
+    selecao: String,
+    nomes: Vec<String>,
+    nomes_curtos: Vec<String>,
+) -> Vec<f64> {
+    let jogadores: Vec<scorer::NamedPlayer> = nomes
+        .iter()
+        .enumerate()
+        .map(|(i, nome)| scorer::NamedPlayer {
+            nome,
+            nome_curto: nomes_curtos.get(i).map(String::as_str),
+        })
+        .collect();
+    scorer::encontrar_jogador_na_partida(&selecao, &jogadores).encoded()
+}
+
+#[napi]
+pub fn participation_unproven(minutos_publicados: bool, participou: bool, sem_gols: bool) -> bool {
+    scorer::participation_unproven(minutos_publicados, participou, sem_gols)
+}
+
+#[napi]
+pub fn listed_but_did_not_play(minutos: Option<f64>, participou: bool, sem_gols: bool) -> bool {
+    scorer::listed_but_did_not_play(minutos, participou, sem_gols)
+}
