@@ -243,50 +243,34 @@ export function statisticFamilyInText(rawText: string): StatisticFamily | null {
   return null;
 }
 
+/** A linha do feed de cada família; `booking_points` soma amarelos e vermelhos. */
+const STAT_KEY_DA_FAMILIA: Readonly<Record<Exclude<StatisticFamily, "booking_points">, MatchStatisticKey>> = {
+  corners: "corners",
+  yellow_cards: "yellowCards",
+  red_cards: "redCards",
+  shots_total: "shotsTotal",
+  shots_on_target: "shotsOnTarget",
+  fouls: "fouls",
+  offsides: "offsides",
+  saves: "saves",
+  interceptions: "interceptions",
+  clearances: "clearances",
+  assists: "assists",
+  blocks: "blocks",
+  steals: "steals",
+  turnovers: "turnovers",
+  rebounds: "rebounds",
+  aces: "aces",
+  double_faults: "doubleFaults",
+  three_pointers: "threePointers",
+};
+
 export function valuesForFamily(
   family: StatisticFamily,
   stats: MatchStatistics,
 ): MatchStatisticPair | null {
-  switch (family) {
-    case "corners":
-      return stats.corners ?? null;
-    case "booking_points":
-      return bookingPoints(stats);
-    case "yellow_cards":
-      return stats.yellowCards ?? null;
-    case "red_cards":
-      return stats.redCards ?? null;
-    case "shots_total":
-      return stats.shotsTotal ?? null;
-    case "shots_on_target":
-      return stats.shotsOnTarget ?? null;
-    case "fouls":
-      return stats.fouls ?? null;
-    case "offsides":
-      return stats.offsides ?? null;
-    case "saves":
-      return stats.saves ?? null;
-    case "interceptions":
-      return stats.interceptions ?? null;
-    case "clearances":
-      return stats.clearances ?? null;
-    case "assists":
-      return stats.assists ?? null;
-    case "blocks":
-      return stats.blocks ?? null;
-    case "steals":
-      return stats.steals ?? null;
-    case "turnovers":
-      return stats.turnovers ?? null;
-    case "rebounds":
-      return stats.rebounds ?? null;
-    case "aces":
-      return stats.aces ?? null;
-    case "double_faults":
-      return stats.doubleFaults ?? null;
-    case "three_pointers":
-      return stats.threePointers ?? null;
-  }
+  if (family === "booking_points") return bookingPoints(stats);
+  return stats[STAT_KEY_DA_FAMILIA[family]] ?? null;
 }
 
 function bookingPoints(stats: MatchStatistics): MatchStatisticPair | null {
