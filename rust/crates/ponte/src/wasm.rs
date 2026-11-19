@@ -1029,11 +1029,6 @@ pub fn match_moneyline_selection(selecao: &str, evento: &str, strict: bool) -> J
     optional_str(sides::match_moneyline_selection(selecao, evento, strict).map(Outcome::as_str))
 }
 
-#[wasm_bindgen(js_name = moneylineSelectionAsksAnotherMarket)]
-pub fn moneyline_selection_asks_another_market(selecao: &str, evento: Option<String>) -> bool {
-    sides::moneyline_selection_asks_another_market(selecao, evento.as_deref())
-}
-
 /// `[side, contradicts]`.
 #[wasm_bindgen(js_name = resolveSideFromMarketAndSelection)]
 pub fn resolve_side_from_market_and_selection(
@@ -1154,11 +1149,6 @@ pub fn is_double_chance_market(mercado: &str) -> bool {
 #[wasm_bindgen(js_name = totalLabelSide)]
 pub fn total_label_side(mercado: &str, evento: &str) -> JsValue {
     side_value(classify::total_label_side(mercado, evento))
-}
-
-#[wasm_bindgen(js_name = isTeamTotalMarket)]
-pub fn is_team_total_market(mercado: &str, selecao: &str, evento: Option<String>) -> bool {
-    classify::is_team_total_market(mercado, selecao, evento.as_deref())
 }
 
 #[wasm_bindgen(js_name = marketPeriodOf)]
@@ -1459,4 +1449,31 @@ pub fn selecao_nomeia_time_do_total(selecao: &str, evento: &str) -> bool {
 #[wasm_bindgen(js_name = declaresEuropeanHandicap)]
 pub fn declares_european_handicap(selecao: &str) -> bool {
     shape::declares_european_handicap(selecao)
+}
+
+use dominio::settlement::markets;
+
+#[wasm_bindgen(js_name = classifyScoreMarket)]
+pub fn classify_score_market(mercado_n: &str, selecao_n: &str, evento: Option<String>) -> JsValue {
+    optional_str(
+        markets::classify_score_market(mercado_n, selecao_n, evento.as_deref())
+            .map(|kind| kind.as_str()),
+    )
+}
+
+#[wasm_bindgen(js_name = isScoreResolvableMarket)]
+pub fn is_score_resolvable_market(
+    mercado: &str,
+    selecao: &str,
+    esporte: Option<String>,
+    evento: Option<String>,
+) -> bool {
+    markets::is_score_resolvable_market(mercado, selecao, esporte.as_deref(), evento.as_deref())
+}
+
+#[wasm_bindgen(js_name = declaredScorePeriod)]
+pub fn declared_score_period(mercado: &str, selecao: &str, esporte: Option<String>) -> String {
+    markets::declared_score_period(mercado, selecao, esporte.as_deref())
+        .as_str()
+        .to_owned()
 }

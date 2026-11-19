@@ -52,14 +52,6 @@ export function matchMoneylineSelection(
 }
 
 /**
- * A seleção de moneyline pede outro mercado: traz linha ("Flamengo -1.5"),
- * placar exato ("Flamengo 2x0") ou classificação, título e vitória a zero.
- */
-export function moneylineSelectionAsksAnotherMarket(selecao: string, evento?: string): boolean {
-  return dominio.moneylineSelectionAsksAnotherMarket(selecao, evento);
-}
-
-/**
  * Lado da aposta quando ele pode vir de DUAS fontes: o rótulo do mercado
  * ("Home Total Goals") e o nome do time na seleção. Discordam → decisão
  * humana; só uma fala → ela decide; nenhuma → `null`.
