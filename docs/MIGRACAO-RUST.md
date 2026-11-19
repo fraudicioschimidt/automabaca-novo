@@ -407,6 +407,29 @@ diretiva. Andamento:
   23,0 µs), pelas idas ao host da normalização. O laço de coerção sobre os
   aliases fica parelho (13,9 s contra 14,1 s). O WASM foi a 248 KB com gzip
   (+2,3 KB).
+- classificação para o placar (`settlement/markets`): a família do mercado
+  que o placar final responde (handicap, total, team total, ambas marcam,
+  resultado, DNB, dupla chance), as pernas juntas por conectivo e o período
+  declarado nas duas superfícies. A limpeza veio antes, no #45, que tirou
+  o barril de reexportação de `stat-qualifier`. O evento opcional passa
+  cru às regras já portadas, como no TS. `isTeamTotalMarket` e
+  `moneylineSelectionAsksAnotherMarket` saíram da casca e da ponte: só este
+  módulo os lia. Paridade com o TS em 700 mil comparações nos dois lados,
+  com os rótulos e aliases de produção e todas as famílias. Por chamada, o
+  servidor fica em 28,4 µs contra 30,9 µs do TS e o navegador em 35,2 µs;
+  o laço de coerção sobre os aliases fica parelho (10,5 s contra 10,4 s).
+  O WASM foi a 253 KB com gzip (+4,4 KB).
+
+O teste dos aliases de produção (`tests/apostas/normalize-fields.test.ts`)
+ganhou o limite de um teste de varredura (60 s, no #45): na CI o caso
+Unknown passou de 15 s duas vezes, a segunda num PR só de TypeScript, com
+~1 s numa máquina livre e a memória estável. Ele confere o período; a
+velocidade de cada porte é conferida pelo laço alternado acima.
+
+O que falta para `stat-unit`, `selecao` e `coerce` passa por
+`settlement/statistics`, que lê `markets`, `player-prop-classify` (que lê
+`goalscorer`) e `lucro`: a ordem segue `goalscorer` → `player-prop-classify`
+→ `statistics` → `stat-unit` e `selecao` → `coerce`.
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)

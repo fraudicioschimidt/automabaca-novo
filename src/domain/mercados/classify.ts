@@ -129,18 +129,6 @@ export function totalLabelSide(mercado: string, evento: string): "home" | "away"
 }
 
 /**
- * Team total no mercado ("Home Total Goals") ou na seleção ("Total Goals" +
- * "Flamengo Over 1.5"). Fonte única usada por settlement e coverage.
- */
-export function isTeamTotalMarket(
-  mercado: string,
-  selecao = "",
-  evento?: string,
-): boolean {
-  return dominio.isTeamTotalMarket(mercado, selecao, evento);
-}
-
-/**
  * Frases de meio-tempo, como DADO. O filtro SQL precisa das MESMAS: ele negava
  * "segundo tempo" e "1º" mas não "2 tempo"/"2o tempo"/"primeiro tempo", então
  * uma aposta de 2º tempo ficava sem NENHUM liquidador automático. As siglas

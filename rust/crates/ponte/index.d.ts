@@ -190,7 +190,6 @@ declare const dominio: {
   isDrawNoBetMarket(mercado: string): boolean;
   isDoubleChanceMarket(mercado: string): boolean;
   totalLabelSide(mercado: string, evento: string): "home" | "away" | null;
-  isTeamTotalMarket(mercado: string, selecao: string, evento?: string): boolean;
   marketPeriodOf(mercado: string, esporte?: string | null): "FT" | "HT" | "SECOND_HALF" | "MAP" | "OTHER";
   marketKindOf(
     mercado: string,
@@ -253,11 +252,18 @@ declare const dominio: {
   selecaoPareceHandicap(selecao: string): boolean;
   selecaoNomeiaTimeDoTotal(selecao: string, evento: string): boolean;
   declaresEuropeanHandicap(selecao: string): boolean;
+  /** Ver `src/domain/settlement/markets.ts`. */
+  classifyScoreMarket(
+    mercadoN: string,
+    selecaoN: string,
+    evento?: string,
+  ): "handicap" | "total" | "team_total" | "btts" | "moneyline" | "draw_no_bet" | "double_chance" | null;
+  isScoreResolvableMarket(mercado: string, selecao: string, esporte?: string, evento?: string): boolean;
+  declaredScorePeriod(mercado: string, selecao: string, esporte?: string): "FT" | "HT" | "SECOND_HALF" | "MAP" | "OTHER";
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;
   matchMoneylineSelection(selecao: string, evento: string, strict: boolean): "home" | "away" | "draw" | null;
-  moneylineSelectionAsksAnotherMarket(selecao: string, evento?: string): boolean;
   resolveSideFromMarketAndSelection(
     mercado: string,
     selecao: string,

@@ -1006,11 +1006,6 @@ pub fn match_moneyline_selection(
     sides::match_moneyline_selection(&selecao, &evento, strict).map(Outcome::as_str)
 }
 
-#[napi]
-pub fn moneyline_selection_asks_another_market(selecao: String, evento: Option<String>) -> bool {
-    sides::moneyline_selection_asks_another_market(&selecao, evento.as_deref())
-}
-
 /// `[side, contradicts]`.
 #[napi]
 pub fn resolve_side_from_market_and_selection(
@@ -1129,11 +1124,6 @@ pub fn is_double_chance_market(mercado: String) -> bool {
 #[napi]
 pub fn total_label_side(mercado: String, evento: String) -> Option<&'static str> {
     side_name(classify::total_label_side(&mercado, &evento))
-}
-
-#[napi]
-pub fn is_team_total_market(mercado: String, selecao: String, evento: Option<String>) -> bool {
-    classify::is_team_total_market(&mercado, &selecao, evento.as_deref())
 }
 
 #[napi]
@@ -1412,4 +1402,35 @@ pub fn selecao_nomeia_time_do_total(selecao: String, evento: String) -> bool {
 #[napi]
 pub fn declares_european_handicap(selecao: String) -> bool {
     shape::declares_european_handicap(&selecao)
+}
+
+use dominio::settlement::markets;
+
+#[napi]
+pub fn classify_score_market(
+    mercado_n: String,
+    selecao_n: String,
+    evento: Option<String>,
+) -> Option<&'static str> {
+    markets::classify_score_market(&mercado_n, &selecao_n, evento.as_deref())
+        .map(|kind| kind.as_str())
+}
+
+#[napi]
+pub fn is_score_resolvable_market(
+    mercado: String,
+    selecao: String,
+    esporte: Option<String>,
+    evento: Option<String>,
+) -> bool {
+    markets::is_score_resolvable_market(&mercado, &selecao, esporte.as_deref(), evento.as_deref())
+}
+
+#[napi]
+pub fn declared_score_period(
+    mercado: String,
+    selecao: String,
+    esporte: Option<String>,
+) -> &'static str {
+    markets::declared_score_period(&mercado, &selecao, esporte.as_deref()).as_str()
 }
