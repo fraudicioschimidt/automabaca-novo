@@ -4,9 +4,9 @@ import {
   declaresEuropeanHandicap,
   selecaoNomeiaTimeDoTotal,
   selecaoPareceHandicap,
-  selecaoPareceTotal,
   stripSelectionOdds,
 } from "./selection-shape";
+import { looksLikeTotalSelection } from "./total-direction";
 import { hasNonScoreStatQualifier, hasScoreUnitMismatch } from "./stat-qualifier";
 import { inferPinnacleStatMarket } from "./stat-unit";
 import { isCombinedSelection } from "./selecao";
@@ -95,7 +95,7 @@ function coerceMarketFamily(
   // Mesma razão para a unidade que não é o placar DESTE esporte: "Corridas -
   // Jogo" em futebol virava `Total – Match` e liquidava por gols.
   if (hasScoreUnitMismatch(mercado, selecao, esporte)) return mercado;
-  if (selecaoPareceTotal(selecao)) {
+  if (looksLikeTotalSelection(selecao)) {
     return finalizePinnacleMarket(
       evento && selecaoNomeiaTimeDoTotal(selecao, evento) ? "Team Total" : "Total",
       esporte,

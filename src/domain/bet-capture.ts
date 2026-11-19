@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { parseStoredLegs, type BetLegsTicket } from "@/src/domain/bet-legs";
-import { selecaoPareceTotal } from "@/src/domain/mercados/selection-shape";
+import { looksLikeTotalSelection } from "@/src/domain/mercados/total-direction";
 import { parseLineQuarters } from "@/src/domain/settlement/lines";
 import { playerPropInputSchema } from "@/src/domain/settlement/player-prop-terms";
 import type { SportResolutionDecision } from "@/src/domain/sports/detect";
@@ -298,7 +298,7 @@ function lineKey(selecao: string, evento: string): number | null {
     const name = normalizeStr(team);
     if (/\d/.test(name)) rest = rest.split(name).join(" ");
   }
-  return parseLineQuarters(rest, { allowNegative: !selecaoPareceTotal(rest) });
+  return parseLineQuarters(rest, { allowNegative: !looksLikeTotalSelection(rest) });
 }
 
 /**

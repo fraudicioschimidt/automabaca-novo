@@ -1,11 +1,11 @@
 import { statisticFamilyOf } from "@/src/domain/settlement/statistics";
 import { HALF_PERIOD_ABBREVIATIONS, HALF_PERIOD_PHRASES } from "./classify";
 import { keepDeclaredPeriod } from "./finalize";
-import { selecaoPareceHandicap, selecaoPareceTotal } from "./selection-shape";
+import { selecaoPareceHandicap } from "./selection-shape";
 import { hasNonScoreStatQualifier, isBothTeamsCardsText } from "./stat-qualifier";
 import { normalizeStr } from "@/src/domain/text";
 import { matchTeamSide } from "@/src/domain/settlement/sides";
-import { separateCompactStatUnit } from "./total-direction";
+import { looksLikeTotalSelection, separateCompactStatUnit } from "./total-direction";
 
 /**
  * Promove mercado genérico (Total / Moneyline / AH) para o rótulo Pinnacle da
@@ -92,7 +92,7 @@ function inferStatMarket(
     if (temCartoes(selecao, extraText)) return "Asian Handicap Cards";
   }
 
-  if (!selecaoPareceTotal(selecao)) return mercado;
+  if (!looksLikeTotalSelection(selecao)) return mercado;
 
   // Quando só a legenda nomeia a contagem, ela precisa sobreviver no rótulo:
   // conservar apenas "Total / Under 3.5" transformaria a entrada em gols.
