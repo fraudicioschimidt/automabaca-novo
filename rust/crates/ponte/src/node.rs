@@ -811,11 +811,6 @@ pub fn has_non_score_stat_qualifier(mercado: String, selecao: String) -> bool {
 }
 
 #[napi]
-pub fn score_qualifier_terms() -> Vec<String> {
-    stat_qualifier::score_qualifier_terms()
-}
-
-#[napi]
 pub fn has_unknown_score_qualifier(mercado: String) -> bool {
     stat_qualifier::has_unknown_score_qualifier(&mercado)
 }
@@ -1306,11 +1301,6 @@ use dominio::bookmaker;
 use dominio::settlement::goalscorer_matching as scorer;
 
 #[napi]
-pub fn is_known_bookmaker_key(key: String) -> bool {
-    bookmaker::is_known_bookmaker_key(&key)
-}
-
-#[napi]
 pub fn canonicalize_bookmaker_name(value: String) -> String {
     bookmaker::canonicalize_bookmaker_name(&value)
 }
@@ -1378,4 +1368,21 @@ pub fn participation_unproven(minutos_publicados: bool, participou: bool, sem_go
 #[napi]
 pub fn listed_but_did_not_play(minutos: Option<f64>, participou: bool, sem_gols: bool) -> bool {
     scorer::listed_but_did_not_play(minutos, participou, sem_gols)
+}
+
+use dominio::settlement::over_under_subject as subject;
+
+#[napi]
+pub fn prefixo_antes_da_linha(selecao: String) -> Option<String> {
+    subject::prefixo_antes_da_linha(&selecao)
+}
+
+#[napi]
+pub fn subject_after_line(selecao: String, evento: Option<String>) -> Option<String> {
+    subject::subject_after_line(&selecao, evento.as_deref())
+}
+
+#[napi]
+pub fn line_subject_is_not_event_team(selecao: String, evento: Option<String>) -> bool {
+    subject::line_subject_is_not_event_team(&selecao, evento.as_deref())
 }

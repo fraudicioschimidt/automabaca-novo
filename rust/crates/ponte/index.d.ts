@@ -162,7 +162,6 @@ declare const dominio: {
   isBothTeamsCardsText(text: string): boolean;
   selecaoDeclaraLinhaDeEstatistica(selecao: string): boolean;
   hasNonScoreStatQualifier(mercado: string, selecao: string): boolean;
-  scoreQualifierTerms(): string[];
   hasUnknownScoreQualifier(mercado: string): boolean;
   knownScoreQualifierSqlTerms(): string[];
   nonScoreStatSqlTerms(): string[];
@@ -233,7 +232,6 @@ declare const dominio: {
   parseLineQuarters(selecao: string, allowNegative: boolean): number | null;
   statusFromAdjustedQuarters(adjusted: number): "VOID" | "HALF_WON" | "HALF_LOST" | "WON" | "LOST";
   /** Ver `src/domain/bookmaker.ts`. */
-  isKnownBookmakerKey(key: string): boolean;
   canonicalizeBookmakerName(value: string): string;
   /** Ver `src/domain/settlement/goalscorer-matching.ts`. */
   goalscorerThresholds(): [similaridade: number, vantagem: number];
@@ -245,6 +243,10 @@ declare const dominio: {
   encontrarJogadorNaPartida(selecao: string, nomes: string[], nomesCurtos: string[]): number[];
   participationUnproven(minutosPublicados: boolean, participou: boolean, semGols: boolean): boolean;
   listedButDidNotPlay(minutos: number | null, participou: boolean, semGols: boolean): boolean;
+  /** Ver `src/domain/settlement/over-under-subject.ts`. */
+  prefixoAntesDaLinha(selecao: string): string | null;
+  subjectAfterLine(selecao: string, evento?: string): string | null;
+  lineSubjectIsNotEventTeam(selecao: string, evento?: string): boolean;
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;
