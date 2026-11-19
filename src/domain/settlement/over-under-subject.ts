@@ -14,6 +14,8 @@ import { matchTeamSide } from "@/src/domain/settlement/sides";
 import { normalizeStr, splitEventoTeams } from "@/src/domain/text";
 
 const DIRECAO = /\b(?:over|under|mais|menos|acima|abaixo)\b/;
+/** O sujeito: o texto mais curto antes da primeira direção. */
+const PREFIXO_DA_DIRECAO = new RegExp(`^(.+?)\\s+${DIRECAO.source}`);
 
 /**
  * Texto à esquerda de over/under na seleção. Sem isso, "Tatum over 10.5" e
@@ -22,7 +24,7 @@ const DIRECAO = /\b(?:over|under|mais|menos|acima|abaixo)\b/;
  */
 export function prefixoAntesDaLinha(selecao: string): string | null {
   const n = normalizeStr(expandAbbreviatedDirection(selecao)).replace(/[^a-z0-9]+/g, " ").trim();
-  const achado = n.match(new RegExp(`^(.+?)\\s+${DIRECAO.source}`));
+  const achado = n.match(PREFIXO_DA_DIRECAO);
   const prefixo = achado?.[1]?.trim();
   if (!prefixo || !/[a-z]/.test(prefixo)) return null;
   return prefixo;
@@ -47,20 +49,22 @@ const COMPETITION_WORDS = [
 ];
 
 /**
- * O país colado à competição ("Copa do Brasil", "Liga de Portugal", "Italy
- * Serie A", "World Cup") também é o lugar. O nome mais longo vem antes, para
- * "Irlanda do Norte" não deixar o "norte" como sujeito; o com hífen fica de
- * fora do padrão, e a grafia com espaço o cobre.
+ * Chaves da lista de países que também são time ou região de time ("New
+ * England" dos Patriots, "Georgia" do college, "Internacional"): continuam
+ * sujeito, e a aposta vai para o dono em vez do total da partida.
  */
-// Chaves da lista de países que também são time ou região de time ("New
-// England" dos Patriots, "Georgia" do college, "Internacional"): continuam
-// sujeito, e a aposta vai para o dono em vez do total da partida.
 const NOT_ONLY_A_COUNTRY = new Set(["new england", "nova inglaterra", "georgia", "internacional", "international"]);
 const COUNTRY_NAMES = [...KNOWN_COUNTRY_KEYS]
   .filter((key) => /^[a-z ]+$/.test(key) && !NOT_ONLY_A_COUNTRY.has(key))
   .sort((a, b) => b.length - a.length)
   .join("|");
 const COMPETITION = COMPETITION_WORDS.join("|");
+/**
+ * O país colado à competição ("Copa do Brasil", "Liga de Portugal", "Italy
+ * Serie A", "World Cup") também é o lugar. O nome mais longo vem antes, para
+ * "Irlanda do Norte" não deixar o "norte" como sujeito; o com hífen fica de
+ * fora do padrão, e a grafia com espaço o cobre.
+ */
 const COMPETITION_COUNTRY = new RegExp(
   String.raw`\b(${COMPETITION})\s+(?:(?:de|do|da|of|the)\s+)?(${COUNTRY_NAMES})\b|\b(${COUNTRY_NAMES})\s+(?=(?:${COMPETITION})\b)`,
   "g",
