@@ -1353,11 +1353,6 @@ pub fn listed_but_did_not_play(minutos: Option<f64>, participou: bool, sem_gols:
 use dominio::settlement::over_under_subject as subject;
 
 #[napi]
-pub fn prefixo_antes_da_linha(selecao: String) -> Option<String> {
-    subject::prefixo_antes_da_linha(&selecao)
-}
-
-#[napi]
 pub fn subject_after_line(selecao: String, evento: Option<String>) -> Option<String> {
     subject::subject_after_line(&selecao, evento.as_deref())
 }
@@ -1464,4 +1459,37 @@ pub fn minuto_base(raw: String) -> Option<f64> {
 #[napi]
 pub fn required_player_goals(mercado: String, selecao: String) -> Option<f64> {
     goalscorer::required_player_goals(&mercado, &selecao)
+}
+
+use dominio::settlement::player_prop_classify as prop;
+
+/// `[família, rótulo final, chave do FlashScore ("" em cards_any), chave gravada]`.
+#[napi]
+pub fn player_prop_families() -> Vec<Vec<&'static str>> {
+    prop::FAMILIES
+        .iter()
+        .map(|row| vec![row.1, row.2, row.4.unwrap_or(""), row.0.chave()])
+        .collect()
+}
+
+#[napi]
+pub fn prop_stat_label(family: String, value: f64) -> String {
+    prop::prop_stat_label(&family, value)
+}
+
+/// `[família, período ("" no jogo inteiro)]`, ou `null` quando não é prop.
+#[napi]
+pub fn classificar_prop_de_jogador(
+    mercado: String,
+    selecao: String,
+    evento: Option<String>,
+    esporte: Option<String>,
+) -> Option<Vec<&'static str>> {
+    prop::classificar_prop_de_jogador(&mercado, &selecao, evento.as_deref(), esporte.as_deref())
+        .map(|found| {
+            vec![
+                found.family.as_str(),
+                found.period.map_or("", |period| period.as_str()),
+            ]
+        })
 }

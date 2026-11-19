@@ -435,6 +435,23 @@ diretiva. Andamento:
   fica em 8,7 µs no servidor contra 9,1 µs do TS e 12,4 µs no navegador; o
   laço de coerção sobre os aliases fica parelho (10,4 s contra 10,5 s). O
   WASM foi a 260 KB com gzip (+6,9 KB).
+- prop de jogador (`settlement/player-prop-classify`): a família da
+  estatística de JOGADOR que a aposta pede (faltas sofridas e cometidas,
+  chutes e chutes no gol, desarmes, cartões, assistências, passes…), o
+  rótulo final, a chave do FlashScore e o rótulo em PT. A limpeza veio
+  antes, no #49. A tabela das 16 famílias (nome, rótulo final, estatística
+  no singular e no plural, chave) mora em Rust e a casca a lê uma vez;
+  `valorDaProp` lê o objeto de estatísticas na casca, pela chave. A casca
+  passa o esporte `null` como texto vazio, que o Rust recusa como o
+  `!== undefined` do TS. `classificarPropDeJogador` está no caminho quente
+  dos aliases: cada pergunta da família só roda com o radical dela no texto,
+  e o rótulo canônico só com "player", "jogador", "goleir" ou "faltas
+  sofridas". `prefixoAntesDaLinha` saiu da casca e da ponte: o último
+  leitor em TS era este módulo. Paridade com o TS em 450 mil comparações
+  nos dois lados, com 80 combinações de família e período. Por chamada,
+  31,9 µs no servidor contra 33,2 µs do TS e 41,6 µs no navegador; o laço
+  de coerção sobre os aliases fica parelho (9,7 s contra 9,8 s). O WASM foi
+  a 266 KB com gzip (+5,9 KB).
 
 O teste dos aliases de produção (`tests/apostas/normalize-fields.test.ts`)
 ganhou o limite de um teste de varredura (60 s, no #45): na CI o caso

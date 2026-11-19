@@ -1399,11 +1399,6 @@ pub fn listed_but_did_not_play(minutos: Option<f64>, participou: bool, sem_gols:
 
 use dominio::settlement::over_under_subject as subject;
 
-#[wasm_bindgen(js_name = prefixoAntesDaLinha)]
-pub fn prefixo_antes_da_linha(selecao: &str) -> JsValue {
-    optional_string(subject::prefixo_antes_da_linha(selecao))
-}
-
 #[wasm_bindgen(js_name = subjectAfterLine)]
 pub fn subject_after_line(selecao: &str, evento: Option<String>) -> JsValue {
     optional_string(subject::subject_after_line(selecao, evento.as_deref()))
@@ -1506,4 +1501,41 @@ pub fn minuto_base(raw: &str) -> JsValue {
 #[wasm_bindgen(js_name = requiredPlayerGoals)]
 pub fn required_player_goals(mercado: &str, selecao: &str) -> JsValue {
     optional_number(goalscorer::required_player_goals(mercado, selecao))
+}
+
+use dominio::settlement::player_prop_classify as prop;
+
+/// `[família, rótulo final, chave do FlashScore ("" em cards_any), chave gravada]`.
+#[wasm_bindgen(js_name = playerPropFamilies)]
+pub fn player_prop_families() -> JsValue {
+    lists(prop::FAMILIES.iter().map(|row| {
+        vec![
+            row.1.to_owned(),
+            row.2.to_owned(),
+            row.4.unwrap_or("").to_owned(),
+            row.0.chave().to_owned(),
+        ]
+    }))
+}
+
+#[wasm_bindgen(js_name = propStatLabel)]
+pub fn prop_stat_label(family: &str, value: f64) -> String {
+    prop::prop_stat_label(family, value)
+}
+
+/// `[família, período ("" no jogo inteiro)]`, ou `null` quando não é prop.
+#[wasm_bindgen(js_name = classificarPropDeJogador)]
+pub fn classificar_prop_de_jogador(
+    mercado: &str,
+    selecao: &str,
+    evento: Option<String>,
+    esporte: Option<String>,
+) -> JsValue {
+    prop::classificar_prop_de_jogador(mercado, selecao, evento.as_deref(), esporte.as_deref())
+        .map_or(JsValue::NULL, |found| {
+            strings([
+                found.family.as_str(),
+                found.period.map_or("", |period| period.as_str()),
+            ])
+        })
 }
