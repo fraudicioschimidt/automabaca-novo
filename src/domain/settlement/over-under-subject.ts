@@ -8,15 +8,6 @@
 import dominio from "@automabaca/dominio";
 
 /**
- * Texto à esquerda de over/under na seleção. Sem isso, "Tatum over 10.5" e
- * "Over 10.5" parecem a mesma linha — só o prefixo diz se há um sujeito. A
- * direção abreviada ("Pedro O 0.5") tem o mesmo sujeito.
- */
-export function prefixoAntesDaLinha(selecao: string): string | null {
-  return dominio.prefixoAntesDaLinha(selecao);
-}
-
-/**
  * Quem vem DEPOIS da linha e não é time do evento: o jogador de "Over 0.5 -
  * Mbappé" ou de "Menos de 27.5 [A'ja Wilson]". Sem evento, null: o sujeito
  * não se prova alheio.

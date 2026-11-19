@@ -241,7 +241,6 @@ declare const dominio: {
   participationUnproven(minutosPublicados: boolean, participou: boolean, semGols: boolean): boolean;
   listedButDidNotPlay(minutos: number | null, participou: boolean, semGols: boolean): boolean;
   /** Ver `src/domain/settlement/over-under-subject.ts`. */
-  prefixoAntesDaLinha(selecao: string): string | null;
   subjectAfterLine(selecao: string, evento?: string): string | null;
   lineSubjectIsNotEventTeam(selecao: string, evento?: string): boolean;
   /** Ver `src/domain/mercados/selection-shape.ts`. */
@@ -266,6 +265,15 @@ declare const dominio: {
   orderedGoalscorerMarketOrder(mercado: string, selecao?: string): "first" | "last" | null;
   minutoBase(raw: string): number | null;
   requiredPlayerGoals(mercado: string, selecao: string): number | null;
+  /** Ver `src/domain/settlement/player-prop-classify.ts`. */
+  playerPropFamilies(): Array<[family: string, mercado: string, statKey: string, chave: string]>;
+  propStatLabel(family: string, value: number): string;
+  classificarPropDeJogador(
+    mercado: string,
+    selecao: string,
+    evento?: string,
+    esporte?: string,
+  ): [family: string, period: "" | "HT" | "SECOND_HALF" | "MAP" | "OTHER"] | null;
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;
