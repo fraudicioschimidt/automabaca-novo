@@ -1,9 +1,9 @@
 import {
   ehMercadoArtilheiro,
   ehMercadoArtilheiroPorTempo,
-  type JogadorDaPartida,
   type OrderedGoal,
 } from "@/src/domain/settlement/goalscorer";
+import { type JogadorDaPartida } from "@/src/domain/settlement/goalscorer-matching";
 import { toNumber } from "@/src/domain/money";
 import { declaredScorePeriod } from "@/src/domain/settlement/markets";
 import { hasNonScoreStatQualifier } from "@/src/domain/mercados/stat-qualifier";

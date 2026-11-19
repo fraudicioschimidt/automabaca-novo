@@ -3,11 +3,10 @@ import {
   hasUnsupportedGoalQualifier,
   resolveGoalscorer,
   resolveOrderedGoalscorer,
-  type GoalscorerRefusal,
-  type JogadorDaPartida,
   type OrderedGoalscorerOrder,
   type OrderedGoalscorerRefusal,
 } from "@/src/domain/settlement/goalscorer";
+import { type GoalscorerRefusal, type JogadorDaPartida } from "@/src/domain/settlement/goalscorer-matching";
 import { resolvePeriodGoalscorer } from "@/src/domain/settlement/goalscorer-period";
 import { declaredScorePeriod } from "@/src/domain/settlement/markets";
 import { createLogger } from "@/src/infra/logger";

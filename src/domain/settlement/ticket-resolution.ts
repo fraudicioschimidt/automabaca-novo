@@ -12,9 +12,9 @@ import {
   ehMercadoArtilheiro,
   ehMercadoArtilheiroPorTempo,
   resolveGoalscorer,
-  type JogadorDaPartida,
   type OrderedGoal,
 } from "./goalscorer";
+import { type JogadorDaPartida } from "./goalscorer-matching";
 import { resolvePeriodGoalscorer } from "./goalscorer-period";
 import { resolvePlayerProp } from "./player-props";
 import { classificarPropDeJogador } from "./player-prop-classify";

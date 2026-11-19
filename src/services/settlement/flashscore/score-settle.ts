@@ -3,7 +3,8 @@ import { fmtU } from "@/src/domain/formato-de-resultado";
 import { resolveLiveScoreAtTip } from "@/src/domain/live-score-at-tip";
 import { emojiStatus, rotuloStatus } from "@/src/domain/mensagem-operador";
 import { toNumber } from "@/src/domain/money";
-import type { JogadorDaPartida, OrderedGoal } from "@/src/domain/settlement/goalscorer";
+import type { OrderedGoal } from "@/src/domain/settlement/goalscorer";
+import type { JogadorDaPartida } from "@/src/domain/settlement/goalscorer-matching";
 import type { ScoreResolution, ScoreResolutionFailure } from "@/src/domain/settlement/score-resolution";
 import {
   resolveTicketFromScore,
