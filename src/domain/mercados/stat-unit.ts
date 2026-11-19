@@ -42,8 +42,9 @@ function textoDePrimeiroTempo(text: string): boolean {
   return FIRST_HALF_RE.test(normalizeStr(text).replace(/[^a-z0-9+]+/g, " "));
 }
 
-function temCantos(selecao: string, extraText: string): boolean {
-  return CORNERS.test(selecao) || CORNERS.test(extraText);
+/** O total de escanteios, no 1º tempo quando o texto o declara. */
+function totalDeCantos(blob: string): string {
+  return textoDePrimeiroTempo(blob) ? "Total (Corners) – 1st Half" : "Corners O/U";
 }
 
 function temCartoes(selecao: string, extraText: string): boolean {
@@ -122,15 +123,12 @@ function inferStatMarket(
   // fora desta detecção: "Cartões Amarelos / Over 1.5" não é Bookings (amarelo
   // ≠ ponto de cartão), e "Total (Corners) / Over 8.5" já está no final certo.
   if (CARDS.test(selecao) && !CARD_COLOR.test(selecao)) return "Total Cards";
-  if (CORNERS.test(selecao)) {
-    return textoDePrimeiroTempo(blob) ? "Total (Corners) – 1st Half" : "Corners O/U";
-  }
+  if (CORNERS.test(selecao)) return totalDeCantos(blob);
   if (temCartoes(selecao, extraText) && !CARD_COLOR.test(`${selecao} ${extraText}`)) {
     return "Total Cards";
   }
-  if (temCantos(selecao, extraText)) {
-    return textoDePrimeiroTempo(blob) ? "Total (Corners) – 1st Half" : "Corners O/U";
-  }
+  // A seleção já não tem cantos aqui: só a legenda os nomeia.
+  if (CORNERS.test(extraText)) return totalDeCantos(blob);
 
   return mercado;
 }
