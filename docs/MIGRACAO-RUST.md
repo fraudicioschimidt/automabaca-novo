@@ -376,6 +376,21 @@ diretiva. Andamento:
   em 2,3 milhões de comparações, com os dois lados da ponte. O casamento
   numa lista de 36 jogadores caiu de ~130 µs para ~60 µs e a casa, de 1,7
   µs para 0,8 µs. O WASM foi a 237 KB com gzip (+8,7 KB).
+- sujeito da linha over/under (`settlement/over-under-subject`): o que vem
+  antes ou depois de "Over 0.5" e não é time do evento ("Tatum over 10.5",
+  "Over 0.5 - Mbappé"), sem o país que só diz a competição. A limpeza veio
+  antes, no #41. O prefixo antes da direção virou leitura das palavras, sem
+  motor de regex (no texto só de `[a-z0-9 ]` o `^(.+?)\s+\b(?:direção)\b` é
+  o que vem antes da primeira palavra de direção). As regexes do sujeito
+  depois da linha ficam, com a ordem do vocabulário de `stat_qualifier`
+  (a troca depende de qual alternativa casa primeiro), e cada uma só roda
+  quando o texto tem o que toda forma dela exige: um dígito para a linha,
+  uma palavra de competição para o país. `isKnownBookmakerKey` e
+  `scoreQualifierTerms` saíram da casca e da ponte: só este módulo os lia.
+  Paridade com o TS em 1,2 milhão de comparações nos dois lados, com 15
+  mil sujeitos achados depois da linha. Parelho com o TS por chamada (~37
+  µs) e no laço de coerção sobre os aliases (13,7 s contra 14,0 s, em
+  rodadas alternadas). O WASM foi a 246 KB com gzip (+8,9 KB).
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)

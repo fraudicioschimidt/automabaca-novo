@@ -34,11 +34,6 @@ export function hasNonScoreStatQualifier(mercado: string, selecao: string): bool
   return dominio.hasNonScoreStatQualifier(mercado, selecao);
 }
 
-/** Unidades que nomeiam o placar ou uma parcial dele (gols, pontos, corridas, sets, games, mapas…). */
-export function scoreQualifierTerms(): string[] {
-  return dominio.scoreQualifierTerms();
-}
-
 /**
  * Um rótulo que nomeia a UNIDADE de Total/Handicap não pode cair aberto no
  * placar só porque essa unidade ainda não entrou no vocabulário.

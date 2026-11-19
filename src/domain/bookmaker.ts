@@ -5,11 +5,6 @@
  */
 import dominio from "@automabaca/dominio";
 
-/** A palavra (sem acento nem pontuação) é uma casa conhecida ("betano", "bet365"). */
-export function isKnownBookmakerKey(key: string): boolean {
-  return dominio.isKnownBookmakerKey(key);
-}
-
 /** Normaliza somente marcas conhecidas; nomes desconhecidos preservam a grafia. */
 export function canonicalizeBookmakerName(value: string): string {
   return dominio.canonicalizeBookmakerName(value);
