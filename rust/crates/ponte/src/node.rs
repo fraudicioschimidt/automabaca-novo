@@ -1077,11 +1077,6 @@ pub fn is_btts_market(mercado: String) -> bool {
 }
 
 #[napi]
-pub fn market_names_both_halves(text: String) -> bool {
-    classify::market_names_both_halves(&text)
-}
-
-#[napi]
 pub fn is_combined_btts_market(mercado: String) -> bool {
     classify::is_combined_btts_market(&mercado)
 }
@@ -1433,4 +1428,40 @@ pub fn declared_score_period(
     esporte: Option<String>,
 ) -> &'static str {
     markets::declared_score_period(&mercado, &selecao, esporte.as_deref()).as_str()
+}
+
+use dominio::settlement::goalscorer;
+
+#[napi]
+pub fn eh_mercado_artilheiro(mercado: String, selecao: Option<String>) -> bool {
+    goalscorer::eh_mercado_artilheiro(&mercado, selecao.as_deref())
+}
+
+#[napi]
+pub fn eh_mercado_artilheiro_por_tempo(mercado: String, selecao: Option<String>) -> bool {
+    goalscorer::eh_mercado_artilheiro_por_tempo(&mercado, selecao.as_deref())
+}
+
+#[napi]
+pub fn has_unsupported_goal_qualifier(mercado: String, selecao: String) -> bool {
+    goalscorer::has_unsupported_goal_qualifier(&mercado, &selecao)
+}
+
+#[napi]
+pub fn ordered_goalscorer_market_order(
+    mercado: String,
+    selecao: Option<String>,
+) -> Option<&'static str> {
+    goalscorer::ordered_goalscorer_market_order(&mercado, selecao.as_deref())
+        .map(|order| order.as_str())
+}
+
+#[napi]
+pub fn minuto_base(raw: String) -> Option<f64> {
+    goalscorer::minuto_base(&raw)
+}
+
+#[napi]
+pub fn required_player_goals(mercado: String, selecao: String) -> Option<f64> {
+    goalscorer::required_player_goals(&mercado, &selecao)
 }

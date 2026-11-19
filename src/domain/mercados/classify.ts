@@ -61,11 +61,6 @@ export function isBttsMarket(mercado: string): boolean {
   return dominio.isBttsMarket(mercado);
 }
 
-/** O texto pede os DOIS tempos ("nos dois tempos", "Both Halves", "1º e 2º tempo"). */
-export function marketNamesBothHalves(text: string): boolean {
-  return dominio.marketNamesBothHalves(text);
-}
-
 /**
  * BTTS COMBINADO com outra perna ("Casa vence e ambas marcam", "BTTS & Over
  * 2.5") ou em cada tempo: exige as duas condições, e não é um BTTS.

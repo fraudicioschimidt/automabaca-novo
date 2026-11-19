@@ -1,5 +1,6 @@
 //! Regras da liquidação, portadas de `src/domain/settlement/`.
 
+pub mod goalscorer;
 pub mod goalscorer_matching;
 pub mod lines;
 pub mod markets;
@@ -10,7 +11,8 @@ use js_regex::Regex;
 
 /// Os regexes do módulo, para o catálogo que o teste compara com o V8.
 pub(crate) fn regexes() -> Vec<&'static Regex> {
-    let mut all = lines::regexes();
+    let mut all = goalscorer::regexes();
+    all.extend(lines::regexes());
     all.extend(markets::regexes());
     all.extend(over_under_subject::regexes());
     all.extend(sides::regexes());
