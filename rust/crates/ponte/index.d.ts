@@ -232,6 +232,19 @@ declare const dominio: {
   extractSignedNumbers(text: string): number[];
   parseLineQuarters(selecao: string, allowNegative: boolean): number | null;
   statusFromAdjustedQuarters(adjusted: number): "VOID" | "HALF_WON" | "HALF_LOST" | "WON" | "LOST";
+  /** Ver `src/domain/bookmaker.ts`. */
+  isKnownBookmakerKey(key: string): boolean;
+  canonicalizeBookmakerName(value: string): string;
+  /** Ver `src/domain/settlement/goalscorer-matching.ts`. */
+  goalscorerThresholds(): [similaridade: number, vantagem: number];
+  tokensDoNome(nome: string): string[];
+  similaridadeDeTokens(ta: string[], tb: string[]): number;
+  tokensDaSelecao(selecao: string): string[];
+  temPolaridadeNegativa(textos: string[]): boolean;
+  playerMatchRefusals(): Array<"selecao_sem_jogador" | "sem_jogadores" | "jogador_nao_encontrado" | "jogador_ambiguo">;
+  encontrarJogadorNaPartida(selecao: string, nomes: string[], nomesCurtos: string[]): number[];
+  participationUnproven(minutosPublicados: boolean, participou: boolean, semGols: boolean): boolean;
+  listedButDidNotPlay(minutos: number | null, participou: boolean, semGols: boolean): boolean;
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;

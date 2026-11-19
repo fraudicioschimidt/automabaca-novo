@@ -1,5 +1,6 @@
 //! Regras da liquidação, portadas de `src/domain/settlement/`.
 
+pub mod goalscorer_matching;
 pub mod lines;
 pub mod sides;
 
