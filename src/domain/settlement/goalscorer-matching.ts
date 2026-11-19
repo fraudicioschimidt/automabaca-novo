@@ -150,13 +150,18 @@ const PALAVRAS_DE_MERCADO = new Set([
   "hat", "trick", "tricks", "hattrick", "brace", "bis", "ou", "or", "more", "least", "minimo",
 ]);
 
-/** Tokens comparáveis: sem acento, sem pontuação, sem partícula. */
-export function tokensDoNome(nome: string): string[] {
-  return normalizeStr(nome)
+/** Palavras do texto sem acento e sem pontuação; hífen separa como espaço. */
+function palavrasNormalizadas(texto: string): string[] {
+  return normalizeStr(texto)
     .replace(/[.'`´]/g, " ")
     .replace(/[^a-z0-9\s-]/g, " ")
     .split(/[\s-]+/)
-    .filter((token) => token.length > 0 && !PARTICULAS.has(token));
+    .filter((token) => token.length > 0);
+}
+
+/** Tokens comparáveis: sem acento, sem pontuação, sem partícula. */
+export function tokensDoNome(nome: string): string[] {
+  return palavrasNormalizadas(nome).filter((token) => !PARTICULAS.has(token));
 }
 /** true quando `curto` é abreviação plausível de `longo` ("f" para "franco"). */
 function ehInicialDe(curto: string, longo: string): boolean {
@@ -252,11 +257,7 @@ const NEGADOS_APOS_NO = new Set([
 export function temPolaridadeNegativa(...textos: ReadonlyArray<string | null | undefined>): boolean {
   return textos.some((texto) => {
     if (!texto) return false;
-    const tokens = normalizeStr(texto)
-      .replace(/[.'`´]/g, " ")
-      .replace(/[^a-z0-9\s-]/g, " ")
-      .split(/[\s-]+/)
-      .filter(Boolean);
+    const tokens = palavrasNormalizadas(texto);
     return tokens.some((token, indice) => {
       if (NEGACOES.has(token)) return true;
       if (token !== "no") return false;
@@ -283,23 +284,20 @@ export function encontrarJogadorNaPartida<T extends JogadorNomeado>(
   }
 
   const notas = jogadores
-    .map((jogador) => ({
-      jogador,
-      nota: Math.max(
-        similaridadeDeTokens(alvo, tokensDoNome(jogador.nome)),
-        jogador.nomeCurto
-          ? similaridadeDeTokens(alvo, tokensDoNome(jogador.nomeCurto))
-          : 0,
-      ),
-    }))
+    .map((jogador) => {
+      const nome = tokensDoNome(jogador.nome);
+      const curto = jogador.nomeCurto ? tokensDoNome(jogador.nomeCurto) : [];
+      return {
+        jogador,
+        tokens: [...nome, ...curto],
+        nota: Math.max(similaridadeDeTokens(alvo, nome), curto.length > 0 ? similaridadeDeTokens(alvo, curto) : 0),
+      };
+    })
     .sort((x, y) => y.nota - x.nota);
 
   const unico = alvo[0];
   if (alvo.length === 1 && unico && unico.length >= 3) {
-    const exatos = notas.filter(({ jogador }) =>
-      tokensDoNome(jogador.nome).includes(unico) ||
-      (jogador.nomeCurto ? tokensDoNome(jogador.nomeCurto).includes(unico) : false),
-    );
+    const exatos = notas.filter(({ tokens }) => tokens.includes(unico));
     const so = exatos[0];
     if (exatos.length === 1 && so) {
       return {

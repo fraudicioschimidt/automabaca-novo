@@ -21,6 +21,20 @@ const CANONICAL_BOOKMAKERS: Record<string, string> = {
   vaidebet: "VaideBet",
 };
 
+/**
+ * Sufixos operacionais de grafia colada ("Betano-VIP", "BetanoPro"):
+ * `official` (EN) além de `oficial` (PT); `live`/`tv`/`casino` são CANAIS da
+ * mesma casa, não outra marca. A segurança vem da estrutura: só sai se o que
+ * sobra é marca do catálogo.
+ */
+const GLUED_SUFFIX =
+  /(?:sportsbook|international|esportes|apostas|exchange|official|sports|online|oficial|premium|casino|express|mobile|global|clube|prime|club|live|lite|plus|pro|vip|app|bet|tv|brasil|br)$/;
+
+/** Chave da marca: sem acento, sem espaço nem pontuação. */
+function keyOf(name: string): string {
+  return normalizeStr(name).replace(/[^a-z0-9]/g, "");
+}
+
 /** A palavra (sem acento nem pontuação) é uma casa conhecida ("betano", "bet365"). */
 export function isKnownBookmakerKey(key: string): boolean {
   return Object.hasOwn(CANONICAL_BOOKMAKERS, key);
@@ -30,7 +44,6 @@ export function isKnownBookmakerKey(key: string): boolean {
 export function canonicalizeBookmakerName(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "";
-  const keyOf = (name: string) => normalizeStr(name).replace(/[^a-z0-9]/g, "");
   const direct = CANONICAL_BOOKMAKERS[keyOf(trimmed)];
   if (direct) return direct;
   // Sufixo de plano, nível ou canal não cria outra marca. O teste é ESTRUTURAL,
@@ -44,15 +57,9 @@ export function canonicalizeBookmakerName(value: string): string {
     const brand = CANONICAL_BOOKMAKERS[keyOf(words.slice(0, take).join(" "))];
     if (brand) return brand;
   }
-  // Grafia colada ("Betano-VIP", "BetanoPro") não tem fronteira de palavra:
-  // ali só a lista de sufixos operacionais conhecidos resolve. A remoção é UMA
-  // por vez, testando a marca a cada passo: com `+` guloso "pixbetbet" perdia
-  // os dois "bet" de uma vez e sobrava "pix".
-  // `official` (EN) além de `oficial` (PT); `live`/`tv`/`casino` são CANAIS da
-  // mesma casa, não outra marca. A segurança continua vindo da estrutura: só
-  // remove se o que sobra é marca do catálogo.
-  const GLUED_SUFFIX =
-    /(?:sportsbook|international|esportes|apostas|exchange|official|sports|online|oficial|premium|casino|express|mobile|global|clube|prime|club|live|lite|plus|pro|vip|app|bet|tv|brasil|br)$/;
+  // Grafia colada não tem fronteira de palavra: ali só a lista de sufixos
+  // resolve. A remoção é UMA por vez, testando a marca a cada passo: com `+`
+  // guloso "pixbetbet" perdia os dois "bet" de uma vez e sobrava "pix".
   let key = keyOf(trimmed);
   for (let step = 0; step < 4; step += 1) {
     const stripped = key.replace(GLUED_SUFFIX, "");
