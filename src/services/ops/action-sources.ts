@@ -1,6 +1,6 @@
 import { spRelative } from "@/src/domain/dates";
 import { ACTIVE_OPERATIONAL_ACTION_STATUSES } from "@/src/domain/operational-action-status";
-import { hasNonScoreStatQualifier } from "@/src/domain/settlement/markets";
+import { hasNonScoreStatQualifier } from "@/src/domain/mercados/stat-qualifier";
 import { sportPendingMessage } from "@/src/domain/sport-pending";
 import { SPORT_RESOLUTION_BACKOFF_MS } from "@/src/domain/sport-resolution-retry";
 import { BetStatus, OperationalRisk } from "@/src/generated/prisma/client";

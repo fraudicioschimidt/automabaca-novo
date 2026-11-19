@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { BetStatus } from "@/src/generated/prisma/client";
-import {
-  classifyScoreMarket,
-  isScoreResolvableMarket,
-  hasUnknownScoreQualifier,
-} from "@/src/domain/settlement/markets";
+import { classifyScoreMarket, isScoreResolvableMarket } from "@/src/domain/settlement/markets";
+import { hasUnknownScoreQualifier } from "@/src/domain/mercados/stat-qualifier";
 import { resolveResultFromScore } from "@/src/domain/settlement/score-resolution";
 import { matchMoneylineSelection } from "@/src/domain/settlement/sides";
 import { coerceMercadoPelaSelecao } from "@/src/domain/mercados/coerce";

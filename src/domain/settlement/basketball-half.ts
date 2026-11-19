@@ -3,8 +3,8 @@ import { marketIncludesExtraTime, HALF_PERIOD_ABBREVIATIONS, HALF_PERIOD_PHRASES
 import { normalizeMercadoKey } from "@/src/domain/mercados/catalog";
 import { normalizeStr } from "@/src/domain/text";
 import { matchTeamSide } from "./sides";
-import { classifyScoreMarket, declaredScorePeriod, hasNonScoreStatQualifier,
-  hasScoreUnitMismatch, hasUnknownScoreQualifier } from "./markets";
+import { classifyScoreMarket, declaredScorePeriod } from "./markets";
+import { hasNonScoreStatQualifier, hasScoreUnitMismatch, hasUnknownScoreQualifier } from "@/src/domain/mercados/stat-qualifier";
 
 type Terms = { esporte?: string; mercado: string; selecao: string; evento?: string };
 const firstHalfMention = new RegExp(String.raw`\b(?:${[...HALF_PERIOD_PHRASES.first, ...HALF_PERIOD_ABBREVIATIONS.first].join("|")})\b`);

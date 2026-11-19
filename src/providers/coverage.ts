@@ -2,12 +2,11 @@ import { isMercadoFinal } from "@/src/domain/mercados/catalog";
 import { isMercadoFinalForSport } from "@/src/domain/mercados/compatibility";
 import { marketKindOf, marketPeriodOf } from "@/src/domain/mercados/classify";
 import { classificarPropDeJogador } from "@/src/domain/settlement/player-prop-classify";
-import { hasNonScoreStatQualifier } from "@/src/domain/settlement/markets";
 import { normalizeStr } from "@/src/domain/text";
 import { BRIDGEODDS_COVERAGE, bridgeOddsSportContract, bridgeOddsSupportsScope, type BridgeOddsMarketKind } from "@/src/providers/bridgeodds/coverage-contract";
 import { pinnacle17SportId } from "./pinnacle17/types";
 import { pinnacle17MarketContract } from "./pinnacle17/market-contract";
-import { hasScoreUnitMismatch } from "@/src/domain/mercados/stat-qualifier";
+import { hasScoreUnitMismatch, hasNonScoreStatQualifier } from "@/src/domain/mercados/stat-qualifier";
 
 /**
  * Fonte única de CAPACIDADE dos providers sharp: qual provider cobre qual

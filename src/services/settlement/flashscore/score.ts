@@ -5,7 +5,8 @@ import {
   type OrderedGoal,
 } from "@/src/domain/settlement/goalscorer";
 import { toNumber } from "@/src/domain/money";
-import { declaredScorePeriod, hasNonScoreStatQualifier } from "@/src/domain/settlement/markets";
+import { declaredScorePeriod } from "@/src/domain/settlement/markets";
+import { hasNonScoreStatQualifier } from "@/src/domain/mercados/stat-qualifier";
 import { classificarPropDeJogador } from "@/src/domain/settlement/player-prop-classify";
 import {
   resolveTicketFromScore,
