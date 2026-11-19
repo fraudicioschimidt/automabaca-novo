@@ -1539,3 +1539,28 @@ pub fn classificar_prop_de_jogador(
             ])
         })
 }
+
+use dominio::settlement::statistics;
+
+#[wasm_bindgen(js_name = statisticFamilyOf)]
+pub fn statistic_family_of(
+    market: &str,
+    selection: &str,
+    evento: Option<String>,
+    esporte: Option<String>,
+) -> JsValue {
+    optional_str(
+        statistics::statistic_family_of(market, selection, evento.as_deref(), esporte.as_deref())
+            .map(|family| family.as_str()),
+    )
+}
+
+#[wasm_bindgen(js_name = statisticFamilyInText)]
+pub fn statistic_family_in_text(raw_text: &str) -> JsValue {
+    optional_str(statistics::statistic_family_in_text(raw_text).map(|family| family.as_str()))
+}
+
+#[wasm_bindgen(js_name = isBothTeamsCards)]
+pub fn is_both_teams_cards(market: &str, selection: &str) -> bool {
+    statistics::is_both_teams_cards(market, selection)
+}

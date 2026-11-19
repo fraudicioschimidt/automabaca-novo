@@ -452,6 +452,20 @@ diretiva. Andamento:
   31,9 µs no servidor contra 33,2 µs do TS e 41,6 µs no navegador; o laço
   de coerção sobre os aliases fica parelho (9,7 s contra 9,8 s). O WASM foi
   a 266 KB com gzip (+5,9 KB).
+- regras de texto da estatística de time (`settlement/statistics`): a
+  família da linha (escanteios, cartões e as cores, chutes e chutes no gol,
+  faltas e duplas faltas, cestas de três…) pelo mercado e pela seleção,
+  com as guardas de prop de jogador, sujeito que não é time e "race to". A
+  limpeza veio antes, no #51. O resolvedor (`resolveResultFromStatistics`)
+  fica na casca por ora, compondo essas regras com o objeto de estatísticas
+  e o lucro; vai num PR próprio. `statisticFamilyOf` é o caminho mais quente
+  do laço dos aliases: cada pergunta de família só roda com o radical dela
+  no texto. A casca passa o esporte `null` como texto vazio, como a prop de
+  jogador. Paridade com o TS em 900 mil comparações nos dois lados, com as
+  19 famílias e os rótulos e aliases de produção. Por chamada, 28,1 µs no
+  servidor contra 32,2 µs do TS e 37,9 µs no navegador; o laço de coerção
+  sobre os aliases ficou 5% mais rápido (9,1 s contra 9,5 s). O WASM foi a
+  269 KB com gzip (+3,4 KB).
 
 O teste dos aliases de produção (`tests/apostas/normalize-fields.test.ts`)
 ganhou o limite de um teste de varredura (60 s, no #45): na CI o caso

@@ -7,6 +7,7 @@ pub mod markets;
 pub mod over_under_subject;
 pub mod player_prop_classify;
 pub mod sides;
+pub mod statistics;
 
 use js_regex::Regex;
 
@@ -18,5 +19,6 @@ pub(crate) fn regexes() -> Vec<&'static Regex> {
     all.extend(over_under_subject::regexes());
     all.extend(player_prop_classify::regexes());
     all.extend(sides::regexes());
+    all.extend(statistics::regexes());
     all
 }
