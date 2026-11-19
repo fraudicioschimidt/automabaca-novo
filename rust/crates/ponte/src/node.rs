@@ -656,11 +656,6 @@ pub fn trailing_team_candidate(trailing: String) -> Option<String> {
 }
 
 #[napi]
-pub fn trailing_team_candidate_of_selection(selecao: String) -> Option<String> {
-    trailing_side::trailing_team_candidate_of_selection(&selecao)
-}
-
-#[napi]
 pub fn separate_compact_stat_unit(text: String) -> String {
     total_direction::separate_compact_stat_unit(&text)
 }
@@ -1385,4 +1380,36 @@ pub fn subject_after_line(selecao: String, evento: Option<String>) -> Option<Str
 #[napi]
 pub fn line_subject_is_not_event_team(selecao: String, evento: Option<String>) -> bool {
     subject::line_subject_is_not_event_team(&selecao, evento.as_deref())
+}
+
+use dominio::mercados::selection_shape as shape;
+
+#[napi]
+pub fn strip_selection_odds(selection: String) -> String {
+    shape::strip_selection_odds(&selection)
+}
+
+#[napi]
+pub fn is_esports_player_selection(selecao: String, evento: String) -> bool {
+    shape::is_esports_player_selection(&selecao, &evento)
+}
+
+#[napi]
+pub fn selection_total_line(selecao: String, evento: String) -> Option<f64> {
+    shape::selection_total_line(&selecao, &evento)
+}
+
+#[napi]
+pub fn selecao_parece_handicap(selecao: String) -> bool {
+    shape::selecao_parece_handicap(&selecao)
+}
+
+#[napi]
+pub fn selecao_nomeia_time_do_total(selecao: String, evento: String) -> bool {
+    shape::selecao_nomeia_time_do_total(&selecao, &evento)
+}
+
+#[napi]
+pub fn declares_european_handicap(selecao: String) -> bool {
+    shape::declares_european_handicap(&selecao)
 }

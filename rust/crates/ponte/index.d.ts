@@ -126,7 +126,6 @@ declare const dominio: {
   /** `[MATCH_SCOPE_NOUNS, SIDE_SCOPE_NOUNS]`. */
   scopeNouns(): [string[], string[]];
   trailingTeamCandidate(trailing: string): string | null;
-  trailingTeamCandidateOfSelection(selecao: string): string | null;
   separateCompactStatUnit(text: string): string;
   expandAbbreviatedDirection(selection: string): string;
   totalDirectionOf(selection: string, allowBarePositiveLine: boolean): "over" | "under" | null;
@@ -247,6 +246,13 @@ declare const dominio: {
   prefixoAntesDaLinha(selecao: string): string | null;
   subjectAfterLine(selecao: string, evento?: string): string | null;
   lineSubjectIsNotEventTeam(selecao: string, evento?: string): boolean;
+  /** Ver `src/domain/mercados/selection-shape.ts`. */
+  stripSelectionOdds(selection: string): string;
+  isEsportsPlayerSelection(selecao: string, evento: string): boolean;
+  selectionTotalLine(selecao: string, evento: string): number | null;
+  selecaoPareceHandicap(selecao: string): boolean;
+  selecaoNomeiaTimeDoTotal(selecao: string, evento: string): boolean;
+  declaresEuropeanHandicap(selecao: string): boolean;
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;

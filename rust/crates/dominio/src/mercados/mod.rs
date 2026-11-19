@@ -8,6 +8,7 @@ pub mod double_chance_selection;
 pub mod draw_vocabulary;
 pub mod finalize;
 pub mod match_scope;
+pub mod selection_shape;
 pub mod sharp_equivalent;
 pub mod stat_qualifier;
 pub mod total_direction;
@@ -22,6 +23,7 @@ pub(crate) fn regexes() -> Vec<&'static Regex> {
     all.extend(compatibility::regexes());
     all.extend(double_chance_selection::regexes());
     all.extend(draw_vocabulary::regexes());
+    all.extend(selection_shape::regexes());
     all.extend(stat_qualifier::regexes());
     all.extend(total_direction::regexes());
     all.extend(trailing_side::regexes());
