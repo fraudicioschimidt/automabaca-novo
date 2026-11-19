@@ -12,11 +12,3 @@ import dominio from "@automabaca/dominio";
 export function trailingTeamCandidate(trailing: string): string | null {
   return dominio.trailingTeamCandidate(trailing || "");
 }
-
-/**
- * Trecho da seleção que vem DEPOIS da primeira linha numérica, já limpo.
- * Null quando a seleção não tem linha ou nada nomeável a segue.
- */
-export function trailingTeamCandidateOfSelection(selecao: string): string | null {
-  return dominio.trailingTeamCandidateOfSelection(selecao || "");
-}

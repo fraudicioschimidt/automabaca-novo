@@ -691,11 +691,6 @@ pub fn trailing_team_candidate(trailing: &str) -> JsValue {
     optional_string(trailing_side::trailing_team_candidate(trailing))
 }
 
-#[wasm_bindgen(js_name = trailingTeamCandidateOfSelection)]
-pub fn trailing_team_candidate_of_selection(selecao: &str) -> JsValue {
-    optional_string(trailing_side::trailing_team_candidate_of_selection(selecao))
-}
-
 #[wasm_bindgen(js_name = separateCompactStatUnit)]
 pub fn separate_compact_stat_unit(text: &str) -> String {
     total_direction::separate_compact_stat_unit(text)
@@ -1432,4 +1427,36 @@ pub fn subject_after_line(selecao: &str, evento: Option<String>) -> JsValue {
 #[wasm_bindgen(js_name = lineSubjectIsNotEventTeam)]
 pub fn line_subject_is_not_event_team(selecao: &str, evento: Option<String>) -> bool {
     subject::line_subject_is_not_event_team(selecao, evento.as_deref())
+}
+
+use dominio::mercados::selection_shape as shape;
+
+#[wasm_bindgen(js_name = stripSelectionOdds)]
+pub fn strip_selection_odds(selection: &str) -> String {
+    shape::strip_selection_odds(selection)
+}
+
+#[wasm_bindgen(js_name = isEsportsPlayerSelection)]
+pub fn is_esports_player_selection(selecao: &str, evento: &str) -> bool {
+    shape::is_esports_player_selection(selecao, evento)
+}
+
+#[wasm_bindgen(js_name = selectionTotalLine)]
+pub fn selection_total_line(selecao: &str, evento: &str) -> JsValue {
+    optional_number(shape::selection_total_line(selecao, evento))
+}
+
+#[wasm_bindgen(js_name = selecaoPareceHandicap)]
+pub fn selecao_parece_handicap(selecao: &str) -> bool {
+    shape::selecao_parece_handicap(selecao)
+}
+
+#[wasm_bindgen(js_name = selecaoNomeiaTimeDoTotal)]
+pub fn selecao_nomeia_time_do_total(selecao: &str, evento: &str) -> bool {
+    shape::selecao_nomeia_time_do_total(selecao, evento)
+}
+
+#[wasm_bindgen(js_name = declaresEuropeanHandicap)]
+pub fn declares_european_handicap(selecao: &str) -> bool {
+    shape::declares_european_handicap(selecao)
 }

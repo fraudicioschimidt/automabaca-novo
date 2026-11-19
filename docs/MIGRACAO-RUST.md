@@ -391,6 +391,22 @@ diretiva. Andamento:
   mil sujeitos achados depois da linha. Parelho com o TS por chamada (~37
   µs) e no laço de coerção sobre os aliases (13,7 s contra 14,0 s, em
   rodadas alternadas). O WASM foi a 246 KB com gzip (+8,9 KB).
+- forma da seleção (`mercados/selection-shape`): handicap, total do time,
+  linha do total, jogador de eSports e handicap europeu. A limpeza veio
+  antes, no #43, que tirou o apelido `selecaoPareceTotal`. O prefixo antes da
+  direção de `selecaoNomeiaTimeDoTotal` é o de `prefixoAntesDaLinha` (o
+  mesmo texto e a mesma regex; o `trim` antes ou depois dá o mesmo prefixo).
+  Cada regex só roda quando o texto pode casar: a linha de handicap pede um
+  dígito ou uma estatística no fim; o jogador de eSports, o radical da
+  estatística; o handicap europeu, "europe", "via" ou "way". O
+  `trailingTeamCandidateOfSelection` saiu da casca e da ponte: só este
+  módulo o lia. Paridade com o TS em 1,8 milhão de comparações nos dois
+  lados. No servidor ficou mais rápido que o TS (5,2 µs contra 6,3 µs em
+  `selecaoPareceHandicap`; 17,2 µs contra 18,8 µs em
+  `selecaoNomeiaTimeDoTotal`); no navegador, 11% e 22% mais lento (7,1 µs e
+  23,0 µs), pelas idas ao host da normalização. O laço de coerção sobre os
+  aliases fica parelho (13,9 s contra 14,1 s). O WASM foi a 248 KB com gzip
+  (+2,3 KB).
 - tamanho do WASM, medido com o binário de 139 KB (gzip) do #23: o `wasm-opt
   -Oz` tira 1,3% e não entra; o `opt-level = "z"` tira 10,6%, mas deixa o
   casamento de confrontos 35% mais lento no navegador (mais que o TS antigo)
