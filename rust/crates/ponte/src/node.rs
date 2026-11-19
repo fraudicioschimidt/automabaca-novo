@@ -1493,3 +1493,26 @@ pub fn classificar_prop_de_jogador(
             ]
         })
 }
+
+use dominio::settlement::statistics;
+
+#[napi]
+pub fn statistic_family_of(
+    market: String,
+    selection: String,
+    evento: Option<String>,
+    esporte: Option<String>,
+) -> Option<&'static str> {
+    statistics::statistic_family_of(&market, &selection, evento.as_deref(), esporte.as_deref())
+        .map(|family| family.as_str())
+}
+
+#[napi]
+pub fn statistic_family_in_text(raw_text: String) -> Option<&'static str> {
+    statistics::statistic_family_in_text(&raw_text).map(|family| family.as_str())
+}
+
+#[napi]
+pub fn is_both_teams_cards(market: String, selection: String) -> bool {
+    statistics::is_both_teams_cards(&market, &selection)
+}

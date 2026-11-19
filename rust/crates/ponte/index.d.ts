@@ -274,6 +274,10 @@ declare const dominio: {
     evento?: string,
     esporte?: string,
   ): [family: string, period: "" | "HT" | "SECOND_HALF" | "MAP" | "OTHER"] | null;
+  /** Ver `src/domain/settlement/statistics.ts`. */
+  statisticFamilyOf(market: string, selection: string, evento?: string, esporte?: string): string | null;
+  statisticFamilyInText(rawText: string): string | null;
+  isBothTeamsCards(market: string, selection: string): boolean;
   /** Ver `src/domain/settlement/sides.ts`. */
   stripTeamNames(selecao: string, evento: string): string;
   matchTeamSide(selecao: string, evento: string): "home" | "away" | null;
